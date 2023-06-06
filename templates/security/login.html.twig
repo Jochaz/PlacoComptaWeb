@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Page de connexion : PlacoCompta{% endblock %}
+
+{% block body %}
+<section class="vh-100">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-6 text-black">
+
+        <div class="px-5 ms-xl-4">
+            <img src={{ asset('build/images/IconePng.ico') }}
+            alt="Login image" height="65px" width="65px" style="object-fit: cover; object-position: left;">
+          <i class="fas fa-crow fa-2x me-3 pt-5 mt-xl-4" style="color: #709085;"></i>
+          <span class="h2 fw-bold mb-0">PlacoCompta</span>
+        </div>
+
+        <div class="d-flex align-items-center h-custom-2 px-5 ms-xl-4 mt-5 pt-5 pt-xl-0 mt-xl-n5">
+
+          <form style="width: 23rem;" method="post">
+                {% if error %}
+                    <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                {% endif %}
+
+                {% if app.user %}
+                    <div class="mb-3">
+                        You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
+                    </div>
+                {% endif %}
+                <h3 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Module de connexion</h3>
+
+                <div class="form-outline mb-4">
+                    <label class="form-label" for="inputEmail">Adresse email</label>
+                    <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control form-control-lg" autocomplete="email" required autofocus>
+                </div>
+
+                <div class="form-outline mb-4">
+                    <label class="form-label" for="inputPassword">Mot de passe</label>
+                    <input type="password" name="password" id="inputPassword" class="form-control form-control-lg" autocomplete="current-password" required>
+                </div>
+
+                <div class="pt-1 mb-4">
+                <button class="btn btn-info btn-lg btn-block" type="button">Se connecter</button>
+                </div><!--
+                <p class="small mb-5 pb-lg-2"><a class="text-muted" href="#!">Forgot password?</a></p>
+                <p>Don't have an account? <a href="#!" class="link-info">Register here</a></p>-->
+
+          </form>
+
+        </div>
+
+      </div>
+      <div class="col-sm-6 px-0 d-none d-sm-block">
+        <img src="https://guiderenovation.fr/wp-content/uploads/2019/09/cloisons-en-placo-pl%C3%A2tre.jpg"
+          alt="Login image" class="w-100 vh-100" style="object-fit: cover; object-position: left;">
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
