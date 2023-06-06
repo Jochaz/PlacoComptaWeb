@@ -31,9 +31,13 @@ class TVA
     #[ORM\OneToMany(mappedBy: 'TVADefaut', targetEntity: CategorieMateriaux::class)]
     private Collection $categorieMateriauxes;
 
+    #[ORM\OneToMany(mappedBy: 'TVA', targetEntity: Materiaux::class)]
+    private Collection $materiauxes;
+
     public function __construct()
     {
         $this->categorieMateriauxes = new ArrayCollection();
+        $this->materiauxes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -113,6 +117,36 @@ class TVA
             // set the owning side to null (unless already changed)
             if ($categorieMateriaux->getTVADefaut() === $this) {
                 $categorieMateriaux->setTVADefaut(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Materiaux>
+     */
+    public function getMateriauxes(): Collection
+    {
+        return $this->materiauxes;
+    }
+
+    public function addMateriaux(Materiaux $materiaux): self
+    {
+        if (!$this->materiauxes->contains($materiaux)) {
+            $this->materiauxes->add($materiaux);
+            $materiaux->setTVA($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMateriaux(Materiaux $materiaux): self
+    {
+        if ($this->materiauxes->removeElement($materiaux)) {
+            // set the owning side to null (unless already changed)
+            if ($materiaux->getTVA() === $this) {
+                $materiaux->setTVA(null);
             }
         }
 
