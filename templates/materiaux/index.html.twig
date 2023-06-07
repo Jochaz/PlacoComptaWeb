@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Matériaux : PlacoCompta{% endblock %}
+
+{% block body %}
+
+<div class="container">
+    <br />
+    <h2>Liste des matériaux</h2>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Désignation</th>
+                <th scope="col">Prix d'achat</th>
+                <th scope="col">Prix unitaire</th>
+                <th scope="col">TVA</th>
+                <th scope="col">Catégorie</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for materiaux in pagination %}
+            <tr onclick="window.location='/material/{{materiaux.id}}'">
+                <th scope="row">{{materiaux.Designation}}</th>
+                <td>{{materiaux.PrixAchat}}€</td>
+                <td>{{materiaux.PrixUnitaire}}€</td>
+                <td>{{materiaux.TVA.Libelle}} {{materiaux.TVA.Taux}}%</td>
+                <td>{{materiaux.Categorie.Libelle}}</td>
+            </tr>
+            </a>
+            {% endfor %}
+        </tbody>
+    </table>   
+    <hr> 
+    <br />
+    {{ knp_pagination_render(pagination)}}
+</div>
+
+    
+
+    
+
+{% endblock %}

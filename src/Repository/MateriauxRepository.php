@@ -39,20 +39,16 @@ class MateriauxRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Materiaux[] Returns an array of Materiaux objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('m')
-//            ->andWhere('m.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('m.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+   /**
+    * @return Materiaux[] Returns a query of Materiaux objects
+    */
+   public function paginationQuery()
+   {
+       return $this->createQueryBuilder('m')
+           ->orderBy('m.id', 'ASC')
+           ->getQuery()
+       ;
+   }
 
 //    public function findOneBySomeField($value): ?Materiaux
 //    {
