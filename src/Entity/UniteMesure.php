@@ -24,6 +24,9 @@ class UniteMesure
     #[ORM\OneToMany(mappedBy: 'UniteMesure', targetEntity: Materiaux::class)]
     private Collection $materiauxes;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $NumOrdre = null;
+
     public function __construct()
     {
         $this->materiauxes = new ArrayCollection();
@@ -84,6 +87,18 @@ class UniteMesure
                 $materiaux->setUniteMesure(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getNumOrdre(): ?int
+    {
+        return $this->NumOrdre;
+    }
+
+    public function setNumOrdre(?int $NumOrdre): self
+    {
+        $this->NumOrdre = $NumOrdre;
 
         return $this;
     }

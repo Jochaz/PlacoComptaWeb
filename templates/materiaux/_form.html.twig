@@ -1,0 +1,9 @@
+{{ form_start(form)}}
+    {{ form_row(form.Designation)}}
+    {{ form_row(form.PrixAchat)}}
+    {{ form_row(form.PrixUnitaire)}}
+    {{ form_row(form.Categorie)}}
+    {{ form_row(form.UniteMesure)}}
+    {{ form_row(form.TVA)}}
+    <button type="submit" class="btn btn-primary">{{ button_label|default('Créer le matériaux')}}</button>
+{{ form_end(form)}}

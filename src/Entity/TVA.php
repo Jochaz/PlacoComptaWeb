@@ -86,6 +86,11 @@ class TVA
         return $this->Taux;
     }
 
+    public function getLibelleTVAComplet(): ?string
+    {
+        return $this->Libelle.' ('.(string)$this->Taux.'%)';
+    }
+
     public function setTaux(float $Taux): self
     {
         $this->Taux = $Taux;
