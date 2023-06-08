@@ -9,8 +9,11 @@ use App\Entity\UniteMesure;
 use App\Repository\UniteMesureRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Positive;
+use Symfony\Component\Validator\Constraints\Regex;
 
 class MateriauxType extends AbstractType
 {
@@ -20,11 +23,24 @@ class MateriauxType extends AbstractType
             ->add('Designation', options:[
                 'label' => 'Désignation'
             ])
-            ->add('PrixAchat', options:[
-                'label' => 'Prix d\'achat fournisseur'
+            ->add('PrixAchat', MoneyType::class, options:[
+                'label' => 'Prix d\'achat fournisseur',
+                'constraints' => [
+                    new Positive(
+                        message: 'Le prix d\'achat ne peut pas être négatif'
+                    )
+                ],
+                'required'          => false,
+                'invalid_message' => 'La valeur du prix d\'achat est invalide.',
             ])
-            ->add('PrixUnitaire', options:[
-                'label' => 'Prix unitaire (HT)'
+            ->add('PrixUnitaire', MoneyType::class, options:[
+                'label' => 'Prix unitaire (HT)',
+                'constraints' => [
+                    new Positive(
+                        message: 'Le prix unitaire ne peut pas être négatif'
+                    )
+                ],
+                'invalid_message' => 'La valeur du prix unitaire est invalide.',
             ])
             ->add('TVA', EntityType::class, [
                 'class' => TVA::class,

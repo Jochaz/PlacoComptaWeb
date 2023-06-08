@@ -29,11 +29,19 @@ class MateriauxController extends AbstractController
     }
 
     #[Route('/material/detail/{id}', name: 'app_materiaux_id')]
-    public function detail(int $id, MateriauxRepository $materiauxRepository): Response
+    public function detail(int $id, MateriauxRepository $materiauxRepository, Request $request, EntityManagerInterface $em): Response
     {
         $materiaux = $materiauxRepository->find($id);
         $form = $this->createForm(MateriauxType::class, $materiaux);
+        $form->handleRequest($request);
 
+        if($form->isSubmitted() && $form->isvalid()){
+            $em->persist($materiaux);
+            $em->flush();
+
+            $this->addFlash('success', 'Matériaux modifié avec succès');
+           // return $this->redirectToRoute('app_materiaux');
+        }
         return $this->render('materiaux/detail.html.twig', [
             'materiaux' => $materiaux,
             'form' => $form->createView()
