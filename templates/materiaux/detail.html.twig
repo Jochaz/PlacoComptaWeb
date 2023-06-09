@@ -9,6 +9,8 @@
         <div class="col-12" id="principal">
             <h2>Modification : {{materiaux.Designation}}</h2>
             <hr>
+            <a href="/material/delete/{{materiaux.id}}"><button type="button" class="btn btn-secondary">Désactiver</button></a>
+            <hr>
             {% include "_partials/_flash.html.twig"%}
             {% include "materiaux/_form.html.twig" with {'button_label': 'Modifier'} %}
         </div>

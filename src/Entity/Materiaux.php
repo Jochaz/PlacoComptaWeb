@@ -35,6 +35,9 @@ class Materiaux
     #[ORM\JoinColumn(nullable: false)]
     private ?UniteMesure $UniteMesure = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $Plus_utilise = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -108,6 +111,18 @@ class Materiaux
     public function setUniteMesure(?UniteMesure $UniteMesure): self
     {
         $this->UniteMesure = $UniteMesure;
+
+        return $this;
+    }
+
+    public function isPlusUtilise(): ?bool
+    {
+        return $this->Plus_utilise;
+    }
+
+    public function setPlusUtilise(?bool $Plus_utilise): self
+    {
+        $this->Plus_utilise = $Plus_utilise;
 
         return $this;
     }

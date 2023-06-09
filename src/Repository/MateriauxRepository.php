@@ -46,6 +46,8 @@ class MateriauxRepository extends ServiceEntityRepository
    {
        return $this->createQueryBuilder('m')
            ->orderBy('m.id', 'ASC')
+           ->andWhere('m.Plus_utilise = :val')
+           ->setParameter('val', false)
            ->getQuery()
        ;
    }
