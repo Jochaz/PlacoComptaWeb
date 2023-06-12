@@ -1,0 +1,22 @@
+{% if form %}
+
+    <div class="accordion" id="accordionExample">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingOne">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                Filtres
+            </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample" style="">
+                <div class="accordion-body">
+                    {{ form_start(form)}}  
+                        {{ form_row(form.libelle)}}
+                        {{ form_row(form.categorie)}}
+                        <button  type="submit"  class="btn btn-secondary">Rechercher</button>
+                    {{ form_end(form)}}
+                </div>
+            </div>
+        </div>
+    </div>
+  
+{% endif %}

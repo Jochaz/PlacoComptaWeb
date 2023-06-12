@@ -9,6 +9,10 @@
         <div class="col-12" id="principal">
             <h2>Liste des matériaux</h2>
             <hr>
+            <div class="container">
+                {% include "_partials/_search_data.html.twig"%} 
+            </div>
+            <hr>
             <a href="/material/add"><button type="button" class="btn btn-info">Nouveau</button></a>
             <br />
             <table class="table table-hover">
@@ -35,14 +39,12 @@
                 </tbody>
             </table>   
             <hr> 
-            <br />                
-            {{ knp_pagination_render(pagination)}}
+            <br />   
+            <div class="navigation flex justify-center mb-8">              
+                {{ knp_pagination_render(pagination)}}
+            </div>
         </div>
     </section>
-</main> 
-
-    
-
-    
+</main>     
 
 {% endblock %}

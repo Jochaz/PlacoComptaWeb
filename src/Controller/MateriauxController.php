@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Materiaux;
 use App\Form\MateriauxType;
+use App\Form\SearchType;
+use App\Model\SearchData;
 use App\Repository\MateriauxRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,6 +23,23 @@ class MateriauxController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
+        $searchData = new SearchData();
+        $form = $this->createForm(SearchType::class, $searchData);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+            $pagination = $paginator->paginate(
+                $materiauxRepository->findBySearch($searchData),
+                $request->query->get('page', 1),
+                10
+            );
+    
+            return $this->render('materiaux/index.html.twig', [
+                'pagination' => $pagination,
+                'form' => $form
+            ]);
+        }
+
         $pagination = $paginator->paginate(
             $materiauxRepository->paginationQuery(),
             $request->query->get('page', 1),
@@ -28,7 +47,8 @@ class MateriauxController extends AbstractController
         );
 
         return $this->render('materiaux/index.html.twig', [
-            'pagination' => $pagination
+            'pagination' => $pagination,
+            'form' => $form->createView()
         ]);
     }
 
