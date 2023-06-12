@@ -9,6 +9,14 @@ class SearchData{
 
     public string $libelle = '';
 
+    public float $prixminachat = 0;
+
+    public float $prixmaxachat = 0;
+
+    public float $prixminunitaire = 0;
+
+    public float $prixmaxunitaire = 0;
+
     /**
      * @var CategorieMateriaux[]
      */

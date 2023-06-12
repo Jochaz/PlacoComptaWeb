@@ -104,7 +104,7 @@ class MateriauxController extends AbstractController
         ]);
     }
 
-    #[Route('/material/delete/{id}', name: 'app_materiaux_add')]
+    #[Route('/material/delete/{id}', name: 'app_materiaux_delete')]
     public function delete(string $id, MateriauxRepository $materiauxRepository, Request $request, EntityManagerInterface $em): Response
     {
         if (!$this->getUser()) {
