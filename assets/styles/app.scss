@@ -19,3 +19,19 @@
 #filtreprix{
     width: 100%;
 }
+
+.sidenav {
+    height: 100%;
+    width: 350px;
+    position: fixed;
+    padding-left: 5px;
+    left: 0;
+    overflow-x: hidden;
+    padding-top: 20px;
+    border-right: solid 1px;
+  }
+
+  .main {
+    margin-left: 350px; /* Same as the width of the sidenav */
+  }
+  
