@@ -111,14 +111,25 @@ class ClientController extends AbstractController
     }
     
     #[Route('/customer/disable/{id}', name: 'app_customer_disable')]
-    public function customerDisable(string $id): Response
+    public function customerDisable(string $id, ParticulierRepository $particulierRepository, EntityManagerInterface $em): Response
     {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
         }
 
-        return $this->render('client/index.html.twig', [
-            'controller_name' => 'ClientController',
+        $particulier = $particulierRepository->find($id);
+        if (!$particulier || !$particulier->isActif()){
+           return $this->redirectToRoute('app_customer');
+        }
+        $particulier->setActif(false);
+        $em->persist($particulier);
+        $em->flush();
+
+        $this->addFlash('success', 'Client modifié avec succès');
+        return $this->redirectToRoute('app_customer');
+    
+        return $this->render('client/customer/detail.html.twig', [
+            'particulier' => $particulier
         ]);
     }
 
