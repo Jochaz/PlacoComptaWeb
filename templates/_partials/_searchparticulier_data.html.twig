@@ -1,0 +1,20 @@
+{% if form %}
+<div class="container">
+    <h5 class="accordion-header" id="headingOne">
+        Filtres
+    </h5>
+    
+        <div class="accordion-body">
+            {{ form_start(form)}}  
+                {{ form_row(form.nom)}}
+                {{ form_row(form.prenom)}}
+                {{ form_row(form.adresseemail)}}
+                {{ form_row(form.numerotelephoneportable)}}
+                {{ form_row(form.numerotelephonefixe)}}
+
+                <button  type="submit"  class="btn btn-secondary">Rechercher</button>
+            {{ form_end(form)}}
+        </div>
+</div>
+  
+{% endif %}

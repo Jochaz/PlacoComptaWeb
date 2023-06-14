@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Client particulier : PlacoCompta{% endblock %}
+
+{% block body %}
+
+<main class="container">
+    <section class="row">
+        <div class="col-12" id="principal">
+            <h2>Créer un nouveau client</h2>
+            <hr>
+            {% include "_partials/_flash.html.twig"%}
+            {% include "client/customer/_form.html.twig"%}
+        </div>
+
+
+    </section>
+</main>
+
+    
+
+    
+
+{% endblock %}

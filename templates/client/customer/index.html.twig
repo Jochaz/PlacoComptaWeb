@@ -7,56 +7,50 @@
 <main class="container">
     <section class="row">
         <div class="col-12" id="principal">
-            <h2>Liste des clients particulier</h2>
-            <hr>
-            <div class="container">
-                {# {% include "_partials/_search_data.html.twig"%}  #}
+            <div class="sidenav">    
+                    {% include "_partials/_searchparticulier_data.html.twig"%} 
+                <hr>
+                <h5>Panneau de gestion</h5>
+                <a href="/customer/add"><button type="button" class="btn btn-info">Nouveau client</button></a>
+                <br />
             </div>
-            {% if pagination|length > 0 %}
-            <div class="sidenav">
-                <a href="#">About</a>
-                <a href="#">Services</a>
-                <a href="#">Clients</a>
-                <a href="#">Contact</a>
-            </div>
-            <div class="main"> 
-            <hr>
-            <a href="/customer/add"><button type="button" class="btn btn-info">Nouveau</button></a>
-            <br />
 
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th scope="col">Nom du client</th>
-                        <th scope="col">Adresse email principal</th>
-                        <th scope="col">Numéro de téléphone portable</th>
-                        <th scope="col">Numéro de téléphone fixe</th>
-                        <th scope="col">Date création</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for customer in pagination %}
-                    <tr onclick="window.location='/customer/detail/{{customer.id}}'">
-                        <th scope="row">{{customer.nom + ' ' + customer.prenom}}</th>
-                        <td>{{customer.adresseemail1}}€</td>
-                        <td>{{customer.numerotelephoneportable1}}€</td>
-                        <td>{{customer.numerotelephonefixe1}}</td>
-                        <td>{{customer.createdAt}}</td>
-                    </tr>
-                    </a>
-                    {% endfor %}
-                </tbody>
-            </table>   
-            <hr> 
-            <br />   
-            <div class="navigation flex justify-center mb-8">              
-                {{ knp_pagination_render(pagination)}}
+          
+            <div class="main">
+                <h2>Liste des clients particulier</h2>
+                {% if pagination|length > 0 %}
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Nom du client</th>
+                            <th scope="col">Adresse email</th>
+                            <th scope="col">Numéro de téléphone portable</th>
+                            <th scope="col">Numéro de téléphone fixe</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for particulier in pagination %}
+                        <tr onclick="window.location='/customer/detail/{{particulier.id}}'">
+                            <th scope="row">{{particulier.nom}} {{particulier.prenom}}</th>
+                            <td>{{particulier.adresseemail1}}</td>
+                            <td>{{particulier.numerotelephoneportable1}}</td>
+                            <td>{{particulier.numerotelephonefixe1}}</td>
+                        </tr>
+                        </a>
+                        {% endfor %}
+                    </tbody>
+                </table>   
+                <hr> 
+                <br />   
+                <div class="navigation flex justify-center mb-8">              
+                    {{ knp_pagination_render(pagination)}}
+                </div>
+                {% else %}
+                <div class="navigation flex justify-center mb-8">              
+                    <p>Aucun client particulier n'a été trouvé.</p>
+                </div>   
+                {% endif %}
             </div>
-            {% else %}
-             <div class="navigation flex justify-center mb-8">              
-                <p>Aucun client n'a été trouvé. Pour en créer, <a  href="/customer/add">cliquez-ici</a>.</p>
-            </div>   
-            {% endif %}
         </div>
     </section>
 </main>     
