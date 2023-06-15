@@ -1,0 +1,15 @@
+{{ form_start(form)}}
+    {{ form_row(form.nomsociete)}}
+    {{ form_row(form.SIRET)}}
+    {{ form_row(form.SIREN)}}
+    {{ form_row(form.TVAIntra)}}
+    {{ form_row(form.adresseemail1)}}
+    {{ form_row(form.adresseemail2)}}
+    {{ form_row(form.adresseemail3)}}
+    {{ form_row(form.numerotelephoneportable1)}}
+    {{ form_row(form.numerotelephoneportable2)}}
+    {{ form_row(form.numerotelephonefixe1)}}
+    {{ form_row(form.numerotelephonefixe2)}}
+    {{ form_row(form.commentaire)}}
+    <button type="submit" class="btn btn-primary">{{ button_label|default('Créer le matériaux')}}</button>
+{{ form_end(form)}}

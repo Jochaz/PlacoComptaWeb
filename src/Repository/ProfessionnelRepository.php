@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Professionnel;
+use App\Model\SearchDataProfessionnel;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -37,6 +38,60 @@ class ProfessionnelRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function paginationQuery()
+    {
+        return $this->createQueryBuilder('p')
+            ->orderBy('p.nomsociete', 'ASC')
+            ->andWhere('p.actif = :val')
+            ->setParameter('val', true)
+            ->getQuery()
+        ;
+    }
+
+    public function findBySearch(SearchDataProfessionnel $searchData){
+        $data =  $this->createQueryBuilder('p')
+            ->andWhere('p.actif = :val')
+            ->setParameter('val', true)
+            ->addOrderby('p.nomsociete', 'asc');
+
+        if (!empty($searchData->nomSociete)){
+            $data = $data 
+                ->andwhere ('p.nomsociete LIKE :nomsociete')
+                ->setParameter('nomsociete', "%{$searchData->nomSociete}%");
+        }
+        if (!empty($searchData->SIRET)){
+            $data = $data 
+                ->andwhere ('p.SIRET LIKE :SIRET')
+                ->setParameter('SIRET', "%{$searchData->SIRET}%");
+        }
+        if (!empty($searchData->SIREN)){
+            $data = $data 
+                ->andwhere ('p.SIREN LIKE :SIREN')
+                ->setParameter('SIREN', "%{$searchData->SIREN}%");
+        }
+
+        if (!empty($searchData->adresseemail)){
+            $data = $data 
+                ->andwhere ('p.adresseemail1 LIKE :adresseemail')
+                ->setParameter('adresseemail', "%{$searchData->adresseemail}%");
+        }
+
+        if (!empty($searchData->numerotelephoneportable)){
+            $data = $data 
+                ->andwhere ('p.numerotelephoneportable1 LIKE :numerotelephoneportable')
+                ->setParameter('numerotelephoneportable', "%{$searchData->numerotelephoneportable}%");
+        }
+
+        if (!empty($searchData->numerotelephonefixe)){
+            $data = $data 
+                ->andwhere ('p.numerotelephonefixe1 LIKE :numerotelephonefixe')
+                ->setParameter('numerotelephonefixe', "%{$searchData->numerotelephonefixe}%");
+        }
+
+        $data = $data->getQuery()->getResult();
+        return $data;
     }
 
 //    /**

@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Client professionnel : PlacoCompta{% endblock %}
+
+{% block body %}
+
+<main class="container">
+    <section class="row">
+        <div class="col-12" id="principal">
+            <div class="sidenav">    
+             <h5>Panneau de gestion</h5>
+                <a href="/professional/add"><button type="button" class="btn btn-info">Nouveau client</button></a>
+                <br />
+                 <hr>
+                {% include "_partials/_searchprofessionnel_data.html.twig"%} 
+                  
+            </div>
+
+          
+            <div class="main">
+                <h2>Liste des clients professionnel</h2>
+                {% if pagination|length > 0 %}
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Nom de société</th>
+                            <th scope="col">N° SIRET</th>
+                            <th scope="col">N° SIREN</th>
+                            <th scope="col">N° TVA Intra</th>
+                            <th scope="col">Adresse email</th>
+                            <th scope="col">Numéro de téléphone portable</th>
+                            <th scope="col">Numéro de téléphone fixe</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for professionnel in pagination %}
+                        <tr onclick="window.location='/professional/detail/{{professionnel.id}}'">
+                            <th scope="row">{{professionnel.nomsociete}}</th>
+                            <td>{{professionnel.SIRET}}</td>
+                            <td>{{professionnel.SIREN}}</td>
+                            <td>{{professionnel.TVAIntra}}</td>
+                            <td>{{professionnel.adresseemail1}}</td>
+                            <td>{{professionnel.numerotelephoneportable1}}</td>
+                            <td>{{professionnel.numerotelephonefixe1}}</td>
+                        </tr>
+                        </a>
+                        {% endfor %}
+                    </tbody>
+                </table>   
+                <hr> 
+                <br />   
+                <div class="navigation flex justify-center mb-8">              
+                    {{ knp_pagination_render(pagination)}}
+                </div>
+                {% else %}
+                <div class="navigation flex justify-center mb-8">              
+                    <p>Aucun client professionnel n'a été trouvé.</p>
+                </div>   
+                {% endif %}
+            </div>
+        </div>
+    </section>
+</main>     
+
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Client professionnel : PlacoCompta{% endblock %}
+
+{% block body %}
+
+<main class="container">
+    <section class="row">
+        <div class="col-12" id="principal">
+            <h2>Modification : {{professionnel.nomsociete}}</h2>
+            <hr>
+            <a href="/professional/disable/{{professionnel.id}}"><button type="button" class="btn btn-secondary">Désactiver le client</button></a>
+            <hr>
+            {% include "_partials/_flash.html.twig"%}
+            {% include "client/professional/_form.html.twig" with {'button_label': 'Modifier les données du client'} %}
+        </div>
+    </section>
+</main> 
+
+    
+
+{% endblock %}

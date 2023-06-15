@@ -3,10 +3,15 @@
 namespace App\Controller;
 
 use App\Entity\Particulier;
+use App\Entity\Professionnel;
 use App\Form\CustomerType;
+use App\Form\ProfessionalType;
 use App\Form\SearchParticulierType;
+use App\Form\SearchProfessionnelType;
 use App\Model\SearchDataParticulier;
+use App\Model\SearchDataProfessionnel;
 use App\Repository\ParticulierRepository;
+use App\Repository\ProfessionnelRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -138,50 +143,117 @@ class ClientController extends AbstractController
 ////////////////////////////////////////////////////////////////////////////////////////
 
     #[Route('/professional', name: 'app_professional')]
-    public function professional(): Response
+    public function professional(Request $request, PaginatorInterface $paginator, ProfessionnelRepository $professionnelRepository): Response
     {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
         }
 
-        return $this->render('client/index.html.twig', [
-            'controller_name' => 'ClientController',
+        $searchData = new SearchDataProfessionnel();
+        $form = $this->createForm(SearchProfessionnelType::class, $searchData);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+            $pagination = $paginator->paginate(
+                $professionnelRepository->findBySearch($searchData),
+                $request->query->get('page', 1),
+                10
+            );
+    
+            return $this->render('client/professional/index.html.twig', [
+                'pagination' => $pagination,
+                'form' => $form
+            ]);
+        }
+
+        $pagination = $paginator->paginate(
+            $professionnelRepository->paginationQuery(),
+            $request->query->get('page', 1),
+            10
+        );
+
+        return $this->render('client/professional/index.html.twig', [
+            'pagination' => $pagination,
+            'form' => $form
         ]);
     }
 
-    #[Route('/professional/detail/{id}', name: 'app_professional')]
-    public function professionalDetail(string $id): Response
+    #[Route('/professional/detail/{id}', name: 'app_professional_detail')]
+    public function professionalDetail(string $id, ProfessionnelRepository $professionnelRepository, Request $request, EntityManagerInterface $em): Response
     {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
         }
 
-        return $this->render('client/index.html.twig', [
-            'controller_name' => 'ClientController',
+        $professionnel = $professionnelRepository->find($id);
+
+        if (!$professionnel || !$professionnel->isActif()){
+            return $this->redirectToRoute('app_customer');
+        }
+        $form = $this->createForm(ProfessionalType::class, $professionnel);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isvalid()){
+            $em->persist($professionnel);
+            $em->flush();
+
+            $this->addFlash('success', 'Client modifié avec succès');
+           // return $this->redirectToRoute('app_materiaux');
+        }
+        return $this->render('client/professional/detail.html.twig', [
+            'professionnel' => $professionnel,
+            'form' => $form->createView()
         ]);
     }
 
-    #[Route('/professional/add', name: 'app_professional')]
-    public function professionalAdd(): Response
+    #[Route('/professional/add', name: 'app_professional_add')]
+    public function professionalAdd(EntityManagerInterface $em, Request $request): Response
     {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
         }
 
-        return $this->render('client/index.html.twig', [
-            'controller_name' => 'ClientController',
+        $professionnel = new Professionnel();
+        $form = $this->createForm(ProfessionalType::class, $professionnel);
+        $form->handleRequest($request);
+        
+        if($form->isSubmitted() && $form->isvalid()){
+            $professionnel->setCreatedAt(new DateTimeImmutable());
+            $professionnel->setActif(true);
+
+            $em->persist($professionnel);
+            $em->flush();
+
+            $this->addFlash('success', 'Client ajouté avec succès');
+           // return $this->redirectToRoute('app_materiaux');
+        }
+
+        return $this->render('client/professional/ajout.html.twig', [
+            'form' => $form->createView()
         ]);
+
     }
 
-    #[Route('/professional/disable/{id}', name: 'app_professional')]
-    public function professionalDisable(string $id): Response
+    #[Route('/professional/disable/{id}', name: 'app_professional_disable')]
+    public function professionalDisable(string $id, ProfessionnelRepository $professionnelRepository, EntityManagerInterface $em): Response
     {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
         }
 
-        return $this->render('client/index.html.twig', [
-            'controller_name' => 'ClientController',
+        $professionnel = $professionnelRepository->find($id);
+        if (!$professionnel || !$professionnel->isActif()){
+           return $this->redirectToRoute('app_professional');
+        }
+        $professionnel->setActif(false);
+        $em->persist($professionnel);
+        $em->flush();
+
+        $this->addFlash('success', 'Client modifié avec succès');
+        return $this->redirectToRoute('app_professional');
+    
+        return $this->render('client/professional/detail.html.twig', [
+            'particulier' => $professionnel
         ]);
     }
 }
