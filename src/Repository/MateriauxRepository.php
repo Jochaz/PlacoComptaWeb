@@ -80,7 +80,7 @@ class MateriauxRepository extends ServiceEntityRepository
                 ->andwhere ('c.id IN ( :categories )')
                 ->setParameter('categories', "{$cat}");
         }
-        dump($searchData->prixminachat);
+        dump($searchData->prixmaxachat);
         if (!empty($searchData->prixminachat) && $searchData->prixminachat != 0) {
             dump(1);
             $data = $data 

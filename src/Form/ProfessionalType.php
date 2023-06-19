@@ -7,6 +7,7 @@ use App\Entity\Professionnel;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -61,7 +62,7 @@ class ProfessionalType extends AbstractType
                 'required'          => false,
                 'label' => 'Numéro de téléphone fixe n°2 du client'
             ])
-            ->add('commentaire', TextType::class, options:[
+            ->add('commentaire', TextareaType::class, options:[
                 'label' => 'Commentaire sur le client',
                 'required'          => false,
             ])

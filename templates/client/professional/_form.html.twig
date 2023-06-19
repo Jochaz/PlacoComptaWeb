@@ -1,15 +1,55 @@
 {{ form_start(form)}}
     {{ form_row(form.nomsociete)}}
-    {{ form_row(form.SIRET)}}
-    {{ form_row(form.SIREN)}}
-    {{ form_row(form.TVAIntra)}}
-    {{ form_row(form.adresseemail1)}}
-    {{ form_row(form.adresseemail2)}}
-    {{ form_row(form.adresseemail3)}}
-    {{ form_row(form.numerotelephoneportable1)}}
-    {{ form_row(form.numerotelephoneportable2)}}
-    {{ form_row(form.numerotelephonefixe1)}}
-    {{ form_row(form.numerotelephonefixe2)}}
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                {{ form_row(form.SIRET)}}
+            </div>
+            <div class="col">
+                {{ form_row(form.SIREN)}}
+            </div>
+            <div class="col">
+                {{ form_row(form.TVAIntra)}}
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                {{ form_row(form.adresseemail1)}}
+            </div>
+            <div class="col">
+                {{ form_row(form.adresseemail2)}}
+            </div>
+            <div class="col">
+                {{ form_row(form.adresseemail3)}}
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                {{ form_row(form.numerotelephoneportable1)}}
+            </div>
+            <div class="col">
+                {{ form_row(form.numerotelephoneportable2)}}
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                {{ form_row(form.numerotelephonefixe1)}}
+            </div>
+            <div class="col">
+                {{ form_row(form.numerotelephonefixe2)}}
+            </div>
+        </div>
+    </div>
+
     {{ form_row(form.commentaire)}}
-    <button type="submit" class="btn btn-primary">{{ button_label|default('Créer le matériaux')}}</button>
+    <button type="submit" class="btn btn-primary">{{ button_label|default('Créer le client')}}</button>
 {{ form_end(form)}}

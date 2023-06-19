@@ -1,7 +1,17 @@
 {{ form_start(form)}}
     {{ form_row(form.Designation)}}
-    {{ form_row(form.PrixAchat)}}
-    {{ form_row(form.PrixUnitaire)}}
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                {{ form_row(form.PrixAchat)}}
+            </div>
+            <div class="col">
+               {{ form_row(form.PrixUnitaire)}}
+            </div>
+        </div>
+    </div>
+    
+    
     {{ form_row(form.Categorie)}}
     {{ form_row(form.UniteMesure)}}
     {{ form_row(form.TVA)}}
