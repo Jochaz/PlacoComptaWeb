@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Catégorie matériaux : PlacoCompta{% endblock %}
+
+{% block body %}
+
+<main class="container">
+    <section class="row">
+        <div class="col-12" id="principal">
+            <h2>Ajouter une nouvelle catégorie de matériaux</h2>
+            <hr>
+            {% include "_partials/_flash.html.twig"%}
+            {% include "configuration/categories/_form.html.twig"%}
+        </div>
+    </section>
+</main>
+
+    
+
+    
+
+{% endblock %}

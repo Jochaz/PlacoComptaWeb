@@ -39,20 +39,19 @@ class CategorieMateriauxRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return CategorieMateriaux[] Returns an array of CategorieMateriaux objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('c.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+   /**
+    * @return CategorieMateriaux[] Returns an array of CategorieMateriaux objects
+    */
+   public function findByUse(): array
+   {
+       return $this->createQueryBuilder('c')
+           ->andWhere('c.plus_Utilise = :val')
+           ->setParameter('val', false)
+           ->orderBy('c.Libelle', 'ASC')
+           ->getQuery()
+           ->getResult()
+       ;
+   }
 
 //    public function findOneBySomeField($value): ?CategorieMateriaux
 //    {

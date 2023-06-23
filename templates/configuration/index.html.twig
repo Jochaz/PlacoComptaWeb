@@ -7,16 +7,22 @@
     <section class="row">
       <div class="col-12" id="principal">
         <h2>Fenêtre de configuration</h2>
+        <br />
         <div class="container">
           <div class="row">
             <div class="col-sm">
-              
+              {% include "configuration/_partials/_tva.html.twig"%} 
             </div>
             <div class="col-sm">
-              
+              {% include "configuration/_partials/_unitemesure.html.twig"%} 
             </div>
+          </div>
+        </div>
+        <br />
+        <div class="container">
+          <div class="row">
             <div class="col-sm">
-              
+              {% include "configuration/_partials/_categorie.html.twig" %} 
             </div>
           </div>
         </div>

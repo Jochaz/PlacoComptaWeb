@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Catégorie matériaux : PlacoCompta{% endblock %}
+
+{% block body %}
+
+<main class="container">
+    <section class="row">
+        <div class="col-12" id="principal">
+            <h2>Modification : {{categorie.Libelle}}</h2>
+            <hr>
+            <a href="/configuration/categorie/disable/{{categorie.id}}"><button type="button" class="btn btn-secondary">Désactiver le matériaux</button></a>
+            <a href="/configuration"><button type="button" class="btn btn-info">Retour</button></a>
+            <hr>
+            {% include "_partials/_flash.html.twig"%}
+            {% include "configuration/categories/_form.html.twig" with {'button_label': 'Modifier les données de la catégorie de matériaux'} %}
+        </div>
+    </section>
+</main> 
+
+    
+
+{% endblock %}

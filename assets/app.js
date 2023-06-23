@@ -11,3 +11,11 @@ import './styles/app.scss';
 import 'bootswatch/dist/Minty/bootstrap.min.css'; // Added this :boom:
 
 import { Tooltip, Toast, Popover } from 'bootstrap';
+
+
+$(document).ready(function() {
+    // you may need to change this code if you are not using Bootstrap Datepicker
+    $('.js-datepicker').datepicker({
+        format: 'dd-mm-yyyy'
+    });
+});

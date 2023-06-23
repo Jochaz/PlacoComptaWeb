@@ -25,6 +25,9 @@ class CategorieMateriaux
     #[ORM\OneToMany(mappedBy: 'Categorie', targetEntity: Materiaux::class)]
     private Collection $materiauxes;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $plus_Utilise = null;
+
     public function __construct()
     {
         $this->materiauxes = new ArrayCollection();
@@ -92,5 +95,17 @@ class CategorieMateriaux
     public function __toString()
     {
         return $this->Libelle;
+    }
+
+    public function isPlusUtilise(): ?bool
+    {
+        return $this->plus_Utilise;
+    }
+
+    public function setPlusUtilise(?bool $plus_Utilise): self
+    {
+        $this->plus_Utilise = $plus_Utilise;
+
+        return $this;
     }
 }

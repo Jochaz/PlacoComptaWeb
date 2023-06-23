@@ -1,0 +1,21 @@
+<h4>Gestion des catégories de matériaux</h4>
+{% if Categories|length > 0 %}
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col" style="border-bottom: solid 1px; background-color: #78c2ad; color:#dfe4ea">Liste des catégories</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for aCategorie in Categories %}
+        <tr onclick="window.location='/configuration/categorie/{{aCategorie.id}}'">
+            <th>{{aCategorie.Libelle}}</th>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+    <p>Aucune catégorie n'a été trouvé.</p>
+{% endif %}
+
+<a href="/configuration/categorie/add">Ajouter une nouvelle catégorie</a>

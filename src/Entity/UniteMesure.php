@@ -27,6 +27,9 @@ class UniteMesure
     #[ORM\Column(nullable: true)]
     private ?int $NumOrdre = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $plus_Utilise = null;
+
     public function __construct()
     {
         $this->materiauxes = new ArrayCollection();
@@ -99,6 +102,18 @@ class UniteMesure
     public function setNumOrdre(?int $NumOrdre): self
     {
         $this->NumOrdre = $NumOrdre;
+
+        return $this;
+    }
+
+    public function isPlusUtilise(): ?bool
+    {
+        return $this->plus_Utilise;
+    }
+
+    public function setPlusUtilise(?bool $plus_Utilise): self
+    {
+        $this->plus_Utilise = $plus_Utilise;
 
         return $this;
     }

@@ -1,0 +1,6 @@
+{{ form_start(form)}}
+    {{ form_row(form.Libelle)}}
+    {{ form_row(form.Abreviation)}}
+    {{ form_row(form.NumOrdre)}}
+    <button type="submit" class="btn btn-primary">{{ button_label|default('Créer l\'unité de mesure')}}</button>
+{{ form_end(form)}}

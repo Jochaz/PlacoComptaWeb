@@ -1,0 +1,23 @@
+<h4>Gestion des unités de mesure</h4>
+
+{% if UM|length > 0 %}
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col" style="border-bottom: solid 1px; background-color: #78c2ad; color:#dfe4ea">Liste des unités de mesure</th>
+            <th scope="col" style="border-bottom: solid 1px; background-color: #78c2ad; color:#dfe4ea">Abréviation</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for aUM in UM %}
+        <tr onclick="window.location='/configuration/UM/{{aUM.id}}'">
+            <th>{{aUM.Libelle}}</th>
+            <th>{{aUM.Abreviation}}</th>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+    <p>Aucune unité de mesure n'a été trouvé.</p>
+{% endif %}
+<a href="/configuration/UM/add">Ajouter une nouvelle unité de mesure</a>

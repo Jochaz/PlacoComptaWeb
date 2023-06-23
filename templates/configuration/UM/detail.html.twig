@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Catégorie matériaux : PlacoCompta{% endblock %}
+
+{% block body %}
+
+<main class="container">
+    <section class="row">
+        <div class="col-12" id="principal">
+            <h2>Modification : {{um.Libelle}}</h2>
+            <hr>
+            <a href="/configuration/UM/disable/{{um.id}}"><button type="button" class="btn btn-secondary">Désactiver l'unité de mesure</button></a>
+            <a href="/configuration"><button type="button" class="btn btn-info">Retour</button></a>
+            <hr>
+            {% include "_partials/_flash.html.twig"%}
+            {% include "configuration/UM/_form.html.twig" with {'button_label': 'Modifier les données de l\'unité de mesure'} %}
+        </div>
+    </section>
+</main> 
+
+    
+
+{% endblock %}

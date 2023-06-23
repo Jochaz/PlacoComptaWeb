@@ -39,20 +39,19 @@ class UniteMesureRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return UniteMesure[] Returns an array of UniteMesure objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('u')
-//            ->andWhere('u.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('u.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+   /**
+    * @return UniteMesure[] Returns an array of UniteMesure objects
+    */
+   public function findByUse(): array
+   {
+       return $this->createQueryBuilder('u')
+           ->andWhere('u.plus_Utilise = :val or u.plus_Utilise is null')
+           ->setParameter('val', false)
+           ->orderBy('u.NumOrdre, u.Libelle', 'ASC')
+           ->getQuery()
+           ->getResult()
+       ;
+   }
 
 //    public function findOneBySomeField($value): ?UniteMesure
 //    {

@@ -1,0 +1,21 @@
+<h4>Gestion de la TVA</h4>
+{% if TVA|length > 0 %}
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col" style="border-bottom: solid 1px; background-color: #78c2ad; color:#dfe4ea">Liste des TVA</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for aTVA in TVA %}
+        <tr onclick="window.location='/configuration/TVA/{{aTVA.id}}'">
+            <th>{{aTVA.Libelle}} ({{aTVA.Taux}}%)</th>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+    <p>Aucune TVA n'a été trouvé.</p>
+{% endif %}
+
+<a href="/configuration/TVA/add">Ajouter une nouvelle TVA</a>

@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Unité de mesure : PlacoCompta{% endblock %}
+
+{% block body %}
+
+<main class="container">
+    <section class="row">
+        <div class="col-12" id="principal">
+            <h2>Ajouter une nouvelle unité de mesure</h2>
+            <hr>
+            {% include "_partials/_flash.html.twig"%}
+            {% include "configuration/UM/_form.html.twig"%}
+        </div>
+    </section>
+</main>
+
+    
+
+    
+
+{% endblock %}
