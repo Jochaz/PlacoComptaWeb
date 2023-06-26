@@ -2,12 +2,13 @@
 
 namespace App\Form;
 
-use App\Entity\ParametrageDocument;
+use App\Entity\ParametrageFacture;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ParametrageDocumentType extends AbstractType
+class ParametrageFactureType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -27,13 +28,17 @@ class ParametrageDocumentType extends AbstractType
             ->add('CompletionAvecZero', options:[
                 'label' => 'Completer le reste avec des zéros'
             ])
+            ->add('TypeDocument', HiddenType::class, options:[
+                'empty_data' => '',
+                'data_class' => null,
+             ])
         ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => ParametrageDocument::class,
+            'data_class' => ParametrageFacture::class,
         ]);
     }
 }

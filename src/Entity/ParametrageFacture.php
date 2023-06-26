@@ -2,11 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\ParametrageDocumentRepository;
+use App\Repository\ParametrageFactureRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: ParametrageDocumentRepository::class)]
-class ParametrageDocument
+#[ORM\Entity(repositoryClass: ParametrageFactureRepository::class)]
+class ParametrageFacture
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

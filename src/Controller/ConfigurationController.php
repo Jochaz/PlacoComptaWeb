@@ -6,11 +6,14 @@ use App\Entity\CategorieMateriaux;
 use App\Entity\TVA;
 use App\Entity\UniteMesure;
 use App\Form\CategorieMateriauxType;
+use App\Form\ParametrageDevisType;
 use App\Form\ParametrageDocumentType;
+use App\Form\ParametrageFactureType;
 use App\Form\TVAType;
 use App\Form\UniteMesureType;
 use App\Repository\CategorieMateriauxRepository;
-use App\Repository\ParametrageDocumentRepository;
+use App\Repository\ParametrageDevisRepository;
+use App\Repository\ParametrageFactureRepository;
 use App\Repository\TVARepository;
 use App\Repository\UniteMesureRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,7 +27,8 @@ class ConfigurationController extends AbstractController
     public function index(UniteMesureRepository $uniteMesureRepository, 
                           TVARepository $tVARepository,
                           CategorieMateriauxRepository $categorieMateriauxRepository,
-                          ParametrageDocumentRepository $parametrageDocumentRepository,
+                          ParametrageDevisRepository $ParametrageDevisRepository,
+                          ParametrageFactureRepository $ParametrageFactureRepository,
                           Request $request): Response
     {
         if (!$this->getUser()) {
@@ -37,32 +41,30 @@ class ConfigurationController extends AbstractController
 
         $Categories = $categorieMateriauxRepository->findByUse();
 
-        $Devis = $parametrageDocumentRepository->findOneBy(['TypeDocument' => 'Devis']);
-
-        $Facture = $parametrageDocumentRepository->findOneBy(['TypeDocument' => 'Facture']);
-
-        $formDevis = $this->createForm(ParametrageDocumentType::class, $Devis);
+        $Devis = $ParametrageDevisRepository->findOneBy(['TypeDocument' => 'Devis']);
+        $formDevis = $this->createForm(ParametrageDevisType::class, $Devis);
         $formDevis->handleRequest($request);
-
-        $formFacture= $this->createForm(ParametrageDocumentType::class, $Facture);
-        $formFacture->handleRequest($request);
-
-
-        if($formDevis->isSubmitted() && $formDevis->isvalid()){
-
-            $parametrageDocumentRepository->save($Devis, true);
-
+        dump($formDevis);
+        if ($formDevis->isSubmitted() && $formDevis->isvalid() ){
+            $ParametrageDevisRepository->save($Devis, true);
             return $this->redirectToRoute('app_configuration');
-           // return $this->redirectToRoute('app_materiaux');
+        }
+
+        $Facture = $ParametrageFactureRepository->findOneBy(['TypeDocument' => 'Facture']);
+        $formFacture= $this->createForm(ParametrageFactureType::class, $Facture);
+        $formFacture->handleRequest($request);
+        dump($formFacture);
+        if ($formFacture->isSubmitted() && $formFacture->isvalid())
+        {
+            $ParametrageFactureRepository->save($Facture, true);
+            return $this->redirectToRoute('app_configuration');
         }
 
         return $this->render('configuration/index.html.twig', [
             'TVA' => $TVA,
             'UM' => $UM,
             'Categories' => $Categories,
-            'devis' => $Devis,
             'formDevis' => $formDevis->createView(),
-            'facture' => $Facture,
             'formFacture' => $formFacture->createView()
         ]);
     }
