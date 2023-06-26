@@ -7,7 +7,24 @@
     <section class="row">
       <div class="col-12" id="principal">
         <h2>Fenêtre de configuration</h2>
-        <br />
+        <hr>
+         <div class="container">
+          <div class="row">
+            {% include "configuration/_partials/_devis.html.twig" %}
+          </div>
+        </div>
+        <hr> 
+        <div class="container">
+          <div class="row">
+            {% include "configuration/_partials/_facture.html.twig" %}
+          </div>
+        </div>
+        {# <div class="container">
+          <div class="row">
+            {% include "configuration/_partials/_entete.html.twig" %}
+          </div>
+        </div>  #}
+        <hr>
         <div class="container">
           <div class="row">
             <div class="col-sm">

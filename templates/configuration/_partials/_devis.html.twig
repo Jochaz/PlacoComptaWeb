@@ -1,0 +1,24 @@
+<h4>Gestion des numéros de devis</h4>
+{{ form_start(formDevis)}}
+    <div class="container">
+        <div class="row">
+            <div class="col">
+               {{ form_row(formDevis.Prefixe)}}
+            </div>
+            <div class="col">
+               {{ form_row(formDevis.AnneeEnCours)}}
+            </div>
+            <div class="col">
+               {{ form_row(formDevis.NumeroAGenerer)}}
+            </div>
+            <div class="col">
+               {{ form_row(formDevis.NombreCaractereTotal)}}
+            </div>
+            <div class="col">
+               {{ form_row(formDevis.CompletionAvecZero)}}
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">{{ button_label|default('Sauvegarder le paramétrage')}}</button>
+{{ form_end(formDevis)}}

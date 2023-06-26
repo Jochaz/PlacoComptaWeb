@@ -35,3 +35,12 @@
     margin-left: 350px; /* Same as the width of the sidenav */
   }
   
+  body{
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  footer{
+    margin-top: auto;
+}

@@ -1,0 +1,24 @@
+<h4>Gestion des numéros de facture</h4>
+{{ form_start(formDevis)}}
+    <div class="container">
+        <div class="row">
+            <div class="col">
+               {{ form_row(formFacture.Prefixe)}}
+            </div>
+            <div class="col">
+               {{ form_row(formFacture.AnneeEnCours)}}
+            </div>
+            <div class="col">
+               {{ form_row(formFacture.NumeroAGenerer)}}
+            </div>
+            <div class="col">
+               {{ form_row(formFacture.NombreCaractereTotal)}}
+            </div>
+            <div class="col">
+               {{ form_row(formFacture.CompletionAvecZero)}}
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">{{ button_label|default('Sauvegarder le paramétrage')}}</button>
+{{ form_end(formDevis)}}

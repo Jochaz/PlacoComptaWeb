@@ -6,9 +6,11 @@ use App\Entity\CategorieMateriaux;
 use App\Entity\TVA;
 use App\Entity\UniteMesure;
 use App\Form\CategorieMateriauxType;
+use App\Form\ParametrageDocumentType;
 use App\Form\TVAType;
 use App\Form\UniteMesureType;
 use App\Repository\CategorieMateriauxRepository;
+use App\Repository\ParametrageDocumentRepository;
 use App\Repository\TVARepository;
 use App\Repository\UniteMesureRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,7 +21,11 @@ use Symfony\Component\Routing\Annotation\Route;
 class ConfigurationController extends AbstractController
 {
     #[Route('/configuration', name: 'app_configuration')]
-    public function index(UniteMesureRepository $uniteMesureRepository, TVARepository $tVARepository, CategorieMateriauxRepository $categorieMateriauxRepository): Response
+    public function index(UniteMesureRepository $uniteMesureRepository, 
+                          TVARepository $tVARepository,
+                          CategorieMateriauxRepository $categorieMateriauxRepository,
+                          ParametrageDocumentRepository $parametrageDocumentRepository,
+                          Request $request): Response
     {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
@@ -31,11 +37,33 @@ class ConfigurationController extends AbstractController
 
         $Categories = $categorieMateriauxRepository->findByUse();
 
+        $Devis = $parametrageDocumentRepository->findOneBy(['TypeDocument' => 'Devis']);
+
+        $Facture = $parametrageDocumentRepository->findOneBy(['TypeDocument' => 'Facture']);
+
+        $formDevis = $this->createForm(ParametrageDocumentType::class, $Devis);
+        $formDevis->handleRequest($request);
+
+        $formFacture= $this->createForm(ParametrageDocumentType::class, $Facture);
+        $formFacture->handleRequest($request);
+
+
+        if($formDevis->isSubmitted() && $formDevis->isvalid()){
+
+            $parametrageDocumentRepository->save($Devis, true);
+
+            return $this->redirectToRoute('app_configuration');
+           // return $this->redirectToRoute('app_materiaux');
+        }
 
         return $this->render('configuration/index.html.twig', [
             'TVA' => $TVA,
             'UM' => $UM,
-            'Categories' => $Categories
+            'Categories' => $Categories,
+            'devis' => $Devis,
+            'formDevis' => $formDevis->createView(),
+            'facture' => $Facture,
+            'formFacture' => $formFacture->createView()
         ]);
     }
 
