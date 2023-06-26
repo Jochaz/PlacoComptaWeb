@@ -1,0 +1,25 @@
+<h4>Gestion de l'entête des devis et des factures</h4>
+{{ form_start(formEnteteDocument)}}
+    <div class="container">
+        <div class="row">
+            <div class="col">
+               {{ form_row(formEnteteDocument.Ligne1Gauche)}}
+               {{ form_row(formEnteteDocument.Ligne2Gauche)}}
+               {{ form_row(formEnteteDocument.Ligne3Gauche)}}
+               {{ form_row(formEnteteDocument.Ligne4Gauche)}}
+               {{ form_row(formEnteteDocument.NumeroTelFixe)}}
+               {{ form_row(formEnteteDocument.NumeroFax)}}
+               {{ form_row(formEnteteDocument.NumeroTelPortable)}}
+            </div>
+            <div class="col">
+               {{ form_row(formEnteteDocument.Ligne1Droite)}}
+               {{ form_row(formEnteteDocument.Ligne2Droite)}}
+               {{ form_row(formEnteteDocument.Ligne3Droite)}}
+               {{ form_row(formEnteteDocument.Ligne4Droite)}}
+               {{ form_row(formEnteteDocument.VilleFaitA)}}
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">{{ button_label|default('Sauvegarder le paramétrage')}}</button>
+{{ form_end(formEnteteDocument)}}

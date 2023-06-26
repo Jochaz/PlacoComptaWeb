@@ -3,15 +3,18 @@
 namespace App\Controller;
 
 use App\Entity\CategorieMateriaux;
+use App\Entity\EnteteDocument;
 use App\Entity\TVA;
 use App\Entity\UniteMesure;
 use App\Form\CategorieMateriauxType;
+use App\Form\EnteteDocumentType;
 use App\Form\ParametrageDevisType;
 use App\Form\ParametrageDocumentType;
 use App\Form\ParametrageFactureType;
 use App\Form\TVAType;
 use App\Form\UniteMesureType;
 use App\Repository\CategorieMateriauxRepository;
+use App\Repository\EnteteDocumentRepository;
 use App\Repository\ParametrageDevisRepository;
 use App\Repository\ParametrageFactureRepository;
 use App\Repository\TVARepository;
@@ -20,6 +23,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraints\Length;
 
 class ConfigurationController extends AbstractController
 {
@@ -29,6 +33,7 @@ class ConfigurationController extends AbstractController
                           CategorieMateriauxRepository $categorieMateriauxRepository,
                           ParametrageDevisRepository $ParametrageDevisRepository,
                           ParametrageFactureRepository $ParametrageFactureRepository,
+                          EnteteDocumentRepository $enteteDocumentRepository,
                           Request $request): Response
     {
         if (!$this->getUser()) {
@@ -44,7 +49,6 @@ class ConfigurationController extends AbstractController
         $Devis = $ParametrageDevisRepository->findOneBy(['TypeDocument' => 'Devis']);
         $formDevis = $this->createForm(ParametrageDevisType::class, $Devis);
         $formDevis->handleRequest($request);
-        dump($formDevis);
         if ($formDevis->isSubmitted() && $formDevis->isvalid() ){
             $ParametrageDevisRepository->save($Devis, true);
             return $this->redirectToRoute('app_configuration');
@@ -53,19 +57,36 @@ class ConfigurationController extends AbstractController
         $Facture = $ParametrageFactureRepository->findOneBy(['TypeDocument' => 'Facture']);
         $formFacture= $this->createForm(ParametrageFactureType::class, $Facture);
         $formFacture->handleRequest($request);
-        dump($formFacture);
         if ($formFacture->isSubmitted() && $formFacture->isvalid())
         {
             $ParametrageFactureRepository->save($Facture, true);
             return $this->redirectToRoute('app_configuration');
         }
 
+        $EntetesDocument = $enteteDocumentRepository->findAll();
+       
+        if (count($EntetesDocument) == 0){
+            $EnteteDocument = new EnteteDocument();
+        } else {
+            $EnteteDocument = $EntetesDocument[0];
+        }
+
+        $formEnteteDocument = $this->createForm(EnteteDocumentType::class, $EnteteDocument);
+        $formEnteteDocument->handleRequest($request);
+        if ($formEnteteDocument->isSubmitted() && $formEnteteDocument->isvalid())
+        {
+            $enteteDocumentRepository->save($EnteteDocument, true);
+            return $this->redirectToRoute('app_configuration');
+        }
+
+
         return $this->render('configuration/index.html.twig', [
             'TVA' => $TVA,
             'UM' => $UM,
             'Categories' => $Categories,
             'formDevis' => $formDevis->createView(),
-            'formFacture' => $formFacture->createView()
+            'formFacture' => $formFacture->createView(),
+            'formEnteteDocument' => $formEnteteDocument->createView()
         ]);
     }
 
