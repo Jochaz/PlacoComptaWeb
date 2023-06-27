@@ -34,10 +34,14 @@ class TVA
     #[ORM\OneToMany(mappedBy: 'TVA', targetEntity: Materiaux::class)]
     private Collection $materiauxes;
 
+    #[ORM\OneToMany(mappedBy: 'TVA', targetEntity: LigneDevis::class)]
+    private Collection $ligneDevis;
+
     public function __construct()
     {
         $this->categorieMateriauxes = new ArrayCollection();
         $this->materiauxes = new ArrayCollection();
+        $this->ligneDevis = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -152,6 +156,36 @@ class TVA
             // set the owning side to null (unless already changed)
             if ($materiaux->getTVA() === $this) {
                 $materiaux->setTVA(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, LigneDevis>
+     */
+    public function getLigneDevis(): Collection
+    {
+        return $this->ligneDevis;
+    }
+
+    public function addLigneDevi(LigneDevis $ligneDevi): self
+    {
+        if (!$this->ligneDevis->contains($ligneDevi)) {
+            $this->ligneDevis->add($ligneDevi);
+            $ligneDevi->setTVA($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLigneDevi(LigneDevis $ligneDevi): self
+    {
+        if ($this->ligneDevis->removeElement($ligneDevi)) {
+            // set the owning side to null (unless already changed)
+            if ($ligneDevi->getTVA() === $this) {
+                $ligneDevi->setTVA(null);
             }
         }
 

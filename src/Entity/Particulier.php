@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ParticulierRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -52,6 +54,14 @@ class Particulier
 
     #[ORM\Column]
     private ?bool $actif = null;
+
+    #[ORM\OneToMany(mappedBy: 'Client', targetEntity: Devis::class)]
+    private Collection $devis;
+
+    public function __construct()
+    {
+        $this->devis = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -210,6 +220,36 @@ class Particulier
     public function setActif(bool $actif): self
     {
         $this->actif = $actif;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Devis>
+     */
+    public function getDevis(): Collection
+    {
+        return $this->devis;
+    }
+
+    public function addDevi(Devis $devi): self
+    {
+        if (!$this->devis->contains($devi)) {
+            $this->devis->add($devi);
+            $devi->setClient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDevi(Devis $devi): self
+    {
+        if ($this->devis->removeElement($devi)) {
+            // set the owning side to null (unless already changed)
+            if ($devi->getClient() === $this) {
+                $devi->setClient(null);
+            }
+        }
 
         return $this;
     }

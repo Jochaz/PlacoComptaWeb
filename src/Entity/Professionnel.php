@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ProfessionnelRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -55,6 +57,14 @@ class Professionnel
 
     #[ORM\Column]
     private ?bool $actif = null;
+
+    #[ORM\OneToMany(mappedBy: 'Professionnel', targetEntity: Devis::class)]
+    private Collection $devis;
+
+    public function __construct()
+    {
+        $this->devis = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -225,6 +235,36 @@ class Professionnel
     public function setActif(bool $actif): self
     {
         $this->actif = $actif;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Devis>
+     */
+    public function getDevis(): Collection
+    {
+        return $this->devis;
+    }
+
+    public function addDevi(Devis $devi): self
+    {
+        if (!$this->devis->contains($devi)) {
+            $this->devis->add($devi);
+            $devi->setProfessionnel($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDevi(Devis $devi): self
+    {
+        if ($this->devis->removeElement($devi)) {
+            // set the owning side to null (unless already changed)
+            if ($devi->getProfessionnel() === $this) {
+                $devi->setProfessionnel(null);
+            }
+        }
 
         return $this;
     }
