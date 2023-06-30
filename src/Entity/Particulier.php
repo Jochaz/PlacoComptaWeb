@@ -236,7 +236,7 @@ class Particulier
     {
         if (!$this->devis->contains($devi)) {
             $this->devis->add($devi);
-            $devi->setClient($this);
+            $devi->setParticulier($this);
         }
 
         return $this;
@@ -246,11 +246,16 @@ class Particulier
     {
         if ($this->devis->removeElement($devi)) {
             // set the owning side to null (unless already changed)
-            if ($devi->getClient() === $this) {
-                $devi->setClient(null);
+            if ($devi->getParticulier() === $this) {
+                $devi->setParticulier(null);
             }
         }
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->getNom().' '.$this->getPrenom();
     }
 }

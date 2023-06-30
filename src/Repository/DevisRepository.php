@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Devis;
+use App\Model\SearchDevisData;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -39,20 +40,29 @@ class DevisRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Devis[] Returns an array of Devis objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('d')
-//            ->andWhere('d.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('d.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+   /**
+    * @return Devis[] Returns an array of Devis objects
+    */
+    public function findBySearch(SearchDevisData $search): array
+    {
+        $data = $this->createQueryBuilder('d')
+           ->andWhere('d.Plusutilise = :val')
+           ->setParameter('val', false)
+           ->orderBy('d.id', 'ASC');
+
+       return $data = $data->getQuery()->getResult();;
+    }
+
+    public function paginationQuery()
+    {
+       return $this->createQueryBuilder('d')
+            ->andWhere('d.Plusutilise = :val')
+            ->setParameter('val', false)
+            ->orderBy('d.id', 'ASC')
+            ->getQuery()
+       ;
+    }
+
 
 //    public function findOneBySomeField($value): ?Devis
 //    {

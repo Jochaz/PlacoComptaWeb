@@ -1,0 +1,25 @@
+<div class="container">
+{{ form_start(form)}}
+    <div class="row">
+        <div class="col">
+            {{ form_row(form.NumDevis)}}
+        </div>
+        <div class="col">
+            {{ form_row(form.NumDossier)}}
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col">
+            {{ form_row(form.DateDevis)}}
+        </div>
+        <div class="col">
+            {{ form_row(form.DateSignature)}}
+        </div>
+    </div>
+    {{ form_row(form.Objet)}}
+    {{ form_row(form.TVAAutoliquidation)}}
+    {{ form_row(form.ModeReglement)}}
+    <button type="submit" class="btn btn-primary">{{ button_label|default('Continuer vers les adresses')}}</button>
+{{ form_end(form)}}
+</div>

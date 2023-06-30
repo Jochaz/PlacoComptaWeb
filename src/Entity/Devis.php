@@ -31,13 +31,13 @@ class Devis
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $Objet = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?int $Remise = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?int $PrixHT = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?int $PrixTTC = null;
 
     #[ORM\Column(nullable: true)]
@@ -50,7 +50,7 @@ class Devis
     private Collection $ligneDevis;
 
     #[ORM\ManyToOne(inversedBy: 'devis')]
-    private ?Particulier $Client = null;
+    private ?Particulier $Particulier = null;
 
     #[ORM\ManyToOne(inversedBy: 'devis')]
     private ?Professionnel $Professionnel = null;
@@ -60,10 +60,10 @@ class Devis
     private ?ModeReglement $ModeReglement = null;
 
     #[ORM\ManyToOne(inversedBy: 'devis')]
-    private ?Adresse $AdresseChantier = null;
+    private ?AdresseDocument $AdresseChantier = null;
 
     #[ORM\ManyToOne(inversedBy: 'devis')]
-    private ?Adresse $AdresseFacturation = null;
+    private ?AdresseFacturation $AdresseFacturation = null;
 
     public function __construct()
     {
@@ -225,14 +225,14 @@ class Devis
         return $this;
     }
 
-    public function getClient(): ?Particulier
+    public function getParticulier(): ?Particulier
     {
-        return $this->Client;
+        return $this->Particulier;
     }
 
-    public function setClient(?Particulier $Client): self
+    public function setParticulier(?Particulier $Particulier): self
     {
-        $this->Client = $Client;
+        $this->Particulier = $Particulier;
 
         return $this;
     }
@@ -261,24 +261,24 @@ class Devis
         return $this;
     }
 
-    public function getAdresseChantier(): ?Adresse
+    public function getAdresseChantier(): ?AdresseDocument
     {
         return $this->AdresseChantier;
     }
 
-    public function setAdresseChantier(?Adresse $AdresseChantier): self
+    public function setAdresseChantier(?AdresseDocument $AdresseChantier): self
     {
         $this->AdresseChantier = $AdresseChantier;
 
         return $this;
     }
 
-    public function getAdresseFacturation(): ?Adresse
+    public function getAdresseFacturation(): ?AdresseFacturation
     {
         return $this->AdresseFacturation;
     }
 
-    public function setAdresseFacturation(?Adresse $AdresseFacturation): self
+    public function setAdresseFacturation(?AdresseFacturation $AdresseFacturation): self
     {
         $this->AdresseFacturation = $AdresseFacturation;
 

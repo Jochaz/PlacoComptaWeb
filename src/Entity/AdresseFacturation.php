@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AdresseRepository::class)]
-class Adresse
+class AdresseFacturation
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -130,7 +130,7 @@ class Adresse
     {
         if (!$this->devis->contains($devi)) {
             $this->devis->add($devi);
-            $devi->setAdresseChantier($this);
+            $devi->setAdresseFacturation($this);
         }
 
         return $this;
@@ -140,8 +140,8 @@ class Adresse
     {
         if ($this->devis->removeElement($devi)) {
             // set the owning side to null (unless already changed)
-            if ($devi->getAdresseChantier() === $this) {
-                $devi->setAdresseChantier(null);
+            if ($devi->getAdresseFacturation() === $this) {
+                $devi->setAdresseFacturation(null);
             }
         }
 

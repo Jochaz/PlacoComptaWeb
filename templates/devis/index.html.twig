@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Devis : PlacoCompta{% endblock %}
+
+{% block body %}
+
+<main class="container">
+    <section class="row">
+        <div class="col-12" id="principal">
+            <div class="sidenav">    
+                <h5>Panneau de gestion</h5>
+                <a href="/quote/add/info"><button type="button" class="btn btn-info">Nouveau devis</button></a>
+                <br />
+                <hr>
+                {% include "devis/_partials/_search_devis_data.html.twig" %} 
+            </div>
+
+            <div class="main">
+                <h2>Liste des devis</h2>
+                {% if pagination|length > 0 %}
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">N° du devis</th>
+                            <th scope="col">Client</th>
+                            <th scope="col">Prix HT/th>
+                            <th scope="col">Prix TTC</th>
+                            <th scope="col">Date devis</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for devis in pagination %}
+                        <tr onclick="window.location='/devis/detail/{{devis.id}}'">
+                            <th scope="row">{{devis.NumDevis}}</th>
+                            {% if devis.particulier %}
+                            <td>{{devis.nom}} {{devis.prenom}}</td>
+                            {% else %}
+                                {% if devis.professionnel %}
+                                    <td>{{devis.professionnel.NomSociete}}</td>
+                                {% else %}
+                                    <td>Erreur</td>
+                                {% endif %}
+                            {% endif %}
+                            <td>{{devis.PrixHT}}€</td>
+                            <td>{{devis.PrixTTC}}</td>
+                            <td>{{devis.DateDevis|date('d-m-Y')}}</td>
+                        </tr>
+                        </a>
+                        {% endfor %}
+                    </tbody>
+                </table>   
+                <hr> 
+                <br />   
+                <div class="navigation flex justify-center mb-8">              
+                    {{ knp_pagination_render(pagination)}}
+                </div>
+                {% else %}
+                <div class="navigation flex justify-center mb-8">              
+                    <p>Aucun devis n'a été trouvé.</p>
+                </div>   
+                {% endif %}
+            </div>
+        </div>
+    </section>
+</main>     
+
+{% endblock %}

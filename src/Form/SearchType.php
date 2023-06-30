@@ -39,7 +39,7 @@ class SearchType extends AbstractType{
             ])
             ->add('prixmaxachat', MoneyType::class, [
                 'label' => 'Prix max. achat',
-                'invalid_message' => 'La valeur du prix min. d\'achat est invalide.',
+                'invalid_message' => 'La valeur du prix max. d\'achat est invalide.',
                 'required' => false,
                 'empty_data' => '9999999',
             ])
@@ -51,7 +51,7 @@ class SearchType extends AbstractType{
             ])
             ->add('prixmaxunitaire', MoneyType::class, [
                 'label' => 'Prix max. unitaire',
-                'invalid_message' => 'La valeur du prix min. unitaire est invalide.',
+                'invalid_message' => 'La valeur du prix max. unitaire est invalide.',
                 'required' => false,
                 'empty_data' => '9999999',
             ])
