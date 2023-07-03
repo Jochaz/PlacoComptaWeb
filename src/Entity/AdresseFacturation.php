@@ -2,12 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\AdresseRepository;
+use App\Repository\AdresseFacturationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: AdresseRepository::class)]
+#[ORM\Entity(repositoryClass: AdresseFacturationRepository::class)]
 class AdresseFacturation
 {
     #[ORM\Id]

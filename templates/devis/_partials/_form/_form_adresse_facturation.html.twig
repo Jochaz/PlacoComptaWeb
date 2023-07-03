@@ -1,0 +1,19 @@
+<div class="container">
+{{ form_start(form)}}
+    {{ form_row(form.Ligne1)}}
+    {{ form_row(form.Ligne2)}}
+    {{ form_row(form.Ligne3)}}
+    <div class="row">
+        <div class="col">
+            {{ form_row(form.CP)}}
+        </div>
+        <div class="col">
+            {{ form_row(form.Ville)}}
+        </div>
+        <div class="col">
+            {{ form_row(form.BoitePostale)}}
+        </div>
+    </div>
+    <button type="submit" id="btnSuivant" class="btn btn-primary">{{ button_label|default('Continuer vers les articles')}}</button>
+{{ form_end(form)}}
+</div>

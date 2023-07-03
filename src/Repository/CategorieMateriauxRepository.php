@@ -45,7 +45,7 @@ class CategorieMateriauxRepository extends ServiceEntityRepository
    public function findByUse(): array
    {
        return $this->createQueryBuilder('c')
-           ->andWhere('c.plus_Utilise = :val')
+           ->andWhere('c.plus_Utilise = :val or c.plus_Utilise is null')
            ->setParameter('val', false)
            ->orderBy('c.Libelle', 'ASC')
            ->getQuery()

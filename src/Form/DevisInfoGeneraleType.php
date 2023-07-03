@@ -44,7 +44,9 @@ class DevisInfoGeneraleType extends AbstractType
             ->add('TVAAutoliquidation', options:[
                 'label' => 'TVA due par le preneur assujetti autoliquidation application article 242 nonies A, I-13° annexe au CGI'
             ])
-            ->add('ModeReglement')
+            ->add('ModeReglement', options:[
+                'label' => 'Mode de réglement'
+            ])
           
         ;
     }
