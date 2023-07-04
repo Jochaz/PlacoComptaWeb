@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\MateriauxRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -37,6 +39,14 @@ class Materiaux
 
     #[ORM\Column(nullable: true)]
     private ?bool $Plus_utilise = null;
+
+    #[ORM\ManyToMany(targetEntity: ModelePiece::class, mappedBy: 'Materiaux')]
+    private Collection $modelePieces;
+
+    public function __construct()
+    {
+        $this->modelePieces = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -125,5 +135,37 @@ class Materiaux
         $this->Plus_utilise = $Plus_utilise;
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, ModelePiece>
+     */
+    public function getModelePieces(): Collection
+    {
+        return $this->modelePieces;
+    }
+
+    public function addModelePiece(ModelePiece $modelePiece): self
+    {
+        if (!$this->modelePieces->contains($modelePiece)) {
+            $this->modelePieces->add($modelePiece);
+            $modelePiece->addMateriaux($this);
+        }
+
+        return $this;
+    }
+
+    public function removeModelePiece(ModelePiece $modelePiece): self
+    {
+        if ($this->modelePieces->removeElement($modelePiece)) {
+            $modelePiece->removeMateriaux($this);
+        }
+
+        return $this;
+    }
+
+    public function __toString()
+    {
+        return $this->Designation;
     }
 }

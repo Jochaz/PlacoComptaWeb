@@ -4,8 +4,10 @@ namespace App\Form;
 
 use App\Entity\CategorieMateriaux;
 use App\Entity\Materiaux;
+use App\Entity\ModelePiece;
 use App\Entity\TVA;
 use App\Entity\UniteMesure;
+use App\Repository\ModelePieceRepository;
 use App\Repository\UniteMesureRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -62,6 +64,17 @@ class MateriauxType extends AbstractType
                     return $umr->createQueryBuilder('um')
                                 ->orderby('um.NumOrdre');                
                 }
+            ])
+            ->add('modelePieces', EntityType::class, options:[
+                'query_builder' => function (ModelePieceRepository $er) {
+                    return $er->createQueryBuilder('m')
+                        ->where('m.Plus_utilise = false')
+                        ->orderBy('m.Libelle', 'ASC');
+                },
+                'class' => ModelePiece::class,
+                'multiple' => true,
+                'expanded' => true,
+                'label' => 'Inclus dans les modèles de pièce'
             ])
         ;
     }

@@ -1,0 +1,21 @@
+<h4>Gestion des modèles de pièce</h4>
+{% if ModelesPiece|length > 0 %}
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col" style="border-bottom: solid 1px; background-color: #78c2ad; color:#dfe4ea">Liste des modèles de pièce</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for aModele in ModelesPiece %}
+        <tr onclick="window.location='/configuration/modelepiece/{{aModele.id}}'">
+            <th>{{aModele.Libelle}}</th>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+    <p>Aucun modèle de pièce n'a été trouvé.</p>
+{% endif %}
+
+<a href="/configuration/modelepiece/add">Ajouter un nouveau modèle de pièce</a>

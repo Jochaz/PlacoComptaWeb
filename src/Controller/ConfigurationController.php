@@ -4,17 +4,19 @@ namespace App\Controller;
 
 use App\Entity\CategorieMateriaux;
 use App\Entity\EnteteDocument;
+use App\Entity\ModelePiece;
 use App\Entity\TVA;
 use App\Entity\UniteMesure;
 use App\Form\CategorieMateriauxType;
 use App\Form\EnteteDocumentType;
+use App\Form\ModelePieceType;
 use App\Form\ParametrageDevisType;
-use App\Form\ParametrageDocumentType;
 use App\Form\ParametrageFactureType;
 use App\Form\TVAType;
 use App\Form\UniteMesureType;
 use App\Repository\CategorieMateriauxRepository;
 use App\Repository\EnteteDocumentRepository;
+use App\Repository\ModelePieceRepository;
 use App\Repository\ParametrageDevisRepository;
 use App\Repository\ParametrageFactureRepository;
 use App\Repository\TVARepository;
@@ -23,7 +25,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Constraints\Length;
 
 class ConfigurationController extends AbstractController
 {
@@ -34,6 +35,7 @@ class ConfigurationController extends AbstractController
                           ParametrageDevisRepository $ParametrageDevisRepository,
                           ParametrageFactureRepository $ParametrageFactureRepository,
                           EnteteDocumentRepository $enteteDocumentRepository,
+                          ModelePieceRepository $modelePieceRepository,
                           Request $request): Response
     {
         if (!$this->getUser()) {
@@ -45,6 +47,8 @@ class ConfigurationController extends AbstractController
         $UM = $uniteMesureRepository->findByUse();
 
         $Categories = $categorieMateriauxRepository->findByUse();
+
+        $modelesPiece = $modelePieceRepository->findByUse();
 
         $Devis = $ParametrageDevisRepository->findOneBy(['TypeDocument' => 'Devis']);
         $formDevis = $this->createForm(ParametrageDevisType::class, $Devis);
@@ -84,6 +88,7 @@ class ConfigurationController extends AbstractController
             'TVA' => $TVA,
             'UM' => $UM,
             'Categories' => $Categories,
+            'ModelesPiece' => $modelesPiece,
             'formDevis' => $formDevis->createView(),
             'formFacture' => $formFacture->createView(),
             'formEnteteDocument' => $formEnteteDocument->createView()
@@ -167,6 +172,30 @@ class ConfigurationController extends AbstractController
         ]);
     }
 
+    #[Route('/configuration/modelepiece/add', name: 'app_configuration_modele_piece_add')]
+    public function modelePieceAdd(Request $request, ModelePieceRepository $modelePieceRepository): Response
+    {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        $modelePiece = new ModelePiece();
+        $form = $this->createForm(ModelePieceType::class, $modelePiece);
+        $form->handleRequest($request);
+        
+        if($form->isSubmitted() && $form->isvalid()){
+            $modelePiece->setPlusUtilise(false);
+            $modelePieceRepository->save($modelePiece, true);
+
+            return $this->redirectToRoute('app_configuration');
+           // return $this->redirectToRoute('app_materiaux');
+        }
+
+      
+        return $this->render('configuration/modelepiece/ajout.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
 //////////////////////////////////////////////////////////DETAIL///////////////////////////////////////////////////////////
     #[Route('/configuration/TVA/{id}', name: 'app_TVA_detail')]
     public function TVADetail(string $id, Request $request, TVARepository $tVARepository): Response
@@ -249,6 +278,32 @@ class ConfigurationController extends AbstractController
         ]);
     }
 
+    #[Route('/configuration/modelepiece/{id}', name: 'app_modele_piece_detail')]
+    public function modelePieceDetail(string $id, Request $request, modelePieceRepository $modelePieceRepository): Response
+    {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        $modelePiece = $modelePieceRepository->find($id);
+        if (!$modelePiece || $modelePiece->isPlusUtilise()){
+             return $this->redirectToRoute('app_configuration');
+        }
+        $form = $this->createForm(ModelePieceType::class, $modelePiece);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isvalid()){
+            $modelePieceRepository->save($modelePiece, true);
+
+            $this->addFlash('success', 'Modèle de pièce modifié avec succès');
+           // return $this->redirectToRoute('app_materiaux');
+        }
+        return $this->render('configuration/modelepiece/detail.html.twig', [
+            'modelepiece' => $modelePiece,
+            'form' => $form->createView()
+        ]);
+    }
+
 
     /////////////DISABLE//////////////////
     // #[Route('/configuration/TVA/delete/{id}', name: 'app_disable_TVA')]
@@ -281,7 +336,7 @@ class ConfigurationController extends AbstractController
         }
         $um = $uniteMesureRepository->find($id);
         if (!$um || $um->isPlusUtilise()){
-           return $this->redirectToRoute('app_materiaux');
+           return $this->redirectToRoute('app_configuration');
         }
         $um->setPlusUtilise(true);
        
@@ -303,16 +358,37 @@ class ConfigurationController extends AbstractController
         }
         $categorie = $CategorieMateriauxRepository->find($id);
         if (!$categorie || $categorie->isPlusUtilise()){
-           return $this->redirectToRoute('app_materiaux');
+           return $this->redirectToRoute('app_configuration');
         }
         $categorie->setPlusUtilise(true);
         $CategorieMateriauxRepository->save($categorie, true);
 
-        $this->addFlash('success', 'Matériaux modifié avec succès');
+        $this->addFlash('success', 'Modèle de pièce modifié avec succès');
         return $this->redirectToRoute('app_configuration');
     
         return $this->render('configuration/categories/detail.html.twig', [
             'categorie' => $categorie
+        ]);
+    }
+
+    #[Route('/configuration/modelepiece/disable/{id}', name: 'app_modele_piece_delete')]
+    public function deleteModelePiece(string $id, ModelePieceRepository $modelePieceRepository): Response
+    {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+        $modelePiece = $modelePieceRepository->find($id);
+        if (!$modelePiece || $modelePiece->isPlusUtilise()){
+           return $this->redirectToRoute('app_configuration');
+        }
+        $modelePiece->setPlusUtilise(true);
+        $modelePieceRepository->save($modelePiece, true);
+
+        $this->addFlash('success', 'Modèle de pièce modifié avec succès');
+        return $this->redirectToRoute('app_configuration');
+    
+        return $this->render('configuration/modelepiece/detail.html.twig', [
+            'modelepiece' => $modelePiece
         ]);
     }
 }

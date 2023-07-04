@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modèle de pièce : PlacoCompta{% endblock %}
+
+{% block body %}
+
+<main class="container">
+    <section class="row">
+        <div class="col-12" id="principal">
+            <h2>Modification : {{modelepiece.Libelle}}</h2>
+            <hr>
+            <a href="/configuration/modelepiece/disable/{{modelepiece.id}}"><button type="button" class="btn btn-secondary">Désactiver le modèle de pièce</button></a>
+            <a href="/configuration"><button type="button" class="btn btn-info">Retour</button></a>
+            <hr>
+            {% include "_partials/_flash.html.twig"%}
+            {% include "configuration/modelepiece/_form.html.twig" with {'button_label': 'Modifier le modèle de pièce'} %}
+        </div>
+    </section>
+</main> 
+
+    
+
+{% endblock %}

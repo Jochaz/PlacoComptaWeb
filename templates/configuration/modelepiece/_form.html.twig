@@ -1,0 +1,5 @@
+{{ form_start(form)}}
+    {{ form_row(form.Libelle)}}
+    {{ form_row(form.Materiaux)}}
+    <button type="submit" class="btn btn-primary">{{ button_label|default('Créer le modèle de pièce')}}</button>
+{{ form_end(form)}}
