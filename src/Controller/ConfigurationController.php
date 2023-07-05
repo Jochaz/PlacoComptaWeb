@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\CategorieMateriaux;
 use App\Entity\EnteteDocument;
+use App\Entity\Materiaux;
 use App\Entity\ModelePiece;
 use App\Entity\TVA;
 use App\Entity\UniteMesure;
@@ -279,7 +280,7 @@ class ConfigurationController extends AbstractController
     }
 
     #[Route('/configuration/modelepiece/{id}', name: 'app_modele_piece_detail')]
-    public function modelePieceDetail(string $id, Request $request, modelePieceRepository $modelePieceRepository): Response
+    public function modelePieceDetail(string $id, Request $request, modelePieceRepository $modelePieceRepository, TVARepository $tVARepository): Response
     {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
@@ -289,6 +290,7 @@ class ConfigurationController extends AbstractController
         if (!$modelePiece || $modelePiece->isPlusUtilise()){
              return $this->redirectToRoute('app_configuration');
         }
+
         $form = $this->createForm(ModelePieceType::class, $modelePiece);
         $form->handleRequest($request);
 

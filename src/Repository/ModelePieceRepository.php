@@ -46,11 +46,28 @@ class ModelePieceRepository extends ServiceEntityRepository
    {
        return $this->createQueryBuilder('m')
            ->andWhere('m.Plus_utilise = false')
-           ->orderBy('m.id', 'ASC')
+           ->orderBy('m.Libelle', 'ASC')
            ->getQuery()
            ->getResult()
        ;
    }
+
+      /**
+    * @return ModelePiece Returns an array of ModelePiece objects
+    */
+    public function findById($value): ?ModelePiece
+    {
+        return $this->createQueryBuilder('m')
+            ->join('m.Materiaux', 'mat')
+            ->andWhere('m.Plus_utilise = false')
+            ->andWhere('mat.Plus_utilise = false')
+            ->andWhere('m.id = :val')
+            ->setParameter('val', $value)
+            ->orderBy('mat.Designation', 'DESC')
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
 
 //    public function findOneBySomeField($value): ?ModelePiece
 //    {

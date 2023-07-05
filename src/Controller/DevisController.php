@@ -8,14 +8,18 @@ use App\Entity\Devis;
 use App\Form\AdresseChantierType;
 use App\Form\AdresseFacturationType;
 use App\Form\DevisInfoGeneraleType;
+use App\Form\ModelePieceType;
 use App\Form\SearchDevisType;
 use App\Model\SearchDevisData;
 use App\Repository\AdresseDocumentRepository;
 use App\Repository\AdresseFacturationRepository;
 use App\Repository\CategorieMateriauxRepository;
 use App\Repository\DevisRepository;
+use App\Repository\ModelePieceRepository;
 use App\Repository\ParametrageDevisRepository;
+use App\Repository\TVARepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\Id;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -177,7 +181,7 @@ class DevisController extends AbstractController
         if($form->isSubmitted() && $form->isvalid()){
             $devis->setAdresseFacturation($adresse);
             $adresseFacturationRepository->save($adresse, true); 
-            return $this->redirectToRoute('app_devis_add_ligne', [serialize("devis") => $devis]);     
+            return $this->redirectToRoute('app_devis_add_ligne', ["devis" => serialize($devis)]);     
         }
 
         return $this->render('devis/add/adresse_chantier.html.twig', [
@@ -186,20 +190,37 @@ class DevisController extends AbstractController
     }
 
     #[Route('/quote/add/ligne', name: 'app_devis_add_ligne')]
-    public function addDevisLigne(Request $request, CategorieMateriauxRepository $categorieMateriauxRepository): Response
+    public function addDevisLigne(Request $request, ModelePieceRepository $modelePieceRepository, TVARepository $tVARepository, DevisRepository $devisRepository): Response
     {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
         }
+
         $devis = unserialize($request->query->get('devis'));
+        if (!$devis) {
+            $devis = $devisRepository->findBy(["id" => $request->request->get("devis")]);
+            if ($devis) {
+                $devis = $devis[0];
+            }
+        }
 
         if (!$devis){
             return $this->redirectToRoute('app_devis_add_info');
         }
-    
-        $categories = $categorieMateriauxRepository->findByUse();
+        dump($request);
+        
+        if ($request->getMethod() == Request::METHOD_POST){
+
+        }
+
+
+        $modelesPiece = $modelePieceRepository->findByUse();
+        $tvas = $tVARepository->findAll();
+
         return $this->render('devis/add/lignes.html.twig', [
-            'categories' =>$categories,
+            'modelesPiece' =>$modelesPiece,
+            'tvas' => $tvas,
+            'devis' => $devis->getId()
         ]);
     }
 }

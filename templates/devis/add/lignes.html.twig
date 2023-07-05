@@ -10,7 +10,19 @@
             <h2>Assistant de création de devis</h2>
             <h6>Contenu du devis</h6>
             <hr>
-            <form method="POST" action="/quote/add/ligne">
+
+
+            {# {{ form_start(form)}}
+                {{ form_row(form.Libelle)}}
+                {% for modele in modelesPiece %}
+                    <p>{{modele.Libelle}}</p>
+                {% endfor %}
+                <button type="submit" class="btn btn-primary">{{ button_label|default('Créer les lignes du devis')}}</button>
+            {{ form_end(form, {'render_rest': false})}} #}
+            <form method="POST" action="/quote/add/ligne" name="formLigne" id="formLigne">
+                <input type="hidden" id="devis" name="devis" value="{{devis}}"/>
+                <button type="submit" class="btn btn-primary">{{ button_label|default('Créer les lignes du devis')}}</button>
+                <hr>
                 <table class="table table-hover">
                     <thead>
                         <th scope="col"></th>
@@ -22,35 +34,58 @@
                         <th scope="col">TVA de l'article</th>
                     </thead>
                     <tbody>
-                        {% for categorie in categories %}
+                        {% for modele in modelesPiece %}
                             <tr class="table-active">
-                                <td></td>
-                                <td scope="row">{{ categorie.libelle }}</td>
+                                <td><input class="form-check-input" type="checkbox" id="checked_modele_{{modele.id}}" name="checked_modele_{{modele.id}}"></td> 
+                                <td scope="row">{{ modele.libelle }}</td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
                             </tr>
-                            {% if categorie.materiauxes|length > 0 %}
-                                {% for materiaux in categorie.materiauxes %}
-                                <tr>
-                                <td></td> 
-                                <td></td> 
-                                <td>{{ materiaux.Designation }}</td> 
-                                <td>{{ materiaux.PrixUnitaire }}€</td> 
-                                <td><input type="text" name="qte"></input></td> 
-                                <td><input type="text" name="remise"></input></td> 
-                                <td></td> 
-                                </tr>
+                            {% if modele.materiaux|length > 0 %}
+                                {% for materiaux in modele.materiaux %}
+                                    {% if not materiaux.isPlusUtilise %}
+                                    <tr>
+                                        <td><input class="form-check-input" type="checkbox" name="checked_materiaux_{{materiaux.id}}" id="checked_materiaux_{{materiaux.id}}" ></td> 
+                                        <td></td> 
+                                        <td><input type="text" class="form-control" id="des_{{materiaux.id}}" name="des_{{materiaux.id}}" value="{{ materiaux.Designation }}"></input></td> 
+                                        <td><input type="text" class="form-control" id="pu_{{materiaux.id}}" name="pu_{{materiaux.id}}" value="{{ materiaux.PrixUnitaire }}"></input></td> 
+                                        <td><input type="text" class="form-control" id="qte_{{materiaux.id}}" name="qte_{{materiaux.id}}"></input></td> 
+                                        <td><input type="text" class="form-control" id="remise_{{materiaux.id}}" name="remise_{{materiaux.id}}"></input></td> 
+                                        <td>
+                                            <select class="form-select" id="tva_{{materiaux.id}}" name="tva_{{materiaux.id}}">
+                                                {% for tva in tvas %}
+                                                <option value={{tva.id}}>{{tva.Libelle}} ({{tva.Taux}}%)</option>
+                                                {% endfor %}
+                                            </select>
+                                        </td> 
+                                    </tr>
+                                    {% endif %} 
                                 {% endfor %}
                             {% endif %}
                         {% endfor %}
                     </tbody>
                 </table>
-            </form>
+                <hr>
+                <button type="submit" class="btn btn-primary">{{ button_label|default('Créer les lignes du devis')}}</button>
+            </form> 
         </div>
     </section>
 </main>
+
+<script>
+    {% for modele in modelesPiece %}
+        const checkbox = document.getElementById('checked_modele_{{modele.id}}')
+
+        checkbox.addEventListener('change', (event) => {
+            {% for materiaux in modele.materiaux %}
+                checkboxmateriaux = document.getElementById('checked_materiaux_{{materiaux.id}}')
+                checkboxmateriaux.checked = event.currentTarget.checked;
+            {% endfor %}
+        })
+    {% endfor %}
+</script>
 
 {% endblock %}

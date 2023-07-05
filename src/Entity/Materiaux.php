@@ -41,6 +41,7 @@ class Materiaux
     private ?bool $Plus_utilise = null;
 
     #[ORM\ManyToMany(targetEntity: ModelePiece::class, mappedBy: 'Materiaux')]
+    #[ORM\OrderBy(["Libelle" => "ASC"])]
     private Collection $modelePieces;
 
     public function __construct()

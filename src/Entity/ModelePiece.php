@@ -22,6 +22,7 @@ class ModelePiece
     private ?bool $Plus_utilise = null;
 
     #[ORM\ManyToMany(targetEntity: Materiaux::class, inversedBy: 'modelePieces')]
+    #[ORM\OrderBy(["Designation" => "ASC"])]
     private Collection $Materiaux;
 
     public function __construct()
@@ -68,7 +69,7 @@ class ModelePiece
 
     public function addMateriaux(Materiaux $materiaux): self
     {
-        if (!$this->Materiaux->contains($materiaux)) {
+        if (!$this->Materiaux->contains($materiaux) && !$materiaux->isPlusUtilise()) {
             $this->Materiaux->add($materiaux);
         }
 

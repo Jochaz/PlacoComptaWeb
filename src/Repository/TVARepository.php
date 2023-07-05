@@ -46,7 +46,6 @@ class TVARepository extends ServiceEntityRepository
    {
        return $this->createQueryBuilder('t')
            ->orderBy('t.Taux', 'ASC')
-           ->setMaxResults(10)
            ->getQuery()
            ->getResult()
        ;
