@@ -1,5 +1,17 @@
 <div class="container">
 {{ form_start(form)}}
+    <div class="container">
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="SwitchTypeClient" name="SwitchTypeClient">
+            <label class="form-check-label" for="SwitchTypeClient" id="SwitchTypeClientLabel" name="SwitchTypeClientLabel">Type de client</label>
+        </div>
+        <div class="row" id="particulier">
+            {{ form_row(form.Particulier)}}
+        </div>
+        <div class="row" id="professionnel" style="display:none">
+            {{ form_row(form.Professionnel)}}
+        </div>
+    </div>
     <div class="row">
         <div class="col">
             {{ form_row(form.NumDevis)}}
@@ -23,3 +35,18 @@
     <button type="submit" class="btn btn-primary">{{ button_label|default('Continuer vers les adresses')}}</button>
 {{ form_end(form)}}
 </div>
+<script>
+    document.getElementById('SwitchTypeClient').addEventListener('change', (event) => {
+        if (event.currentTarget.checked) {
+            document.getElementById('particulier').style.display = "none";
+            document.getElementById('professionnel').style.display = "block";
+            document.getElementById('devis_info_generale_Particulier').setAttribute('required', 'false'); //the empty string
+            document.getElementById('devis_info_generale_Professionnel').setAttribute('required', 'true');
+        } else {
+            document.getElementById('professionnel').style.display = "none";
+            document.getElementById('particulier').style.display = "block";
+            document.getElementById('devis_info_generale_Professionnel').setAttribute('required', 'true'); //the empty string
+            document.getElementById('devis_info_generale_Particulier').setAttribute('required', 'false');
+        }
+    })
+</script>

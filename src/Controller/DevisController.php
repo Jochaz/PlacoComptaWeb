@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\AdresseDocument;
 use App\Entity\AdresseFacturation;
 use App\Entity\Devis;
+use App\Entity\LigneDevis;
+use App\Entity\Materiaux;
 use App\Form\AdresseChantierType;
 use App\Form\AdresseFacturationType;
 use App\Form\DevisInfoGeneraleType;
@@ -15,6 +17,8 @@ use App\Repository\AdresseDocumentRepository;
 use App\Repository\AdresseFacturationRepository;
 use App\Repository\CategorieMateriauxRepository;
 use App\Repository\DevisRepository;
+use App\Repository\LigneDevisRepository;
+use App\Repository\MateriauxRepository;
 use App\Repository\ModelePieceRepository;
 use App\Repository\ParametrageDevisRepository;
 use App\Repository\TVARepository;
@@ -108,9 +112,13 @@ class DevisController extends AbstractController
         $form = $this->createForm(DevisInfoGeneraleType::class, $devis);
         $form->handleRequest($request);        
         if($form->isSubmitted() && $form->isvalid()){
+            //Si pro
+            if($request->request->get("SwitchTypeClient")){
+                $devis->setParticulier(null);
+            } else {
+                $devis->setProfessionnel(null);
+            }
             $devis->setPlusutilise(false);
-            dump($devis);
-
             $em->persist($devis);
             $em->flush();
 
@@ -126,7 +134,9 @@ class DevisController extends AbstractController
     }
 
     #[Route('/quote/add/adressedevis', name: 'app_devis_add_adresse_devis')]
-    public function addAdresseChantier(Request $request, AdresseDocumentRepository $adresseChantierRepository, AdresseFacturationRepository $adresseFacturationRepository): Response
+    public function addAdresseChantier(Request $request, AdresseDocumentRepository $adresseChantierRepository, 
+    AdresseFacturationRepository $adresseFacturationRepository,
+    DevisRepository $devisRepository): Response
     {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
@@ -152,7 +162,8 @@ class DevisController extends AbstractController
                 $adresseFacturation->setCP($adresseDevis->getCP());
                 $adresseFacturation->setBoitePostale($adresseDevis->getBoitePostale());
                 $devis->setAdresseFacturation($adresseFacturation);  
-                $adresseFacturationRepository->save($adresseFacturation, true);      
+                $adresseFacturationRepository->save($adresseFacturation, true);
+                $devisRepository->save($devis);      
                 return $this->redirectToRoute('app_devis_add_ligne', ["devis" => serialize($devis)]);     
             } else {
                 return $this->redirectToRoute('app_devis_add_adresse_facturation_devis', ["devis" => serialize($devis)]);
@@ -165,7 +176,7 @@ class DevisController extends AbstractController
     }
 
     #[Route('/quote/add/adressefacturation', name: 'app_devis_add_adresse_facturation_devis')]
-    public function addAdresseFacturation(Request $request, AdresseFacturationRepository $adresseFacturationRepository): Response
+    public function addAdresseFacturation(Request $request, AdresseFacturationRepository $adresseFacturationRepository, DevisRepository $devisRepository): Response
     {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
@@ -181,6 +192,7 @@ class DevisController extends AbstractController
         if($form->isSubmitted() && $form->isvalid()){
             $devis->setAdresseFacturation($adresse);
             $adresseFacturationRepository->save($adresse, true); 
+            $devisRepository->save($devis); 
             return $this->redirectToRoute('app_devis_add_ligne', ["devis" => serialize($devis)]);     
         }
 
@@ -190,7 +202,11 @@ class DevisController extends AbstractController
     }
 
     #[Route('/quote/add/ligne', name: 'app_devis_add_ligne')]
-    public function addDevisLigne(Request $request, ModelePieceRepository $modelePieceRepository, TVARepository $tVARepository, DevisRepository $devisRepository): Response
+    public function addDevisLigne(Request $request, 
+    ModelePieceRepository $modelePieceRepository, 
+    TVARepository $tVARepository, 
+    DevisRepository $devisRepository,
+    MateriauxRepository $materiauxRepository): Response
     {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
@@ -207,10 +223,53 @@ class DevisController extends AbstractController
         if (!$devis){
             return $this->redirectToRoute('app_devis_add_info');
         }
-        dump($request);
-        
-        if ($request->getMethod() == Request::METHOD_POST){
 
+        if ($request->getMethod() == Request::METHOD_POST){
+            //On va parcourir toutes les données
+            foreach ($request->request as $key => $value){
+                if (str_contains($key, 'checked_materiaux_')) {
+                    $params = explode('_', $key);
+                    //0 et 1 - nom / 2 - id modele / 3 - id materiaux
+                    $identifiant = "_".$params[2]."_".$params[3];
+                    $materiaux = $materiauxRepository->find(["id" => $params[3]]);
+
+                    $ligneDevis = new LigneDevis();
+                    $ligneDevis->setDevis($devis);
+
+                    if ($request->request->get('des'.$identifiant)){
+                        $ligneDevis->setDesignation($request->request->get('des'.$identifiant));
+                    } else {
+                        $ligneDevis->setDesignation($materiaux->getDesignation());
+                    }
+                    
+                    if ($request->request->get('pu'.$identifiant)){
+                        $ligneDevis->setPrixUnitaire(floatval($request->request->get('pu'.$identifiant)));
+                    } else {                   
+                        $ligneDevis->setPrixUnitaire($materiaux->getPrixUnitaire());
+                    }
+
+                    if ($request->request->get('qte'.$identifiant)){
+                        $ligneDevis->setQte($request->request->get('qte'.$identifiant));
+                    } else {
+                        $ligneDevis->setQte(1);
+                    }
+
+                    if ($request->request->get('remise'.$identifiant)){
+                        $ligneDevis->setRemise(floatval($request->request->get('remise'.$identifiant)));
+                    } else {
+                        $ligneDevis->setRemise(0);
+                    }
+
+                    if ($request->request->get('tva'.$identifiant)){
+                        $ligneDevis->setTVA($tVARepository->findOneBy(["id" => $request->request->get('tva'.$identifiant)]));
+                    }
+                    $ligneDevis->setMateriaux($materiaux);
+                    $devis->addLigneDevi($ligneDevis);
+                    
+                }
+            }
+            $devisRepository->save($devis);
+            dump($devis);
         }
 
 

@@ -17,13 +17,13 @@ class LigneDevis
     private ?string $Designation = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $PrixUnitaire = null;
+    private ?float $PrixUnitaire = null;
 
     #[ORM\Column(nullable: true)]
     private ?int $Qte = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?int $Remise = null;
+    private ?float $Remise = null;
 
     #[ORM\ManyToOne(inversedBy: 'ligneDevis')]
     #[ORM\JoinColumn(nullable: false)]
@@ -31,6 +31,9 @@ class LigneDevis
 
     #[ORM\ManyToOne(inversedBy: 'ligneDevis')]
     private ?Devis $Devis = null;
+
+    #[ORM\ManyToOne(inversedBy: 'ligneDevis')]
+    private ?Materiaux $Materiaux = null;
 
     public function getId(): ?int
     {
@@ -49,12 +52,12 @@ class LigneDevis
         return $this;
     }
 
-    public function getPrixUnitaire(): ?int
+    public function getPrixUnitaire(): ?float
     {
         return $this->PrixUnitaire;
     }
 
-    public function setPrixUnitaire(?int $PrixUnitaire): self
+    public function setPrixUnitaire(?float $PrixUnitaire): self
     {
         $this->PrixUnitaire = $PrixUnitaire;
 
@@ -73,12 +76,12 @@ class LigneDevis
         return $this;
     }
 
-    public function getRemise(): ?int
+    public function getRemise(): ?float
     {
         return $this->Remise;
     }
 
-    public function setRemise(?int $Remise): self
+    public function setRemise(?float $Remise): self
     {
         $this->Remise = $Remise;
 
@@ -105,6 +108,18 @@ class LigneDevis
     public function setDevis(?Devis $Devis): self
     {
         $this->Devis = $Devis;
+
+        return $this;
+    }
+
+    public function getMateriaux(): ?Materiaux
+    {
+        return $this->Materiaux;
+    }
+
+    public function setMateriaux(?Materiaux $Materiaux): self
+    {
+        $this->Materiaux = $Materiaux;
 
         return $this;
     }

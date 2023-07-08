@@ -48,16 +48,18 @@
                                 {% for materiaux in modele.materiaux %}
                                     {% if not materiaux.isPlusUtilise %}
                                     <tr>
-                                        <td><input class="form-check-input" type="checkbox" name="checked_materiaux_{{materiaux.id}}" id="checked_materiaux_{{materiaux.id}}" ></td> 
+                                        <td><input class="form-check-input" type="checkbox" name="checked_materiaux_{{modele.id}}_{{materiaux.id}}" id="checked_materiaux_{{modele.id}}_{{materiaux.id}}" ></td> 
                                         <td></td> 
-                                        <td><input type="text" class="form-control" id="des_{{materiaux.id}}" name="des_{{materiaux.id}}" value="{{ materiaux.Designation }}"></input></td> 
-                                        <td><input type="text" class="form-control" id="pu_{{materiaux.id}}" name="pu_{{materiaux.id}}" value="{{ materiaux.PrixUnitaire }}"></input></td> 
-                                        <td><input type="text" class="form-control" id="qte_{{materiaux.id}}" name="qte_{{materiaux.id}}"></input></td> 
-                                        <td><input type="text" class="form-control" id="remise_{{materiaux.id}}" name="remise_{{materiaux.id}}"></input></td> 
+                                        <td><input type="text" class="form-control" id="des_{{modele.id}}_{{materiaux.id}}" name="des_{{modele.id}}_{{materiaux.id}}" value="{{ materiaux.Designation }}"></input></td> 
+                                        <td><input type="text" class="form-control" id="pu_{{modele.id}}_{{materiaux.id}}" name="pu_{{modele.id}}_{{materiaux.id}}" value="{{ materiaux.PrixUnitaire }}"></input></td> 
+                                        <td><input type="text" class="form-control" id="qte_{{modele.id}}_{{materiaux.id}}" name="qte_{{modele.id}}_{{materiaux.id}}"></input></td> 
+                                        <td><input type="text" class="form-control" id="remise_{{modele.id}}_{{materiaux.id}}" name="remise_{{modele.id}}_{{materiaux.id}}"></input></td> 
                                         <td>
-                                            <select class="form-select" id="tva_{{materiaux.id}}" name="tva_{{materiaux.id}}">
+                                            <select class="form-select" id="tva_{{modele.id}}_{{materiaux.id}}" name="tva_{{modele.id}}_{{materiaux.id}}">
                                                 {% for tva in tvas %}
-                                                <option value={{tva.id}}>{{tva.Libelle}} ({{tva.Taux}}%)</option>
+                                                <option value={{tva.id}} {% if tva.id == materiaux.tva.id %}selected{% endif %}>
+                                                    {{tva.Libelle}} ({{tva.Taux}}%)
+                                                </option>
                                                 {% endfor %}
                                             </select>
                                         </td> 
@@ -77,11 +79,9 @@
 
 <script>
     {% for modele in modelesPiece %}
-        const checkbox = document.getElementById('checked_modele_{{modele.id}}')
-
-        checkbox.addEventListener('change', (event) => {
+        document.getElementById('checked_modele_{{modele.id}}').addEventListener('change', (event) => {
             {% for materiaux in modele.materiaux %}
-                checkboxmateriaux = document.getElementById('checked_materiaux_{{materiaux.id}}')
+                checkboxmateriaux = document.getElementById('checked_materiaux_{{modele.id}}_{{materiaux.id}}')
                 checkboxmateriaux.checked = event.currentTarget.checked;
             {% endfor %}
         })

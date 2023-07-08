@@ -3,7 +3,10 @@
 namespace App\Form;
 
 use App\Entity\Devis;
-use App\Entity\ModeReglement;
+use App\Entity\Particulier;
+use App\Entity\Professionnel;
+use App\Repository\ParticulierRepository;
+use App\Repository\ProfessionnelRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -46,6 +49,29 @@ class DevisInfoGeneraleType extends AbstractType
             ])
             ->add('ModeReglement', options:[
                 'label' => 'Mode de réglement'
+            ])
+            ->add('Particulier', options:[
+                'label' => 'Client (particulier)',
+                'class' => Particulier::class,
+                'attr' => ['required' => true],
+                'query_builder' => function (ParticulierRepository $er) {
+                    return $er->createQueryBuilder('p')
+                        ->where('p.actif = true')
+                        ->orderBy('p.nom, p.prenom', 'ASC');
+                },
+                'multiple' => false,
+                'expanded' => false
+            ])
+            ->add('Professionnel',  options:[
+                'label' => 'Client (professionnel)',
+                'class' => Professionnel::class,
+                'query_builder' => function (ProfessionnelRepository $er) {
+                    return $er->createQueryBuilder('p')
+                        ->where('p.actif = true')
+                        ->orderBy('p.nomsociete', 'ASC');
+                },
+                'multiple' => false,
+                'expanded' => false
             ])
           
         ;

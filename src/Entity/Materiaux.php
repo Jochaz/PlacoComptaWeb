@@ -44,9 +44,13 @@ class Materiaux
     #[ORM\OrderBy(["Libelle" => "ASC"])]
     private Collection $modelePieces;
 
+    #[ORM\OneToMany(mappedBy: 'Materiaux', targetEntity: LigneDevis::class)]
+    private Collection $ligneDevis;
+
     public function __construct()
     {
         $this->modelePieces = new ArrayCollection();
+        $this->ligneDevis = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -168,5 +172,35 @@ class Materiaux
     public function __toString()
     {
         return $this->Designation;
+    }
+
+    /**
+     * @return Collection<int, LigneDevis>
+     */
+    public function getLigneDevis(): Collection
+    {
+        return $this->ligneDevis;
+    }
+
+    public function addLigneDevi(LigneDevis $ligneDevi): self
+    {
+        if (!$this->ligneDevis->contains($ligneDevi)) {
+            $this->ligneDevis->add($ligneDevi);
+            $ligneDevi->setMateriaux($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLigneDevi(LigneDevis $ligneDevi): self
+    {
+        if ($this->ligneDevis->removeElement($ligneDevi)) {
+            // set the owning side to null (unless already changed)
+            if ($ligneDevi->getMateriaux() === $this) {
+                $ligneDevi->setMateriaux(null);
+            }
+        }
+
+        return $this;
     }
 }
