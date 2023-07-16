@@ -52,7 +52,7 @@ class DevisInfoGeneraleType extends AbstractType
             ])
             ->add('Particulier', options:[
                 'label' => 'Client (particulier)',
-                'class' => Particulier::class,
+                'class' => Particulier::class,  
                 'attr' => ['required' => true],
                 'query_builder' => function (ParticulierRepository $er) {
                     return $er->createQueryBuilder('p')
@@ -60,11 +60,12 @@ class DevisInfoGeneraleType extends AbstractType
                         ->orderBy('p.nom, p.prenom', 'ASC');
                 },
                 'multiple' => false,
-                'expanded' => false
+                'expanded' => false,
             ])
             ->add('Professionnel',  options:[
                 'label' => 'Client (professionnel)',
                 'class' => Professionnel::class,
+                'attr' => ['required' => false],
                 'query_builder' => function (ProfessionnelRepository $er) {
                     return $er->createQueryBuilder('p')
                         ->where('p.actif = true')

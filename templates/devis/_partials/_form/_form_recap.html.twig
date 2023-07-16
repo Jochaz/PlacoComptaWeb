@@ -1,0 +1,89 @@
+<div class="container">
+{{ form_start(form)}}
+    <div class="container">
+        <h6>Informations sur le client du devis</h6>
+        {% if devis.particulier %}
+            <div class="row">
+                <div class="col">
+                    Client : {{devis.particulier.nom}}  {{devis.particulier.prenom}}
+                </div>
+            </div>
+            <br/>
+            <div class="row">
+                <div class="col">
+                    Adresse email : {{devis.particulier.adresseemail1}}
+                </div>
+                <div class="col">
+                    Numéro de téléphone portable : {{devis.particulier.numerotelephoneportable1}}
+                </div>
+                <div class="col">
+                    Numéro de téléphone fixe : {{devis.particulier.numerotelephonefixe1}}
+                </div>
+            </div>
+            <br/>
+            <div class="row">
+                <div class="col">
+                    Commentaire : {{devis.particulier.commentaire}}
+                </div>
+            </div>
+        {% else %}
+            <div class="row">
+                <div class="col">
+                    Client : {{devis.professionnel.nomSociete}}
+                </div>
+            </div>
+            <br/>
+            <div class="row">
+                <div class="col">
+                    Adresse email : {{devis.professionnel.adresseemail1}}
+                </div>
+                <div class="col">
+                    Numéro de téléphone portable : {{devis.professionnel.numerotelephoneportable1}}
+                </div>
+                {% if devis.professionnel.numerotelephonefixe1 %}
+                <div class="col">
+                    Numéro de téléphone fixe : {{devis.professionnel.numerotelephonefixe1}}
+                </div>
+                {% endif %}
+            </div>
+            <br/>
+            <div class="row">
+                <div class="col">
+                    Commentaire : {{devis.professionnel.commentaire}}
+                </div>
+            </div>
+        {% endif %}
+        <br />
+        <h6>Informations du devis</h6>
+        <div class="row">
+            <div class="col">
+                Identifiant du devis : {{devis.NumDevis}}
+            </div>
+            <div class="col">
+                Date création du devis : {{devis.DateDevis|format_datetime('none', 'short', locale='fr')}}
+            </div>
+            <div class="col">
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                Nombre de ligne du devis : {{devis.ligneDevis|length}}
+            </div>
+        </div>
+
+        <br />
+        <div class="row">
+            <div class="col">
+                <p>Montant total du devis HT : {{devis.PrixHT}}€</p>
+            </div>
+            <div class="col">
+                <p>Montant total du devis TTC : {{devis.PrixTTC}}€</p>
+            </div>
+        </div>
+
+    {{ form_row(form.Remise)}}
+    </div>
+    <button type="submit" class="btn btn-primary">{{ button_label|default('Créer le devis')}}</button>
+{{ form_end(form)}}
+</div>

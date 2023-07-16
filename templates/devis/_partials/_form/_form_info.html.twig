@@ -11,6 +11,9 @@
         <div class="row" id="professionnel" style="display:none">
             {{ form_row(form.Professionnel)}}
         </div>
+        <script type="text/javascript">
+
+        </script>
     </div>
     <div class="row">
         <div class="col">
@@ -38,15 +41,17 @@
 <script>
     document.getElementById('SwitchTypeClient').addEventListener('change', (event) => {
         if (event.currentTarget.checked) {
+            document.getElementById('devis_info_generale_Particulier').removeAttribute('required'); //the empty string
+            document.getElementById('devis_info_generale_Professionnel').setAttribute('required', 'true');
             document.getElementById('particulier').style.display = "none";
             document.getElementById('professionnel').style.display = "block";
-            document.getElementById('devis_info_generale_Particulier').setAttribute('required', 'false'); //the empty string
-            document.getElementById('devis_info_generale_Professionnel').setAttribute('required', 'true');
+
         } else {
+            document.getElementById('devis_info_generale_Professionnel').removeAttribute('required'); //the empty string
+            document.getElementById('devis_info_generale_Particulier').setAttribute('required', 'true');
             document.getElementById('professionnel').style.display = "none";
             document.getElementById('particulier').style.display = "block";
-            document.getElementById('devis_info_generale_Professionnel').setAttribute('required', 'true'); //the empty string
-            document.getElementById('devis_info_generale_Particulier').setAttribute('required', 'false');
+           
         }
     })
 </script>

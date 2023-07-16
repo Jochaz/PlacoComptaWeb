@@ -20,7 +20,13 @@
                 <button type="submit" class="btn btn-primary">{{ button_label|default('Créer les lignes du devis')}}</button>
             {{ form_end(form, {'render_rest': false})}} #}
             <form method="POST" action="/quote/add/ligne" name="formLigne" id="formLigne">
-                <input type="hidden" id="devis" name="devis" value="{{devis}}"/>
+                <input type="hidden" id="devis" name="devis" value="{{devis.id}}"/>
+                {% if devis.AdresseChantier %}
+                <input type="hidden" id="adresseC" name="adresseC" value="{{devis.AdresseChantier.id}}"/>
+                {% endif %}
+                {% if devis.AdresseFacturation %}
+                <input type="hidden" id="adresseF" name="adresseF" value="{{devis.AdresseFacturation.id}}"/>
+                {% endif %}
                 <button type="submit" class="btn btn-primary">{{ button_label|default('Créer les lignes du devis')}}</button>
                 <hr>
                 <table class="table table-hover">

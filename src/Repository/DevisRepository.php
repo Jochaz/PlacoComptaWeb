@@ -63,6 +63,21 @@ class DevisRepository extends ServiceEntityRepository
        ;
     }
 
+    public function findWithJoin(string $search): ?Devis
+    {
+        $data = $this->createQueryBuilder('d')
+           ->select('d, part, pro, ad, af')
+           ->leftJoin('d.Particulier', 'part')
+           ->leftJoin('d.Professionnel', 'pro')
+           ->leftJoin('d.AdresseChantier', 'ad')
+           ->leftJoin('d.AdresseFacturation', 'af')
+           ->andWhere('d.Plusutilise = false')
+           ->andWhere('d.id = '.$search)
+           ->orderBy('d.DateDevis', 'ASC');
+
+       return $data = $data->getQuery()->getOneOrNullResult();
+    }
+
 
 //    public function findOneBySomeField($value): ?Devis
 //    {

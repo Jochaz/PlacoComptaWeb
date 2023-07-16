@@ -32,13 +32,13 @@ class Devis
     private ?string $Objet = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $Remise = null;
+    private ?float $Remise = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $PrixHT = null;
+    private ?float $PrixHT = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $PrixTTC = null;
+    private ?float $PrixTTC = null;
 
     #[ORM\Column(nullable: true)]
     private ?bool $TVAAutoliquidation = null;
@@ -46,7 +46,7 @@ class Devis
     #[ORM\Column]
     private ?bool $Plusutilise = null;
 
-    #[ORM\OneToMany(mappedBy: 'Devis', targetEntity: LigneDevis::class)]
+    #[ORM\OneToMany(mappedBy: 'Devis', targetEntity: LigneDevis::class, cascade:["persist"])]
     private Collection $ligneDevis;
 
     #[ORM\ManyToOne(inversedBy: 'devis')]
@@ -135,36 +135,89 @@ class Devis
         return $this;
     }
 
-    public function getRemise(): ?int
+    public function getRemise(): ?float
     {
         return $this->Remise;
     }
 
-    public function setRemise(int $Remise): self
+    public function setRemise(float $Remise): self
     {
         $this->Remise = $Remise;
 
         return $this;
     }
 
-    public function getPrixHT(): ?int
+    public function getPrixHT(): ?float
     {
+        $PrixHT = 0;
+        foreach($this->getLigneDevis() as $key){
+            if ($key->getPrixUnitaire() >= $key->getRemise()){
+                $PrixHT = $PrixHT + ((($key->getQte() * $key->getPrixUnitaire())) - ($key->getRemise() * $key->getQte()));
+            }
+        }
+        $PrixHT = $PrixHT - $this->getRemise(); 
+        if ($PrixHT < 0){
+            $PrixHT = 0;
+        }
+
+        $this->setPrixHT($PrixHT);
         return $this->PrixHT;
     }
 
-    public function setPrixHT(int $PrixHT): self
+    public function setPrixHT(float $PrixHT): self
     {
         $this->PrixHT = $PrixHT;
 
         return $this;
     }
 
-    public function getPrixTTC(): ?int
+    public function getPrixTTC(): ?float
     {
+        $PrixTTC = 0;
+        $Temp = 0;
+        $LstMontantTVA = [];
+        foreach($this->getLigneDevis() as $key) {
+            $Temp = 0;
+            if ($key->getPrixUnitaire() >= $key->getRemise()){
+                $Temp = ($key->getPrixUnitaire() - $key->getRemise()) * $key->getQte();
+            }
+
+            if ($key->getTVA()){
+                $bPasse = false;
+                foreach($LstMontantTVA as $key2){
+                    $MontantTVA = $key2[0];
+                    if ($MontantTVA->getTVA()->getId() == $key->getTVA()->getId()){
+                        $MontantTVA->setMontantTotale($MontantTVA->getMontantTotale() + (($Temp * (1 + ($MontantTVA->getTVA()->getTaux() / 100))) - $Temp));
+                        $bPasse = true;
+                    }
+
+                }
+
+                if ($bPasse == false){
+                    $MontantTotale = new MontantTVA();
+                    $MontantTotale->setMontantTotale(($Temp * (1 + ($key->getTVA()->getTaux() / 100))) - $Temp);
+                    $MontantTotale->setTVA($key->getTVA());
+                    array_push($LstMontantTVA, [$MontantTotale]);
+                }
+
+                $PrixTTC = $PrixTTC + $Temp;
+            }
+        }
+
+        $PrixTTC = $PrixTTC - $this->getRemise();
+        if ($PrixTTC < 0){
+            $PrixTTC = 0;
+        } else {
+            foreach ($LstMontantTVA as $MontantTVA){
+                $PrixTTC =  $PrixTTC + $MontantTVA[0]->getMontantTotale();
+            }
+        }
+        $this->setPrixTTC($PrixTTC);
+
         return $this->PrixTTC;
     }
 
-    public function setPrixTTC(int $PrixTTC): self
+    public function setPrixTTC(float $PrixTTC): self
     {
         $this->PrixTTC = $PrixTTC;
 
