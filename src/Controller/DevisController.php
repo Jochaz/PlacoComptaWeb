@@ -6,18 +6,14 @@ use App\Entity\AdresseDocument;
 use App\Entity\AdresseFacturation;
 use App\Entity\Devis;
 use App\Entity\LigneDevis;
-use App\Entity\Materiaux;
-use App\Entity\MontantTVA;
 use App\Form\AdresseChantierType;
 use App\Form\AdresseFacturationType;
 use App\Form\DevisInfoGeneraleType;
 use App\Form\DevisRemiseType;
-use App\Form\ModelePieceType;
 use App\Form\SearchDevisType;
 use App\Model\SearchDevisData;
 use App\Repository\AdresseDocumentRepository;
 use App\Repository\AdresseFacturationRepository;
-use App\Repository\CategorieMateriauxRepository;
 use App\Repository\DevisRepository;
 use App\Repository\LigneDevisRepository;
 use App\Repository\MateriauxRepository;
@@ -25,8 +21,6 @@ use App\Repository\ModelePieceRepository;
 use App\Repository\ParametrageDevisRepository;
 use App\Repository\ParticulierRepository;
 use App\Repository\TVARepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\Id;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -310,8 +304,9 @@ class DevisController extends AbstractController
         $form= $this->createForm(DevisRemiseType::class, $devis);
         $form->handleRequest($request);        
         if($form->isSubmitted() && $form->isvalid()){
+            dump($devis);
             $devisRepository->save($devis, true);
-            return $this->redirectToRoute('app_devis_add_ligne', ["devis" => serialize($devis)]);     
+            return $this->redirectToRoute('app_devis');     
         }
 
         return $this->render('devis/add/recap.html.twig', [

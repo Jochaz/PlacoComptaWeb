@@ -25,14 +25,14 @@ class LigneDevis
     #[ORM\Column(length: 255, nullable: true)]
     private ?float $Remise = null;
 
-    #[ORM\ManyToOne(inversedBy: 'ligneDevis')]
+    #[ORM\ManyToOne(inversedBy: 'ligneDevis', cascade:["persist"])]
     #[ORM\JoinColumn(nullable: false)]
     private ?TVA $TVA = null;
 
     #[ORM\ManyToOne(inversedBy: 'ligneDevis')]
     private ?Devis $Devis = null;
 
-    #[ORM\ManyToOne(inversedBy: 'ligneDevis')]
+    #[ORM\ManyToOne(inversedBy: 'ligneDevis', cascade:["persist"])]
     private ?Materiaux $Materiaux = null;
 
     public function getId(): ?int

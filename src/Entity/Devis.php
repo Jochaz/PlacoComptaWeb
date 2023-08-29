@@ -55,9 +55,6 @@ class Devis
     #[ORM\ManyToOne(inversedBy: 'devis')]
     private ?Professionnel $Professionnel = null;
 
-    #[ORM\ManyToOne(inversedBy: 'devis')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?ModeReglement $ModeReglement = null;
 
     #[ORM\ManyToOne(inversedBy: 'devis')]
     private ?AdresseDocument $AdresseChantier = null;
@@ -298,18 +295,6 @@ class Devis
     public function setProfessionnel(?Professionnel $Professionnel): self
     {
         $this->Professionnel = $Professionnel;
-
-        return $this;
-    }
-
-    public function getModeReglement(): ?ModeReglement
-    {
-        return $this->ModeReglement;
-    }
-
-    public function setModeReglement(?ModeReglement $ModeReglement): self
-    {
-        $this->ModeReglement = $ModeReglement;
 
         return $this;
     }

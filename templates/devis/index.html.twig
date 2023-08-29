@@ -33,7 +33,7 @@
                         <tr onclick="window.location='/devis/detail/{{devis.id}}'">
                             <th scope="row">{{devis.NumDevis}}</th>
                             {% if devis.particulier %}
-                            <td>{{devis.nom}} {{devis.prenom}}</td>
+                            <td>{{devis.particulier.nom}} {{devis.particulier.prenom}}</td>
                             {% else %}
                                 {% if devis.professionnel %}
                                     <td>{{devis.professionnel.NomSociete}}</td>
@@ -43,7 +43,7 @@
                             {% endif %}
                             <td>{{devis.PrixHT}}€</td>
                             <td>{{devis.PrixTTC}}</td>
-                            <td>{{devis.DateDevis|date('d-m-Y')}}</td>
+                            <td>{{devis.DateDevis|date('d/m/Y')}}</td>
                         </tr>
                         </a>
                         {% endfor %}
