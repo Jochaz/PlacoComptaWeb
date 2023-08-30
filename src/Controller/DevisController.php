@@ -205,7 +205,7 @@ class DevisController extends AbstractController
     ModelePieceRepository $modelePieceRepository, 
     TVARepository $tVARepository, 
     DevisRepository $devisRepository,
-    LigneDevisRepository $ligneDevisRepository,
+
     MateriauxRepository $materiauxRepository,
     AdresseDocumentRepository $adresseChantierRepository,
     AdresseFacturationRepository $adresseFacturationRepository): Response
@@ -301,10 +301,10 @@ class DevisController extends AbstractController
         }
       
         $devis = unserialize($request->query->get('devis'));
+        $devis = $devisRepository->findOneBy(["id" => $devis->getId()]);
         $form= $this->createForm(DevisRemiseType::class, $devis);
         $form->handleRequest($request);        
         if($form->isSubmitted() && $form->isvalid()){
-            dump($devis);
             $devisRepository->save($devis, true);
             return $this->redirectToRoute('app_devis');     
         }
