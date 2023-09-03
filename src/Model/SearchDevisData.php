@@ -2,9 +2,6 @@
 
 namespace App\Model;
 
-use App\Entity\Particulier;
-use App\Entity\Professionnel;
-
 class SearchDevisData{
     public $page = 1;
 
@@ -14,8 +11,7 @@ class SearchDevisData{
 
     public int $prixmaxTTC = 0;
 
-    public Particulier $particulier;
+    public string $client;
 
-    public Professionnel $professionnel;
 
 }

@@ -2,7 +2,10 @@
 
 namespace App\Form;
 
+use App\Entity\Particulier;
 use App\Model\SearchDevisData;
+use Doctrine\ORM\Mapping\Entity;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -23,6 +26,15 @@ class SearchDevisType extends AbstractType{
                  
                 ]
             ])
+            ->add('client', TextType::class, [
+                'label' => 'Recherche par client',
+                'empty_data' => '',
+                'required' => false,
+                'attr' => [              
+                    'placeholder' => 'Recherche par client...',
+                    'value' => '',  
+                ]
+            ])
             ->add('prixminTTC', MoneyType::class, [
                 'label' => 'Prix min. TTC',
                 'invalid_message' => 'La valeur du prix min. TTC.',
@@ -35,6 +47,7 @@ class SearchDevisType extends AbstractType{
                 'required' => false,
                 'empty_data' => '9999999',
             ])
+
             ;
     }
 

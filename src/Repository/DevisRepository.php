@@ -47,8 +47,37 @@ class DevisRepository extends ServiceEntityRepository
     {
         $data = $this->createQueryBuilder('d')
            ->andWhere('d.Plusutilise = :val')
+           ->leftJoin('d.Particulier', 'part')
+           ->leftJoin('d.Professionnel', 'pro')
            ->setParameter('val', false)
            ->orderBy('d.id', 'ASC');
+
+        if (!empty($search->numDevis)){
+            $data = $data 
+                ->andwhere ('d.NumDevis LIKE :NumDevis')
+                ->setParameter('NumDevis', "%{$search->numDevis}%");
+        }
+
+        if (!empty($search->client)){
+            dump($search->client);
+            $data = $data 
+                ->andwhere ('(part.nom LIKE :client) or 
+                             (part.prenom LIKE :client) or
+                             (pro.nomsociete LIKE :client)')
+                ->setParameter('client', "%{$search->client}%");
+        }
+
+        if (!empty($search->prixminTTC) || $search->prixminTTC >= 0){
+            $data = $data 
+                ->andwhere ('d.PrixTTC >= :prixminTTC')
+                ->setParameter('prixminTTC', $search->prixminTTC);
+        }
+
+        if (!empty($search->prixmaxTTC) || $search->prixmaxTTC >= 0){
+            $data = $data 
+                ->andwhere ('d.PrixTTC <= :prixmaxTTC')
+                ->setParameter('prixmaxTTC', $search->prixmaxTTC);
+        }
 
        return $data = $data->getQuery()->getResult();;
     }

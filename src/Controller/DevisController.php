@@ -305,6 +305,8 @@ class DevisController extends AbstractController
         $form= $this->createForm(DevisRemiseType::class, $devis);
         $form->handleRequest($request);        
         if($form->isSubmitted() && $form->isvalid()){
+            $devis->setPrixHT($devis->getPrixHT());
+            $devis->setPrixTTC($devis->getPrixTTC());
             $devisRepository->save($devis, true);
             return $this->redirectToRoute('app_devis');     
         }
