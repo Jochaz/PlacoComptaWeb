@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau devis : PlacoCompta{% endblock %}
+
+{% block body %}
+
+<main class="container">
+    <section class="row">
+        <div class="col-12" id="principal">
+            <h2>Modification du devis : {{devis.NumDevis}}</h2>
+            <h6>Contenu du devis</h6>
+            {% include "_partials/_flash.html.twig"%}
+            <hr>
+            <a href="/quote/detail/{{devis.id}}"><button type="button" class="btn btn-info">Info. générales du devis</button></a>
+            {% if devis.ligneDevis|length > 0 %}
+            <form method="POST" action="/quote/updatecontent/{{devis.id}}" name="formLigne" id="formLigne">
+                <input type="hidden" id="devis" name="devis" value="{{devis.id}}"/>
+                <hr>
+                <button type="submit" class="btn btn-primary">{{ button_label|default('Sauvegarder')}}</button>
+                <hr>
+                <table class="table table-hover">
+                    <thead>
+                        <th scope="col">Désignation</th>
+                        <th scope="col">Prix unitaire</th>
+                        <th scope="col">Quantité</th>
+                        <th scope="col">Remise P.U</th>
+                        <th scope="col">TVA de l'article</th>
+                        <th scope="col"></th>
+                    </thead>
+                    <tbody>
+                        {% for ligne in devis.ligneDevis %}
+                        <tr>
+                            <input type="hidden" id="ligne_{{ligne.id}}" name="ligne_{{ligne.id}}" value="{{ligne.id}}"/>
+                            <td><input type="text" class="form-control" id="des_{{ligne.id}}" name="des_{{ligne.id}}" value="{{ ligne.Designation }}"></input></td> 
+                            <td><input type="text" class="form-control" id="pu_{{ligne.id}}" name="pu_{{ligne.id}}" value="{{ ligne.PrixUnitaire }}"></input></td> 
+                            <td><input type="text" class="form-control" id="qte_{{ligne.id}}" name="qte_{{ligne.id}}" value="{{ ligne.Qte}}"></input></td> 
+                            <td><input type="text" class="form-control" id="remise_{{ligne.id}}" name="remise_{{ligne.id}}" value="{{ligne.Remise}}"></input></td> 
+                            <td>
+                                <select class="form-select" id="tva_{{ligne.id}}" name="tva_{{ligne.id}}">
+                                    {% for tva in tvas %}
+                                    <option value={{tva.id}} {% if tva.id == ligne.tva.id %}selected{% endif %}>
+                                        {{tva.Libelle}} ({{tva.Taux}}%)
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td>
+                                <a href="/quote/delete/ligne/{{ligne.id}}" class="btn btn-primary">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
+                                    <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/>
+                                </svg>   
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <hr>
+                <button type="submit" class="btn btn-primary">{{ button_label|default('Sauvegarder')}}</button>
+            </form> 
+            {% else %}
+                   <div class="navigation flex justify-center mb-8">              
+                    <p>Aucune ligne de devis n'a été trouvé.</p>
+                </div>  
+            {% endif %}
+        </div>
+    </section>
+</main>
+
+{% endblock %}

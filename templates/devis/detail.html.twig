@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Devis : PlacoCompta{% endblock %}
+
+{% block body %}
+
+<main class="container">
+    <section class="row">
+        <div class="col-12" id="principal">
+            <h2>Devis : {{devis.numDevis}}</h2>
+            <hr>
+            <a href="/quote/updatecontent/{{devis.id}}"><button type="button" class="btn btn-primary">Modifier le contenu du devis</button></a>
+            <a href="/quote/transform/{{devis.id}}"><button type="button" class="btn btn-info">Transformer en facture</button></a>
+            <a href="/quote/disable/{{devis.id}}"><button type="button" class="btn btn-secondary">Désactiver le devis</button></a>
+
+            <hr>
+            {% include "_partials/_flash.html.twig"%}
+            {% include "devis/_form.html.twig" with {'button_label': 'Modifier le devis'} %}
+        </div>
+    </section>
+</main> 
+
+{% endblock %}

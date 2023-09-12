@@ -30,7 +30,7 @@
                     </thead>
                     <tbody>
                         {% for devis in pagination %}
-                        <tr onclick="window.location='/devis/detail/{{devis.id}}'">
+                        <tr onclick="window.location='/quote/detail/{{devis.id}}'">
                             <th scope="row">{{devis.NumDevis}}</th>
                             {% if devis.particulier %}
                             <td>{{devis.particulier.nom}} {{devis.particulier.prenom}}</td>

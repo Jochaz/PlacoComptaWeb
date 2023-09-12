@@ -1,0 +1,150 @@
+{{ form_start(form)}}
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                {{ form_row(form.NumDevis)}}
+            </div>
+            <div class="col">
+                {{ form_row(form.NumDossier)}}
+            </div>
+        </div>
+    </div>
+    <br />
+    {% if devis.particulier %}
+     <div class="container">
+        <div class="row">
+            <h6>Client : <a href="/customer/detail/{{devis.particulier.id}}">{{devis.particulier.nom}} {{devis.particulier.prenom}}</a></h6>
+            <div class="col">
+                <p>Email principal : {{devis.particulier.adresseemail1}}</p>
+            </div>
+            <div class="col">
+                <p>Téléphone fixe principal : {{devis.particulier.numerotelephonefixe1}}</p>
+            </div>
+            <div class="col">
+                <p>Téléphone portable principal : {{devis.particulier.numerotelephoneportable1}}</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if devis.professionnel %}
+    <div class="container">
+        <div class="row">
+            <h6>Client : <a href="/customer/detail/{{devis.professionnel.id}}">{{devis.professionnel.nomsociete}}</a></h6>
+            <div class="col">
+                <p>Email principal : {{devis.professionnel.adresseemail1}}</p>
+            </div>
+            <div class="col">
+                <p>Téléphone fixe principal : {{devis.professionnel.numerotelephonefixe1}}</p>
+            </div>
+            <div class="col">
+                <p>Téléphone portable principal : {{devis.professionnel.numerotelephoneportable1}}</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <p><b>Nombre de ligne dans le devis :</b> {{devis.ligneDevis|length}}</p>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h6>Adresse du chantier</h6>
+                
+                {{devis.AdresseChantier.Ligne1}}
+                {% if devis.AdresseChantier.Ligne2 %}
+                <br/>{{devis.AdresseChantier.Ligne2}}
+                {% endif %}
+                {% if devis.AdresseChantier.Ligne3 %}
+                <br/>{{ devis.AdresseChantier.Ligne3 }}
+                {% endif %}
+                <br />{{ devis.AdresseChantier.CP}}, {{ devis.AdresseChantier.Ville}}
+                {% if devis.AdresseChantier.BoitePostale %}
+                <br/>{{ devis.AdresseChantier.BoitePostale }}
+                {% endif %}
+                <br/><a href="/adressechantier/{{devis.AdresseChantier.id}}">Modifier l'adresse du chantier</a>
+            </div>
+            <div class="col">
+                 <h6>Adresse de facturation</h6>
+               
+                {{devis.AdresseFacturation.Ligne1}}
+                {% if devis.AdresseFacturation.Ligne2 %}
+                <br/>{{devis.AdresseFacturation.Ligne2}}
+                {% endif %}
+                {% if devis.AdresseFacturation.Ligne3 %}
+                <br/>{{ devis.AdresseFacturation.Ligne3 }}
+                {% endif %}
+                <br />{{ devis.AdresseFacturation.CP}}, {{ devis.AdresseFacturation.Ville}}
+                {% if devis.AdresseFacturation.BoitePostale %}
+                <br/>{{ devis.AdresseFacturation.BoitePostale }}
+                {% endif %}
+
+                 <br/><a href="/adressefacturation/{{devis.AdresseFacturation.id}}">Modifier l'adresse de facturation</a>
+            </div>
+        </div>
+    </div>
+    <br/>
+    
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                {{ form_row(form.DateDevis)}}
+            </div>
+            <div class="col">
+                {{ form_row(form.DateSignature)}}
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                {{ form_row(form.Remise)}}
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                {{ form_row(form.PrixHT)}}
+            </div>
+
+            <div class="col">
+                {{ form_row(form.PrixTTC)}}
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <p id="TVA">Montant totale de la TVA : {{ devis.PrixTTC - devis.PrixHT|round(2, 'floor')}}
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                {{ form_row(form.Objet)}}
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                {{ form_row(form.TVAAutoliquidation)}}
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">{{ button_label|default('Créer le client')}}</button>
+{{ form_end(form)}}
