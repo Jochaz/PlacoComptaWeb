@@ -326,7 +326,7 @@ class DevisController extends AbstractController
         if (!$devis){
             return $this->redirectToRoute('app_devis');
         }                 
-        dump($devis);
+        
         if (!$devis->getRemise()){
             $devis->setRemise(0);
         }

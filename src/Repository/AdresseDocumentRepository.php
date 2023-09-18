@@ -7,12 +7,12 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Adresse>
+ * @extends ServiceEntityRepository<AdresseDocument>
  *
- * @method Adresse|null find($id, $lockMode = null, $lockVersion = null)
- * @method Adresse|null findOneBy(array $criteria, array $orderBy = null)
- * @method Adresse[]    findAll()
- * @method Adresse[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method AdresseDocument|null find($id, $lockMode = null, $lockVersion = null)
+ * @method AdresseDocument|null findOneBy(array $criteria, array $orderBy = null)
+ * @method AdresseDocument[]    findAll()
+ * @method AdresseDocument[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class AdresseDocumentRepository extends ServiceEntityRepository
 {

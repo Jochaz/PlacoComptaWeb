@@ -13,6 +13,20 @@
             <hr>
             <a href="/quote/detail/{{devis.id}}"><button type="button" class="btn btn-info">Info. générales du devis</button></a>
             {% if devis.ligneDevis|length > 0 %}
+            <hr> 
+            <div class="container">
+                <h6>Prix du devis (avant sauvegarde des modifications)</h6>
+                <div class="row">
+                    <div class="col">
+                        Prix HT : {{devis.PrixHT|round(2, 'floor')}}€
+                    </div>
+
+                    <div class="col">
+                        Prix HT : {{devis.PrixTTC|round(2, 'floor')}}€
+                    </div>
+                </div>
+            </div>
+    
             <form method="POST" action="/quote/updatecontent/{{devis.id}}" name="formLigne" id="formLigne">
                 <input type="hidden" id="devis" name="devis" value="{{devis.id}}"/>
                 <hr>

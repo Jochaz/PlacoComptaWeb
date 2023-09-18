@@ -158,7 +158,7 @@ class Devis
         }
 
         $this->setPrixHT($PrixHT);
-        return $this->PrixHT;
+        return round($this->PrixHT, 2);
     }
 
     public function setPrixHT(float $PrixHT): self
@@ -211,7 +211,7 @@ class Devis
         }
         $this->setPrixTTC($PrixTTC);
 
-        return $this->PrixTTC;
+        return round($this->PrixTTC, 2);
     }
 
     public function setPrixTTC(float $PrixTTC): self
