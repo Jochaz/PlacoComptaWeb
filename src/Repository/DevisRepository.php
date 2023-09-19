@@ -107,6 +107,29 @@ class DevisRepository extends ServiceEntityRepository
        return $data = $data->getQuery()->getOneOrNullResult();
     }
 
+   public function findByIdAdresseChantier($value): ?Devis
+   {
+       return $this->createQueryBuilder('d')
+           ->select('d, ad') 
+           ->innerJoin('d.AdresseChantier', 'ad')
+           ->andWhere('ad.id = :val')
+           ->setParameter('val', $value)
+           ->getQuery()
+           ->getOneOrNullResult()
+       ;
+   }
+
+   public function findByIdAdresseFacturation($value): ?Devis
+   {
+       return $this->createQueryBuilder('d')
+           ->select('d, af') 
+           ->innerJoin('d.AdresseFacturation', 'af')
+           ->andWhere('af.id = :val')
+           ->setParameter('val', $value)
+           ->getQuery()
+           ->getOneOrNullResult()
+       ;
+   }
 
 //    public function findOneBySomeField($value): ?Devis
 //    {

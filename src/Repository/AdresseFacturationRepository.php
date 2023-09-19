@@ -7,12 +7,12 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Adresse>
+ * @extends ServiceEntityRepository<AdresseFacturation>
  *
- * @method Adresse|null find($id, $lockMode = null, $lockVersion = null)
- * @method Adresse|null findOneBy(array $criteria, array $orderBy = null)
- * @method Adresse[]    findAll()
- * @method Adresse[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method AdresseFacturation|null find($id, $lockMode = null, $lockVersion = null)
+ * @method AdresseFacturation|null findOneBy(array $criteria, array $orderBy = null)
+ * @method AdresseFacturation[]    findAll()
+ * @method AdresseFacturation[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class AdresseFacturationRepository extends ServiceEntityRepository
 {

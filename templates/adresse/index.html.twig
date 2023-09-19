@@ -7,10 +7,14 @@
 <main class="container">
     <section class="row">
         <div class="col-12" id="principal">
-            <h2>Modification de l'adresse de chantier du devis</h2>
+            {% if adresseChantier.devis %}
+                <h2>Modification de l'adresse de chantier du devis</h2>
+            {% else %}
+                <h2>Modification de l'adresse de chantier de la facture</h2>
+            {% endif %}
             <hr>
             {% include "_partials/_flash.html.twig"%}
-            {% include "devis/_partials/_form/_form_adresse_chantier.html.twig" with {'button_label': 'Modifier', 'modif' : true} %}
+            {% include "devis/_partials/_form/_form_adresse_chantier.html.twig" with {'button_label': 'Modifier l\'adresse de chantier', 'modif' : true} %}
         </div>
     </section>
 </main> 

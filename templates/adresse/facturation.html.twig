@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Adresse de facturation : PlacoCompta{% endblock %}
+
+{% block body %}
+
+<main class="container">
+    <section class="row">
+        <div class="col-12" id="principal">
+            {% if adresseChantier.devis %}
+                <h2>Modification de l'adresse de facturation du devis</h2>
+            {% else %}
+                <h2>Modification de l'adresse de facturation de la facture</h2>
+            {% endif %}
+            <hr>
+            {% include "_partials/_flash.html.twig"%}
+            {% include "devis/_partials/_form/_form_adresse_facturation.html.twig" with {'button_label': 'Modifier l\'adresse de facturation'} %}
+        </div>
+    </section>
+</main> 
+
+    
+
+{% endblock %}
