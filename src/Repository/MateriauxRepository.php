@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Materiaux;
+use App\Entity\Devis;
+use App\Entity\LigneDevis;
 use App\Model\SearchData;
 use App\Model\SearchDate;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -115,6 +117,26 @@ class MateriauxRepository extends ServiceEntityRepository
         return $data;
     }
 
+    public function findByMateriauxManquantDevis($value)
+    {
+        //Il faut retourner tout les materiaux sauf ceux déjà présent dans le devis !
+        $expr = $this->_em->getExpressionBuilder();
+
+        $sub = $this->_em->createQueryBuilder()
+                ->select('m2.id')
+                ->from(Devis::class, 'd')
+                ->innerJoin('d.ligneDevis', 'ld')
+                ->innerJoin('ld.Materiaux', 'm2')
+                ->andWhere('d.id = '.$value)
+                ;
+
+        $query = $this->createQueryBuilder('m')
+                ->Where($expr->notIn('m.id', $sub->getDQL()))
+                ->andWhere('m.Plus_utilise = false')
+                ;
+
+        return $query->getQuery()->getResult();
+    }
 //    public function findOneBySomeField($value): ?Materiaux
 //    {
 //        return $this->createQueryBuilder('m')

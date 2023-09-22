@@ -26,12 +26,52 @@
                     </div>
                 </div>
             </div>
+            <hr>
+            
+            <form method="POST" action="/quote/updatecontent/{{devis.id}}" name="addLigne" id="addLigne">
+                <div class="container">
+                    <h6>Ajout d'une nouvelle ligne sur le devis</h6>
+                    <div class="row" style="padding-bottom: 15px">
+                        <p><b>Matériaux</b></p>
+                        <input type="text" class="form-control" name="ligne_add_select" id="id_ligne_add_select" list="ligne_add_select" onChange="chargeMateriaux()" required>
+                            <datalist id="ligne_add_select" >
+                                {% for ligne in ligneAdd %}
+                                <option value="{{ligne.Designation}}" 
+                                        data-value="{{ligne.id}}"
+                                        data-pu="{{ligne.PrixUnitaire}}">
+                                  
+                                </option>
+                                {% endfor %}
+                            </datalist>
+                        <input type="hidden" id="materiaux_id" name="materiaux_id" value="x"/>
+                        <hidden>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <p><b>Désignation</b></p>
+                            <input type="text" class="form-control" id="des_add" name="des_add" required></input>
+                        </div>
+                        <div class="col">
+                            <p><b>Prix unitaire</b></p>
+                            <input type="text" class="form-control" id="pu_add" name="pu_add" required></input>
+                        </div>
+                        <div class="col">
+                            <p><b>Quantité</b></p>
+                            <input type="text" class="form-control" id="qte_add" name="qte_add" required></input>
+                        </div>
+                        <div class="col">
+                            <p><b>Remise P.U</b></p>
+                            <input type="text" class="form-control" id="remise_add" name="remise_add"></input>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <button type="submit" class="btn btn-primary">{{ button_label|default('Ajouter la ligne')}}</button>
+            </form>
+            <hr >
     
             <form method="POST" action="/quote/updatecontent/{{devis.id}}" name="formLigne" id="formLigne">
                 <input type="hidden" id="devis" name="devis" value="{{devis.id}}"/>
-                <hr>
-                <button type="submit" class="btn btn-primary">{{ button_label|default('Sauvegarder')}}</button>
-                <hr>
                 <table class="table table-hover">
                     <thead>
                         <th scope="col">Désignation</th>
@@ -81,5 +121,18 @@
         </div>
     </section>
 </main>
+<script>
+    function chargeMateriaux() {
+        var shownVal = document.getElementById('id_ligne_add_select').value;
+        var value2send = document.querySelector("#ligne_add_select option[value='" + shownVal + "']").dataset.value;
 
+        if (value2send) {
+            document.getElementById('materiaux_id').value = value2send;
+            document.getElementById('des_add').value = shownVal;
+            document.getElementById('pu_add').value = document.querySelector("#ligne_add_select option[value='" + shownVal + "']").dataset.pu;
+            document.getElementById('qte_add').value = 1;
+            document.getElementById('remise_add').value = "";
+        }
+    }
+</script>
 {% endblock %}

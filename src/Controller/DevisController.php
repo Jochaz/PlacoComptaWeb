@@ -347,13 +347,14 @@ class DevisController extends AbstractController
     }
 
     #[Route('/quote/updatecontent/{id}', name: 'app_devis_contenu')]
-    public function quotedContent(string $id, Request $request, DevisRepository $devisRepository, LigneDevisRepository $ligneDevisRepository, TVARepository $tVARepository): Response
+    public function quotedContent(string $id, Request $request, DevisRepository $devisRepository, LigneDevisRepository $ligneDevisRepository, MateriauxRepository $materiauxRepository, TVARepository $tVARepository): Response
     {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
         }
         $devis = $devisRepository->findOneBy(["id" => $id]);
         $tvas = $tVARepository->findAll();
+        $ligneAdd = $materiauxRepository->findByMateriauxManquantDevis($devis->getId());
 
         if (!$devis){
             return $this->redirectToRoute('app_devis');
@@ -398,9 +399,11 @@ class DevisController extends AbstractController
             $this->addFlash('success', 'Devis modifié avec succès');    
             return $this->redirectToRoute('app_devis_contenu', ["id" => $devis->getId()]);     
         }
+
         return $this->render('devis/contenu.html.twig', [
             'devis' => $devis, 
-            'tvas' => $tvas
+            'tvas' => $tvas,
+            'ligneAdd' => $ligneAdd
         ]);
     }
 
