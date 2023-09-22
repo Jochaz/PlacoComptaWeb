@@ -38,8 +38,8 @@
                                 {% for ligne in ligneAdd %}
                                 <option value="{{ligne.Designation}}" 
                                         data-value="{{ligne.id}}"
-                                        data-pu="{{ligne.PrixUnitaire}}">
-                                  
+                                        data-pu="{{ligne.PrixUnitaire}}"
+                                        data-tva="{{ligne.tva.id}}">
                                 </option>
                                 {% endfor %}
                             </datalist>
@@ -62,6 +62,16 @@
                         <div class="col">
                             <p><b>Remise P.U</b></p>
                             <input type="text" class="form-control" id="remise_add" name="remise_add"></input>
+                        </div>
+                        <div class="col">
+                            <p><b>TVA de l'article</b></p>
+                            <select class="form-select" id="tva_add" name="tva_add">
+                                {% for tva in tvas %}
+                                <option value={{tva.id}}>
+                                    {{tva.Libelle}} ({{tva.Taux}}%)
+                                </option>
+                                {% endfor %}
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -132,6 +142,7 @@
             document.getElementById('pu_add').value = document.querySelector("#ligne_add_select option[value='" + shownVal + "']").dataset.pu;
             document.getElementById('qte_add').value = 1;
             document.getElementById('remise_add').value = "";
+            document.getElementById('tva_add').value = document.querySelector("#ligne_add_select option[value='" + shownVal + "']").dataset.tva;
         }
     }
 </script>

@@ -361,33 +361,53 @@ class DevisController extends AbstractController
         }
 
       
-        if ($request->getMethod() == Request::METHOD_POST){    
-            foreach ($request->request as $key => $value){
-                if (str_contains($key, 'ligne_')){
-                    $identifiant = $value;
-                    foreach($devis->getLigneDevis() as $ligne){
-                        if ($ligne->getId() == $identifiant){
-                            if ($request->request->get('des_'.$identifiant)){
-                                $ligne->setDesignation($request->request->get('des_'.$identifiant));
-                            } 
+        if ($request->getMethod() == Request::METHOD_POST){
+            //Si on est sur un ajout de materiaux    
+            if ($request->request->get('materiaux_id'))
+            {
+                $materiaux = $materiauxRepository->find($request->request->get('materiaux_id'));
+                $tva = $tVARepository->find($request->request->get('tva_add'));
 
-                            if ($request->request->get('qte_'.$identifiant)){
-                                $ligne->setQte($request->request->get('qte_'.$identifiant));
-                            } 
+                $ligneDevis = new LigneDevis();
+                $ligneDevis->setMateriaux($materiaux);
+                $ligneDevis->setTVA($tva);
+                $ligneDevis->setDesignation($request->request->get('des_add'));
+                $ligneDevis->setQte($request->request->get('qte_add'));
+                if ($request->request->get('remise_add')) {
+                    $ligneDevis->setRemise($request->request->get('remise_add'));
+                } else {
+                    $ligneDevis->setRemise(0);
+                }                   
+                $ligneDevis->setPrixUnitaire($request->request->get('pu_add'));
+                $devis->addLigneDevi($ligneDevis);
+            } else {
+                foreach ($request->request as $key => $value){
+                    if (str_contains($key, 'ligne_')){
+                        $identifiant = $value;
+                        foreach($devis->getLigneDevis() as $ligne){
+                            if ($ligne->getId() == $identifiant){
+                                if ($request->request->get('des_'.$identifiant)){
+                                    $ligne->setDesignation($request->request->get('des_'.$identifiant));
+                                } 
 
-                            if ($request->request->get('pu_'.$identifiant)){
-                                $ligne->setPrixUnitaire($request->request->get('pu_'.$identifiant));
-                            } 
+                                if ($request->request->get('qte_'.$identifiant)){
+                                    $ligne->setQte($request->request->get('qte_'.$identifiant));
+                                } 
 
-                            if ($request->request->get('remise_'.$identifiant)){
-                                $ligne->setRemise($request->request->get('remise_'.$identifiant));
+                                if ($request->request->get('pu_'.$identifiant)){
+                                    $ligne->setPrixUnitaire($request->request->get('pu_'.$identifiant));
+                                } 
+
+                                if ($request->request->get('remise_'.$identifiant)){
+                                    $ligne->setRemise($request->request->get('remise_'.$identifiant));
+                                }
+                                
+                                if ($request->request->get('tva_'.$identifiant)){
+                                    $ligne->setTVA($tVARepository->findOneBy(["id" => $request->request->get('tva_'.$identifiant)]));
+                                }
+                                
+                                $ligneDevisRepository->save($ligne, true);
                             }
-                            
-                            if ($request->request->get('tva_'.$identifiant)){
-                                $ligne->setTVA($tVARepository->findOneBy(["id" => $request->request->get('tva_'.$identifiant)]));
-                            }
-                            
-                            $ligneDevisRepository->save($ligne, true);
                         }
                     }
                 }
