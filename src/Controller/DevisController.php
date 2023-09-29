@@ -16,6 +16,7 @@ use App\Model\SearchDevisData;
 use App\Repository\AdresseDocumentRepository;
 use App\Repository\AdresseFacturationRepository;
 use App\Repository\DevisRepository;
+use App\Repository\EnteteDocumentRepository;
 use App\Repository\LigneDevisRepository;
 use App\Repository\MateriauxRepository;
 use App\Repository\ModelePieceRepository;
@@ -26,6 +27,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Dompdf\Dompdf;
+use Dompdf\Options;
+
+use function PHPUnit\Framework\isNull;
 
 class DevisController extends AbstractController
 {
@@ -462,5 +467,102 @@ class DevisController extends AbstractController
         
         $this->addFlash('success', 'Ligne de devis supprimé avec succès');    
         return $this->redirectToRoute('app_devis_contenu', ["id" => $ligne->getDevis()->getId()]);      
+    }
+
+    #[Route('/quote/generatePDF/{id}', name: 'app_devis_PDF')]
+    public function quoteGeneratePdf(string $id, DevisRepository $devisRepository, EnteteDocumentRepository $enteteDocumentRepository, LigneDevisRepository $ligneDevisRepository): Response
+    {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+        $devis = $devisRepository->findOneBy(["id" => $id]);
+
+        if (!$devis){
+            return $this->redirectToRoute('app_devis');
+        }
+
+        $entete = $enteteDocumentRepository->findAll()[0];
+        $LigneAdresseChantier = $devis->getAdresseChantier()->getLigne1();
+        if (!isNull($devis->getAdresseChantier()->getLigne2())){
+            $LigneAdresseChantier = $LigneAdresseChantier.'\n'.$devis->getAdresseChantier()->getLigne2();
+        }
+        if (!isNull($devis->getAdresseChantier()->getLigne3())){
+            $LigneAdresseChantier = $LigneAdresseChantier.'\n'.$devis->getAdresseChantier()->getLigne3();
+        }
+        $LigneAdresseFacturation = $devis->getAdresseFacturation()->getLigne1();
+        if (!isNull($devis->getAdresseFacturation()->getLigne2())){
+            $LigneAdresseFacturation = $LigneAdresseFacturation.'\n'.$devis->getAdresseFacturation()->getLigne2();
+        }
+        if (!isNull($devis->getAdresseFacturation()->getLigne3())){
+            $LigneAdresseFacturation = $LigneAdresseFacturation.'\n'.$devis->getAdresseFacturation()->getLigne3();
+        }
+        if($devis->getParticulier()){
+            $nomprenom = $devis->getParticulier()->getNom()." ".$devis->getParticulier()->getPrenom();
+        } else if ($devis->getProfessionnel()){
+            $nomprenom = $devis->getProfessionnel()->getNomsociete();
+        }
+
+        $lignes = $ligneDevisRepository->findByIdDevisAndOrderByCategorie($devis->getId());
+        dump($lignes); 
+
+        $pdfOptions = new Options();
+        $pdfOptions->set('defaultFont', 'Arial');
+        $dompdf = new Dompdf($pdfOptions);
+
+          // Retrieve the HTML generated in our twig file
+          $html = $this->renderView('pdf/devis.html.twig', [
+            'title' => "Devis N°".$devis->getNumDevis(),
+
+            'Ligne1Gauche' => $entete->getLigne1Gauche(),
+            'Ligne2Gauche' => $entete->getLigne2Gauche(),
+            'Ligne3Gauche' => $entete->getLigne3Gauche(),
+            'Ligne4Gauche' => $entete->getLigne4Gauche(),
+
+            'Ligne1Droite' => $entete->getLigne1Droite(),
+            'Ligne2Droite' => $entete->getLigne2Droite(),
+            'Ligne3Droite' => $entete->getLigne3Droite(),
+            'Ligne4Droite' => $entete->getLigne4Droite(),
+
+            'TelFixe' => $entete->getNumeroTelFixe(),
+            'TelFax' => $entete->getNumeroFax(),
+            'TelPort' => $entete->getNumeroTelPortable(),
+
+            'NumDevis' => $devis->getNumDevis(),
+
+            'Ville' => $entete->getVilleFaitA(),
+            'DateDevis' => $devis->getDateDevis()->format('d-m-Y'),
+
+            'NomPrenom' => $nomprenom,
+            'LigneAdresseClient' => $LigneAdresseFacturation,
+            
+            'VilleCP' => $devis->getAdresseFacturation()->getCP().' '.$devis->getAdresseFacturation()->getVille(),
+
+            'LigneAdresseChantier' => $LigneAdresseChantier,
+            'CPVilleAdresseChantier' => $devis->getAdresseChantier()->getCP().' '.$devis->getAdresseChantier()->getVille(),
+
+            'MontantHT' => $devis->getPrixHT(),
+            'MontantTTC' => $devis->getPrixTTC(),
+            'TotalTVA' => $devis->getPrixTTC() - $devis->getPrixHT(),
+
+            // 'lignes' => $devis->getLigneDevis(),
+            'lignes' => $lignes,
+            'devis' => $devis
+        ]);
+
+        // Load HTML to Dompdf
+        $dompdf->loadHtml($html);
+        
+        // (Optional) Setup the paper size and orientation 'portrait' or 'portrait'
+        $dompdf->setPaper('A4', 'portrait');
+
+        // Render the HTML as PDF
+        $dompdf->render();
+
+        // Output the generated PDF to Browser (force download)
+        ob_end_clean();
+        $dompdf->stream($devis->getNumDevis().".pdf", [
+            "Attachment" => 0
+        ]);
+        return new Response("The PDF file has been succesfully generated !");
     }
 }

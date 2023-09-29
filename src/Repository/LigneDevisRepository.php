@@ -63,4 +63,18 @@ class LigneDevisRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+   public function findByIdDevisAndOrderByCategorie($value)
+   {
+       return $this->createQueryBuilder('l')
+           ->join('l.Devis', 'd')
+           ->join('l.Materiaux', 'm')
+           ->leftJoin('m.Categorie', 'c')
+           ->andWhere('d.id = :val')
+           ->setParameter('val', $value)
+           ->OrderBy('c.Libelle', 'ASC')
+           ->addOrderBy('m.Designation', 'ASC')
+           ->getQuery()
+           ->getResult()
+       ;
+   }
 }
