@@ -56,7 +56,7 @@
             </div>        
         </div>
 
-        <div class="row" style="margin-top: 150px; color:#4e7eb5; font-size: small;">
+        <div class="row" style="margin-top: 125px; color:#4e7eb5; font-size: small;">
             <div class="col-sm">
                 <b>Tel : {{TelFixe}}<br/>
                 Fax : {{TelFax}}<br/>
@@ -81,6 +81,15 @@
             <div style="padding-top: {{taillePadding}}px">
                 <div class="col-sm" style="font-size: small;">
                     <b>Numéro de dossier :</b> {{devis.NumDossier}}
+                </div>
+            </div>
+            {% set taillePadding = "10" %}
+        {% endif %}
+
+        {% if devis.Objet %}
+            <div style="padding-top: {{taillePadding}}px">
+                <div class="col-sm" style="font-size: small;">
+                    <b>Objet :</b> {{devis.Objet}}
                 </div>
             </div>
             {% set taillePadding = "10" %}
@@ -142,6 +151,14 @@
             </tbody>
         </table>
        
+            {% if devis.TVAAutoliquidation %}
+                <div style="padding-top: 10px">
+                    <div class="col-sm" style="font-size: x-small;">
+                        TVA due par le preneur assujetti autoliquidation application article 242 nonies A, I-13° annexe au CGI
+                    </div>
+                </div>
+            {% endif %}
+
             <div class="row" style="padding-top: 25px; padding-bottom: 30px;">
                 <div class="col-sm" style="font-size: small; text-align: right;">
                     <b>Total Hors Taxes : {{MontantHT}} €<br/>
