@@ -47,10 +47,14 @@ class Materiaux
     #[ORM\OneToMany(mappedBy: 'Materiaux', targetEntity: LigneDevis::class)]
     private Collection $ligneDevis;
 
+    #[ORM\OneToMany(mappedBy: 'Materiaux', targetEntity: LigneFacture::class)]
+    private Collection $ligneFactures;
+
     public function __construct()
     {
         $this->modelePieces = new ArrayCollection();
         $this->ligneDevis = new ArrayCollection();
+        $this->ligneFactures = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -198,6 +202,36 @@ class Materiaux
             // set the owning side to null (unless already changed)
             if ($ligneDevi->getMateriaux() === $this) {
                 $ligneDevi->setMateriaux(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, LigneFacture>
+     */
+    public function getLigneFactures(): Collection
+    {
+        return $this->ligneFactures;
+    }
+
+    public function addLigneFacture(LigneFacture $ligneFacture): self
+    {
+        if (!$this->ligneFactures->contains($ligneFacture)) {
+            $this->ligneFactures->add($ligneFacture);
+            $ligneFacture->setMateriaux($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLigneFacture(LigneFacture $ligneFacture): self
+    {
+        if ($this->ligneFactures->removeElement($ligneFacture)) {
+            // set the owning side to null (unless already changed)
+            if ($ligneFacture->getMateriaux() === $this) {
+                $ligneFacture->setMateriaux(null);
             }
         }
 

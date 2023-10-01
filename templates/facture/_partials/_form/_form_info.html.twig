@@ -1,0 +1,56 @@
+<div class="container">
+{{ form_start(form)}}
+    <div class="container">
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="SwitchTypeClient" name="SwitchTypeClient">
+            <label class="form-check-label" for="SwitchTypeClient" id="SwitchTypeClientLabel" name="SwitchTypeClientLabel">Type de client</label>
+        </div>
+        <div class="row" id="particulier">
+            {{ form_row(form.Particulier)}}
+        </div>
+        <div class="row" id="professionnel" style="display:none">
+            {{ form_row(form.Professionnel)}}
+        </div>
+        <script type="text/javascript">
+
+        </script>
+    </div>
+    <div class="row">
+        <div class="col">
+            {{ form_row(form.NumDevis)}}
+        </div>
+        <div class="col">
+            {{ form_row(form.NumDossier)}}
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col">
+            {{ form_row(form.DateDevis)}}
+        </div>
+        <div class="col">
+            {{ form_row(form.DateSignature)}}
+        </div>
+    </div>
+    {{ form_row(form.Objet)}}
+    {{ form_row(form.TVAAutoliquidation)}}
+    <button type="submit" class="btn btn-primary">{{ button_label|default('Continuer vers les adresses')}}</button>
+{{ form_end(form)}}
+</div>
+<script>
+    document.getElementById('SwitchTypeClient').addEventListener('change', (event) => {
+        if (event.currentTarget.checked) {
+            document.getElementById('devis_info_generale_Particulier').removeAttribute('required'); //the empty string
+            document.getElementById('devis_info_generale_Professionnel').setAttribute('required', 'true');
+            document.getElementById('particulier').style.display = "none";
+            document.getElementById('professionnel').style.display = "block";
+
+        } else {
+            document.getElementById('devis_info_generale_Professionnel').removeAttribute('required'); //the empty string
+            document.getElementById('devis_info_generale_Particulier').setAttribute('required', 'true');
+            document.getElementById('professionnel').style.display = "none";
+            document.getElementById('particulier').style.display = "block";
+           
+        }
+    })
+</script>

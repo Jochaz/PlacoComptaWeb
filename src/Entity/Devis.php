@@ -62,6 +62,9 @@ class Devis
     #[ORM\ManyToOne(inversedBy: 'devis')]
     private ?AdresseFacturation $AdresseFacturation = null;
 
+    #[ORM\OneToOne(mappedBy: 'Devis', cascade: ['persist', 'remove'])]
+    private ?Facture $facture = null;
+
     public function __construct()
     {
         $this->ligneDevis = new ArrayCollection();
@@ -319,6 +322,28 @@ class Devis
     public function setAdresseFacturation(?AdresseFacturation $AdresseFacturation): self
     {
         $this->AdresseFacturation = $AdresseFacturation;
+
+        return $this;
+    }
+
+    public function getFacture(): ?Facture
+    {
+        return $this->facture;
+    }
+
+    public function setFacture(?Facture $facture): self
+    {
+        // unset the owning side of the relation if necessary
+        if ($facture === null && $this->facture !== null) {
+            $this->facture->setDevis(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($facture !== null && $facture->getDevis() !== $this) {
+            $facture->setDevis($this);
+        }
+
+        $this->facture = $facture;
 
         return $this;
     }

@@ -1,0 +1,145 @@
+<div class="container">
+{{ form_start(form)}}
+    <div class="container">
+        <h6>Informations sur le client du devis</h6>
+        {% if devis.particulier %}
+            <div class="row">
+                <div class="col">
+                    Client : {{devis.particulier.nom}}  {{devis.particulier.prenom}}
+                </div>
+            </div>
+            <br/>
+            <div class="row">
+                <div class="col">
+                    Adresse email : {{devis.particulier.adresseemail1}}
+                </div>
+                <div class="col">
+                    Numéro de téléphone portable : {{devis.particulier.numerotelephoneportable1}}
+                </div>
+                <div class="col">
+                    Numéro de téléphone fixe : {{devis.particulier.numerotelephonefixe1}}
+                </div>
+            </div>
+            <br/>
+            <div class="row">
+                <div class="col">
+                    Commentaire : {{devis.particulier.commentaire}}
+                </div>
+            </div>
+        {% else %}
+            <div class="row">
+                <div class="col">
+                    Client : {{devis.professionnel.nomSociete}}
+                </div>
+            </div>
+            <br/>
+            <div class="row">
+                <div class="col">
+                    Adresse email : {{devis.professionnel.adresseemail1}}
+                </div>
+                <div class="col">
+                    Numéro de téléphone portable : {{devis.professionnel.numerotelephoneportable1}}
+                </div>
+                {% if devis.professionnel.numerotelephonefixe1 %}
+                <div class="col">
+                    Numéro de téléphone fixe : {{devis.professionnel.numerotelephonefixe1}}
+                </div>
+                {% endif %}
+            </div>
+            <br/>
+            <div class="row">
+                <div class="col">
+                    Commentaire : {{devis.professionnel.commentaire}}
+                </div>
+            </div>
+        {% endif %}
+        <br />
+        <h6>Informations du devis</h6>
+        <div class="row">
+            <div class="col">
+                Identifiant du devis : {{devis.NumDevis}}
+            </div>
+            <div class="col">
+                Date création du devis : {{devis.DateDevis|date('d/m/Y')}}
+            </div>
+            <div class="col">
+                Date de signature du devis : {{devis.DateSignature|date('d/m/Y')}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                Nombre de ligne du devis : {{devis.ligneDevis|length}}
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col">
+                Adresse du chantier du devis : {{devis.AdresseChantier.Ligne1}} 
+                {% if devis.AdresseChantier.Ligne2 %}
+                    , {{devis.AdresseChantier.Ligne2}} 
+                {% endif %}
+                {% if devis.AdresseChantier.Ligne3 %}
+                    , {{devis.AdresseChantier.Ligne3}} 
+                {% endif %}
+                , {{devis.AdresseChantier.CP}}, {{devis.AdresseChantier.Ville}}
+                {% if devis.AdresseChantier.BoitePostale %}
+                    , {{devis.AdresseChantier.BoitePostale}} 
+                {% endif %}
+            </div>
+        </div>
+        <br />
+        {{ form_row(form.Remise)}}
+        <div class="row">
+            <div class="col">
+                <p id="HT">Montant total du devis HT : {{devis.PrixHT}}€</p>
+            </div>
+            <div class="col">
+                <p id="TVA">Montant total de la TVA : {{devis.PrixTTC - devis.PrixHT}}€</p>
+            </div>
+            <div class="col">
+                <p id="TTC">Montant total du devis TTC : {{devis.PrixTTC}}€</p>
+            </div>
+        </div>
+        <br />
+        {% if devis.TVAAutoliquidation == true %}
+        <div class="row">
+            <div class="col">
+                <p>TVA due par le preneur assujetti autoliquidation application article 242 nonies A, I-13° annexe au CGI</p>
+            </div>
+        </div>
+        <br />
+        {% endif %}
+        <div class="row">
+            <div class="col">
+                <p>Objet : {{devis.objet}}</p>
+            </div>
+        </div>
+        <br />
+    </div>
+    <button type="submit" class="btn btn-primary">{{ button_label|default('Créer le devis')}}</button>
+{{ form_end(form)}}
+</div>
+<script>
+    document.getElementById('devis_remise_Remise').addEventListener('keyup', (event) => {
+        if ({{devis.PrixHT}} >  document.getElementById('devis_remise_Remise').value) {
+            var PrixHT = {{devis.PrixHT}} - document.getElementById('devis_remise_Remise').value;
+        } else {
+            var PrixHT = 0;
+        }
+        if ({{devis.PrixTTC}} > document.getElementById('devis_remise_Remise').value) {
+            var PrixTTC = {{devis.PrixTTC}} - document.getElementById('devis_remise_Remise').value;
+        } else {
+            var PrixTTC = 0;
+        }
+
+        if (PrixTTC - PrixHT < 0){
+            var MontantTVA = 0;
+        } else {
+            var MontantTVA = PrixTTC - PrixHT;
+        }
+
+        document.getElementById('HT').innerHTML = 'Montant total du devis HT : ' + PrixHT + '€';
+        document.getElementById('TTC').innerHTML = 'Montant total du devis TTC : ' + PrixTTC + '€';
+        document.getElementById('TVA').innerHTML = 'Montant total de la TVA : ' + MontantTVA + '€';
+    })
+</script>
