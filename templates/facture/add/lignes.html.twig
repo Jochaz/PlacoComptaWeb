@@ -1,0 +1,88 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle facture : PlacoCompta{% endblock %}
+
+{% block body %}
+
+<main class="container">
+    <section class="row">
+        <div class="col-12" id="principal">
+            <h2>Assistant de création de la facture</h2>
+            <h6>Contenu de la facture</h6>
+            <hr>
+            <form method="POST" action="/invoice/add/ligne" name="formLigne" id="formLigne">
+                <input type="hidden" id="facture" name="facture" value="{{facture.id}}"/>
+                {% if facture.AdresseChantier %}
+                <input type="hidden" id="adresseC" name="adresseC" value="{{facture.AdresseChantier.id}}"/>
+                {% endif %}
+                {% if facture.AdresseFacturation %}
+                <input type="hidden" id="adresseF" name="adresseF" value="{{facture.AdresseFacturation.id}}"/>
+                {% endif %}
+                <button type="submit" class="btn btn-primary">{{ button_label|default('Créer les lignes de la facture')}}</button>
+                <hr>
+                <table class="table table-hover">
+                    <thead>
+                        <th scope="col"></th>
+                        <th scope="col">Catégorie</th>
+                        <th scope="col">Désignation</th>
+                        <th scope="col">Prix unitaire</th>
+                        <th scope="col">Quantité</th>
+                        <th scope="col">Remise P.U</th>
+                        <th scope="col">TVA de l'article</th>
+                    </thead>
+                    <tbody>
+                        {% for modele in modelesPiece %}
+                            <tr class="table-active">
+                                <td><input class="form-check-input" type="checkbox" id="checked_modele_{{modele.id}}" name="checked_modele_{{modele.id}}"></td> 
+                                <td scope="row">{{ modele.libelle }}</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            {% if modele.materiaux|length > 0 %}
+                                {% for materiaux in modele.materiaux %}
+                                    {% if not materiaux.isPlusUtilise %}
+                                    <tr>
+                                        <td><input class="form-check-input" type="checkbox" name="checked_materiaux_{{modele.id}}_{{materiaux.id}}" id="checked_materiaux_{{modele.id}}_{{materiaux.id}}" ></td> 
+                                        <td></td> 
+                                        <td><input type="text" class="form-control" id="des_{{modele.id}}_{{materiaux.id}}" name="des_{{modele.id}}_{{materiaux.id}}" value="{{ materiaux.Designation }}"></input></td> 
+                                        <td><input type="text" class="form-control" id="pu_{{modele.id}}_{{materiaux.id}}" name="pu_{{modele.id}}_{{materiaux.id}}" value="{{ materiaux.PrixUnitaire }}"></input></td> 
+                                        <td><input type="text" class="form-control" id="qte_{{modele.id}}_{{materiaux.id}}" name="qte_{{modele.id}}_{{materiaux.id}}"></input></td> 
+                                        <td><input type="text" class="form-control" id="remise_{{modele.id}}_{{materiaux.id}}" name="remise_{{modele.id}}_{{materiaux.id}}"></input></td> 
+                                        <td>
+                                            <select class="form-select" id="tva_{{modele.id}}_{{materiaux.id}}" name="tva_{{modele.id}}_{{materiaux.id}}">
+                                                {% for tva in tvas %}
+                                                <option value={{tva.id}} {% if tva.id == materiaux.tva.id %}selected{% endif %}>
+                                                    {{tva.Libelle}} ({{tva.Taux}}%)
+                                                </option>
+                                                {% endfor %}
+                                            </select>
+                                        </td> 
+                                    </tr>
+                                    {% endif %} 
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <hr>
+                <button type="submit" class="btn btn-primary">{{ button_label|default('Créer les lignes de la facture')}}</button>
+            </form> 
+        </div>
+    </section>
+</main>
+
+<script>
+    {% for modele in modelesPiece %}
+        document.getElementById('checked_modele_{{modele.id}}').addEventListener('change', (event) => {
+            {% for materiaux in modele.materiaux %}
+                checkboxmateriaux = document.getElementById('checked_materiaux_{{modele.id}}_{{materiaux.id}}')
+                checkboxmateriaux.checked = event.currentTarget.checked;
+            {% endfor %}
+        })
+    {% endfor %}
+</script>
+
+{% endblock %}

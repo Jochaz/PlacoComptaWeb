@@ -1,89 +1,89 @@
 <div class="container">
 {{ form_start(form)}}
     <div class="container">
-        <h6>Informations sur le client du devis</h6>
-        {% if devis.particulier %}
+        <h6>Informations sur le client de la facture</h6>
+        {% if facture.particulier %}
             <div class="row">
                 <div class="col">
-                    Client : {{devis.particulier.nom}}  {{devis.particulier.prenom}}
+                    Client : {{facture.particulier.nom}}  {{facture.particulier.prenom}}
                 </div>
             </div>
             <br/>
             <div class="row">
                 <div class="col">
-                    Adresse email : {{devis.particulier.adresseemail1}}
+                    Adresse email : {{facture.particulier.adresseemail1}}
                 </div>
                 <div class="col">
-                    Numéro de téléphone portable : {{devis.particulier.numerotelephoneportable1}}
+                    Numéro de téléphone portable : {{facture.particulier.numerotelephoneportable1}}
                 </div>
                 <div class="col">
-                    Numéro de téléphone fixe : {{devis.particulier.numerotelephonefixe1}}
+                    Numéro de téléphone fixe : {{facture.particulier.numerotelephonefixe1}}
                 </div>
             </div>
             <br/>
             <div class="row">
                 <div class="col">
-                    Commentaire : {{devis.particulier.commentaire}}
+                    Commentaire : {{facture.particulier.commentaire}}
                 </div>
             </div>
         {% else %}
             <div class="row">
                 <div class="col">
-                    Client : {{devis.professionnel.nomSociete}}
+                    Client : {{facture.professionnel.nomSociete}}
                 </div>
             </div>
             <br/>
             <div class="row">
                 <div class="col">
-                    Adresse email : {{devis.professionnel.adresseemail1}}
+                    Adresse email : {{facture.professionnel.adresseemail1}}
                 </div>
                 <div class="col">
-                    Numéro de téléphone portable : {{devis.professionnel.numerotelephoneportable1}}
+                    Numéro de téléphone portable : {{facture.professionnel.numerotelephoneportable1}}
                 </div>
-                {% if devis.professionnel.numerotelephonefixe1 %}
+                {% if facture.professionnel.numerotelephonefixe1 %}
                 <div class="col">
-                    Numéro de téléphone fixe : {{devis.professionnel.numerotelephonefixe1}}
+                    Numéro de téléphone fixe : {{facture.professionnel.numerotelephonefixe1}}
                 </div>
                 {% endif %}
             </div>
             <br/>
             <div class="row">
                 <div class="col">
-                    Commentaire : {{devis.professionnel.commentaire}}
+                    Commentaire : {{facture.professionnel.commentaire}}
                 </div>
             </div>
         {% endif %}
         <br />
-        <h6>Informations du devis</h6>
+        <h6>Informations de la facture</h6>
         <div class="row">
             <div class="col">
-                Identifiant du devis : {{devis.NumDevis}}
+                Identifiant de la facture : {{facture.NumFacture}}
             </div>
             <div class="col">
-                Date création du devis : {{devis.DateDevis|date('d/m/Y')}}
+                Date création de la facture : {{facture.DateFacture|date('d/m/Y')}}
             </div>
             <div class="col">
-                Date de signature du devis : {{devis.DateSignature|date('d/m/Y')}}
+                Date de signature de la facture : {{facture.DatePaiementFacture|date('d/m/Y')}}
             </div>
         </div>
         <div class="row">
             <div class="col">
-                Nombre de ligne du devis : {{devis.ligneDevis|length}}
+                Nombre de ligne de la facture : {{facture.ligneFacture|length}}
             </div>
         </div>
         <br />
         <div class="row">
             <div class="col">
-                Adresse du chantier du devis : {{devis.AdresseChantier.Ligne1}} 
-                {% if devis.AdresseChantier.Ligne2 %}
-                    , {{devis.AdresseChantier.Ligne2}} 
+                Adresse du chantier de la facture : {{facture.AdresseChantier.Ligne1}} 
+                {% if facture.AdresseChantier.Ligne2 %}
+                    , {{facture.AdresseChantier.Ligne2}} 
                 {% endif %}
-                {% if devis.AdresseChantier.Ligne3 %}
-                    , {{devis.AdresseChantier.Ligne3}} 
+                {% if facture.AdresseChantier.Ligne3 %}
+                    , {{facture.AdresseChantier.Ligne3}} 
                 {% endif %}
-                , {{devis.AdresseChantier.CP}}, {{devis.AdresseChantier.Ville}}
-                {% if devis.AdresseChantier.BoitePostale %}
-                    , {{devis.AdresseChantier.BoitePostale}} 
+                , {{facture.AdresseChantier.CP}}, {{facture.AdresseChantier.Ville}}
+                {% if facture.AdresseChantier.BoitePostale %}
+                    , {{facture.AdresseChantier.BoitePostale}} 
                 {% endif %}
             </div>
         </div>
@@ -91,17 +91,17 @@
         {{ form_row(form.Remise)}}
         <div class="row">
             <div class="col">
-                <p id="HT">Montant total du devis HT : {{devis.PrixHT}}€</p>
+                <p id="HT">Montant total de la facture HT : {{facture.PrixHT}}€</p>
             </div>
             <div class="col">
-                <p id="TVA">Montant total de la TVA : {{devis.PrixTTC - devis.PrixHT}}€</p>
+                <p id="TVA">Montant total de la TVA : {{facture.PrixTTC - facture.PrixHT}}€</p>
             </div>
             <div class="col">
-                <p id="TTC">Montant total du devis TTC : {{devis.PrixTTC}}€</p>
+                <p id="TTC">Montant total de la facture TTC : {{facture.PrixTTC}}€</p>
             </div>
         </div>
         <br />
-        {% if devis.TVAAutoliquidation == true %}
+        {% if facture.TVAAutoliquidation == true %}
         <div class="row">
             <div class="col">
                 <p>TVA due par le preneur assujetti autoliquidation application article 242 nonies A, I-13° annexe au CGI</p>
@@ -111,23 +111,23 @@
         {% endif %}
         <div class="row">
             <div class="col">
-                <p>Objet : {{devis.objet}}</p>
+                <p>Objet : {{facture.objet}}</p>
             </div>
         </div>
         <br />
     </div>
-    <button type="submit" class="btn btn-primary">{{ button_label|default('Créer le devis')}}</button>
+    <button type="submit" class="btn btn-primary">{{ button_label|default('Créer la facture')}}</button>
 {{ form_end(form)}}
 </div>
 <script>
-    document.getElementById('devis_remise_Remise').addEventListener('keyup', (event) => {
-        if ({{devis.PrixHT}} >  document.getElementById('devis_remise_Remise').value) {
-            var PrixHT = {{devis.PrixHT}} - document.getElementById('devis_remise_Remise').value;
+    document.getElementById('facture_remise_Remise').addEventListener('keyup', (event) => {
+        if ({{facture.PrixHT}} >  document.getElementById('facture_remise_Remise').value) {
+            var PrixHT = {{facture.PrixHT}} - document.getElementById('facture_remise_Remise').value;
         } else {
             var PrixHT = 0;
         }
-        if ({{devis.PrixTTC}} > document.getElementById('devis_remise_Remise').value) {
-            var PrixTTC = {{devis.PrixTTC}} - document.getElementById('devis_remise_Remise').value;
+        if ({{facture.PrixTTC}} > document.getElementById('facture_remise_Remise').value) {
+            var PrixTTC = {{facture.PrixTTC}} - document.getElementById('facture_remise_Remise').value;
         } else {
             var PrixTTC = 0;
         }
@@ -138,8 +138,8 @@
             var MontantTVA = PrixTTC - PrixHT;
         }
 
-        document.getElementById('HT').innerHTML = 'Montant total du devis HT : ' + PrixHT + '€';
-        document.getElementById('TTC').innerHTML = 'Montant total du devis TTC : ' + PrixTTC + '€';
+        document.getElementById('HT').innerHTML = 'Montant total de la facture HT : ' + PrixHT + '€';
+        document.getElementById('TTC').innerHTML = 'Montant total de la facture TTC : ' + PrixTTC + '€';
         document.getElementById('TVA').innerHTML = 'Montant total de la TVA : ' + MontantTVA + '€';
     })
 </script>

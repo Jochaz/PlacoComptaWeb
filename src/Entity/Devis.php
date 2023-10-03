@@ -55,7 +55,6 @@ class Devis
     #[ORM\ManyToOne(inversedBy: 'devis')]
     private ?Professionnel $Professionnel = null;
 
-
     #[ORM\ManyToOne(inversedBy: 'devis')]
     private ?AdresseDocument $AdresseChantier = null;
 

@@ -28,12 +28,11 @@ class LigneFacture
     #[ORM\Column(nullable: true)]
     private ?float $Remise = null;
 
-    #[ORM\ManyToOne(inversedBy: 'ligneFactures')]
+    #[ORM\ManyToOne(inversedBy: 'ligneFactures', cascade:["persist"])]
     #[ORM\JoinColumn(nullable: false)]
     private ?TVA $TVA = null;
 
-    #[ORM\ManyToOne(inversedBy: 'ligneFactures')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(inversedBy: 'ligneFactures', cascade:["persist"])]
     private ?Materiaux $Materiaux = null;
 
     public function getId(): ?int

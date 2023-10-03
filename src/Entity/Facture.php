@@ -37,7 +37,7 @@ class Facture
     #[ORM\Column(nullable: true)]
     private ?float $PrixHT = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?float $PrixTTC = null;
 
     #[ORM\Column(nullable: true)]
@@ -46,7 +46,7 @@ class Facture
     #[ORM\Column]
     private ?bool $Plusutilise = null;
 
-    #[ORM\OneToMany(mappedBy: 'facture', targetEntity: LigneFacture::class)]
+    #[ORM\OneToMany(mappedBy: 'facture', targetEntity: LigneFacture::class, cascade:["persist"])]
     private Collection $LigneFacture;
 
     #[ORM\ManyToOne(inversedBy: 'factures')]
@@ -56,11 +56,9 @@ class Facture
     private ?Professionnel $Professionnel = null;
 
     #[ORM\ManyToOne(inversedBy: 'factures')]
-    #[ORM\JoinColumn(nullable: false)]
     private ?AdresseDocument $AdresseChantier = null;
 
     #[ORM\ManyToOne(inversedBy: 'factures')]
-    #[ORM\JoinColumn(nullable: false)]
     private ?AdresseFacturation $AdresseFacturation = null;
 
     #[ORM\OneToOne(inversedBy: 'facture', cascade: ['persist', 'remove'])]
@@ -150,7 +148,19 @@ class Facture
 
     public function getPrixHT(): ?float
     {
-        return $this->PrixHT;
+        $PrixHT = 0;
+        foreach($this->getLigneFacture() as $key){
+            if ($key->getPrixUnitaire() >= $key->getRemise()){
+                $PrixHT = $PrixHT + ((($key->getQte() * $key->getPrixUnitaire())) - ($key->getRemise() * $key->getQte()));
+            }
+        }
+        $PrixHT = $PrixHT - $this->getRemise(); 
+        if ($PrixHT < 0){
+            $PrixHT = 0;
+        }
+
+        $this->setPrixHT($PrixHT);
+        return round($this->PrixHT, 2);
     }
 
     public function setPrixHT(?float $PrixHT): self
@@ -162,7 +172,48 @@ class Facture
 
     public function getPrixTTC(): ?float
     {
-        return $this->PrixTTC;
+        $PrixTTC = 0;
+        $Temp = 0;
+        $LstMontantTVA = [];
+        foreach($this->getLigneFacture() as $key) {
+            $Temp = 0;
+            if ($key->getPrixUnitaire() >= $key->getRemise()){
+                $Temp = ($key->getPrixUnitaire() - $key->getRemise()) * $key->getQte();
+            }
+
+            if ($key->getTVA()){
+                $bPasse = false;
+                foreach($LstMontantTVA as $key2){
+                    $MontantTVA = $key2[0];
+                    if ($MontantTVA->getTVA()->getId() == $key->getTVA()->getId()){
+                        $MontantTVA->setMontantTotale($MontantTVA->getMontantTotale() + (($Temp * (1 + ($MontantTVA->getTVA()->getTaux() / 100))) - $Temp));
+                        $bPasse = true;
+                    }
+
+                }
+
+                if ($bPasse == false){
+                    $MontantTotale = new MontantTVA();
+                    $MontantTotale->setMontantTotale(($Temp * (1 + ($key->getTVA()->getTaux() / 100))) - $Temp);
+                    $MontantTotale->setTVA($key->getTVA());
+                    array_push($LstMontantTVA, [$MontantTotale]);
+                }
+
+                $PrixTTC = $PrixTTC + $Temp;
+            }
+        }
+
+        $PrixTTC = $PrixTTC - $this->getRemise();
+        if ($PrixTTC < 0){
+            $PrixTTC = 0;
+        } else {
+            foreach ($LstMontantTVA as $MontantTVA){
+                $PrixTTC =  $PrixTTC + $MontantTVA[0]->getMontantTotale();
+            }
+        }
+        $this->setPrixTTC($PrixTTC);
+
+        return round($this->PrixTTC, 2);
     }
 
     public function setPrixTTC(float $PrixTTC): self

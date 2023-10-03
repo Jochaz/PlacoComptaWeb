@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Facture : PlacoCompta{% endblock %}
+
+{% block body %}
+
+<main class="container">
+    <section class="row">
+        <div class="col-12" id="principal">
+            <h2>Facture : {{facture.numFacture}}</h2>
+            <hr>
+            <a href="/invoice/updatecontent/{{facture.id}}"><button type="button" class="btn btn-primary">Modifier le contenu de la facture</button></a>
+            <a href="/invoice/generatePDF/{{facture.id}}" target="_blank"><button type="button" class="btn btn-info">Générer le document</button></a>
+            <a href="/invoice/disable/{{facture.id}}"><button type="button" class="btn btn-secondary">Désactiver la facture</button></a>
+
+            <hr>
+            {% include "_partials/_flash.html.twig"%}
+            {% include "facture/_form.html.twig" with {'button_label': 'Modifier la facture'} %}
+        </div>
+    </section>
+</main> 
+
+{% endblock %}

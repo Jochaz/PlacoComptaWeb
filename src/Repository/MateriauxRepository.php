@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Materiaux;
 use App\Entity\Devis;
+use App\Entity\Facture;
 use App\Entity\LigneDevis;
 use App\Model\SearchData;
 use App\Model\SearchDate;
@@ -128,6 +129,26 @@ class MateriauxRepository extends ServiceEntityRepository
                 ->innerJoin('d.ligneDevis', 'ld')
                 ->innerJoin('ld.Materiaux', 'm2')
                 ->andWhere('d.id = '.$value)
+                ;
+
+        $query = $this->createQueryBuilder('m')
+                ->Where($expr->notIn('m.id', $sub->getDQL()))
+                ->andWhere('m.Plus_utilise = false')
+                ;
+
+        return $query->getQuery()->getResult();
+    }
+    public function findByMateriauxManquantFacture($value)
+    {
+        //Il faut retourner tout les materiaux sauf ceux déjà présent dans la facture !
+        $expr = $this->_em->getExpressionBuilder();
+
+        $sub = $this->_em->createQueryBuilder()
+                ->select('m2.id')
+                ->from(Facture::class, 'f')
+                ->innerJoin('f.LigneFacture', 'lf')
+                ->innerJoin('lf.Materiaux', 'm2')
+                ->andWhere('f.id = '.$value)
                 ;
 
         $query = $this->createQueryBuilder('m')

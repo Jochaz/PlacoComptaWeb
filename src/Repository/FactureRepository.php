@@ -115,4 +115,44 @@ class FactureRepository extends ServiceEntityRepository
             ->getQuery()
        ;
     }
+
+    public function findWithJoin(string $search): ?Facture
+    {
+        $data = $this->createQueryBuilder('f')
+           ->select('f, part, pro, ad, af')
+           ->leftJoin('f.Particulier', 'part')
+           ->leftJoin('f.Professionnel', 'pro')
+           ->leftJoin('f.AdresseChantier', 'ad')
+           ->leftJoin('f.AdresseFacturation', 'af')
+           ->andWhere('f.Plusutilise = false')
+           ->andWhere('f.id = '.$search)
+           ->orderBy('f.DateFacture', 'ASC');
+
+       return $data = $data->getQuery()->getOneOrNullResult();
+    }
+
+   public function findByIdAdresseChantier($value): ?Facture
+   {
+       return $this->createQueryBuilder('d')
+           ->select('f, ad') 
+           ->innerJoin('f.AdresseChantier', 'ad')
+           ->andWhere('ad.id = :val')
+           ->setParameter('val', $value)
+           ->getQuery()
+           ->getOneOrNullResult()
+       ;
+   }
+
+   public function findByIdAdresseFacturation($value): ?Facture
+   {
+       return $this->createQueryBuilder('f')
+           ->select('f, af') 
+           ->innerJoin('f.AdresseFacturation', 'af')
+           ->andWhere('af.id = :val')
+           ->setParameter('val', $value)
+           ->getQuery()
+           ->getOneOrNullResult()
+       ;
+   }
+
 }

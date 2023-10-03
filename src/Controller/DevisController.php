@@ -174,6 +174,7 @@ class DevisController extends AbstractController
 
         return $this->render('devis/add/adresse_chantier.html.twig', [
             'form' => $form->createView(),
+            'modif' => false,
         ]);
     }
 
@@ -200,6 +201,7 @@ class DevisController extends AbstractController
 
         return $this->render('devis/add/adresse_chantier.html.twig', [
             'form' => $form->createView(),
+            'modif' => false,
         ]);
     }
 
@@ -313,7 +315,7 @@ class DevisController extends AbstractController
             $devisRepository->save($devis, true);
             return $this->redirectToRoute('app_devis');     
         }
-
+        dump($devis);
         return $this->render('devis/add/recap.html.twig', [
             'devis' => $devis,
             'form' => $form->createView(),

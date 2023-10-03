@@ -17,11 +17,11 @@ class SearchFactureType extends AbstractType{
     {
         $builder
             ->add('NumFacture', TextType::class, [
-                'label' => 'Recherche par numéro de devis',
+                'label' => 'Recherche par numéro de facture',
                 'empty_data' => '',
                 'required' => false,
                 'attr' => [              
-                    'placeholder' => 'Recherche par numéro de devis...',
+                    'placeholder' => 'Recherche par numéro de facture...',
                     'value' => '',
                  
                 ]

@@ -17,7 +17,7 @@
     </div>
     <div class="row">
         <div class="col">
-            {{ form_row(form.NumDevis)}}
+            {{ form_row(form.NumFacture)}}
         </div>
         <div class="col">
             {{ form_row(form.NumDossier)}}
@@ -26,10 +26,10 @@
     
     <div class="row">
         <div class="col">
-            {{ form_row(form.DateDevis)}}
+            {{ form_row(form.DateFacture)}}
         </div>
         <div class="col">
-            {{ form_row(form.DateSignature)}}
+            {{ form_row(form.DatePaiementFacture)}}
         </div>
     </div>
     {{ form_row(form.Objet)}}
@@ -40,14 +40,14 @@
 <script>
     document.getElementById('SwitchTypeClient').addEventListener('change', (event) => {
         if (event.currentTarget.checked) {
-            document.getElementById('devis_info_generale_Particulier').removeAttribute('required'); //the empty string
-            document.getElementById('devis_info_generale_Professionnel').setAttribute('required', 'true');
+            document.getElementById('facture_info_generale_Particulier').removeAttribute('required'); //the empty string
+            document.getElementById('facture_info_generale_Professionnel').setAttribute('required', 'true');
             document.getElementById('particulier').style.display = "none";
             document.getElementById('professionnel').style.display = "block";
 
         } else {
-            document.getElementById('devis_info_generale_Professionnel').removeAttribute('required'); //the empty string
-            document.getElementById('devis_info_generale_Particulier').setAttribute('required', 'true');
+            document.getElementById('facture_info_generale_Professionnel').removeAttribute('required'); //the empty string
+            document.getElementById('facture_info_generale_Particulier').setAttribute('required', 'true');
             document.getElementById('professionnel').style.display = "none";
             document.getElementById('particulier').style.display = "block";
            
