@@ -1,0 +1,196 @@
+<!DOCTYPE html">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title>test</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+        <style>
+            body, footer{
+                font-family: Arial, Helvetica, sans-serif;
+            }
+
+            table {
+                width:100%;
+                margin-top: 20px;
+                border-collapse: collapse;
+                border: 1px solid #333;
+            }
+            th {
+                text-align: center;
+                border: 1px solid #333;
+            }
+            td{
+                font-size: x-small;
+                border-left: 1px solid #333;
+            }
+            footer{
+                font-size: xx-small;
+                text-align: center;
+                position: fixed;
+                left: 0px;
+                right: 0px;
+                bottom: 0px;
+            }  
+
+            .child {
+                background-color:orange;
+                display:inline-block;
+                width:25%;
+                vertical-align:top;}
+        </style>
+    </head>
+    <body>
+        <div>
+            <div style="color:#4e7eb5; font-size: large;float:left;width:50%;">
+                 <b>{{Ligne1Gauche}}<br/>
+                    {{Ligne2Gauche}}<br/>
+                    {{Ligne3Gauche}}<br/>
+                    {{Ligne4Gauche}}</b>
+            </div>   
+            <div style="color:#4e7eb5; font-size: large;float:left;width:50%;text-align:right">
+                <b>{{Ligne1Droite}}<br/>
+                {{Ligne2Droite}}<br/>
+                {{Ligne3Droite}}<br/>
+                {{Ligne4Droite}}</b>
+            </div>        
+        </div>
+
+        <div class="row" style="margin-top: 125px; color:#4e7eb5; font-size: small;">
+            <div class="col-sm">
+                <b>Tel : {{TelFixe}}<br/>
+                Fax : {{TelFax}}<br/>
+                Port : {{TelPort}}</b>
+            </div>
+        </div>
+
+        {% set taillePadding = "75" %}
+        <div style="font-size: small; padding-top: 25px">
+            <div style="float:left;width:50%;">
+                 <b>Facture n°{{NumFacture}}</b><br/>
+                    {{Ville}}, le {{DateFacture}}
+            </div>   
+            <div style="float:left;width:50%;text-align:right">
+                 <b>{{NomPrenom}}</b><br/>
+                    {{LigneAdresseClient}}<br/>
+                    {{VilleCP}}
+            </div>        
+        </div>
+
+        {% if facture.NumDossier %}
+            <div style="padding-top: {{taillePadding}}px">
+                <div class="col-sm" style="font-size: small;">
+                    <b>Numéro de dossier :</b> {{facture.NumDossier}}
+                </div>
+            </div>
+            {% set taillePadding = "10" %}
+        {% endif %}
+
+        {% if facture.Objet %}
+            <div style="padding-top: {{taillePadding}}px">
+                <div class="col-sm" style="font-size: small;">
+                    <b>Objet :</b> {{facture.Objet}}
+                </div>
+            </div>
+            {% set taillePadding = "10" %}
+        {% endif %}
+
+        {% if facture.Objet %}
+            <div style="padding-top: {{taillePadding}}px">
+                <div class="col-sm" style="font-size: small;">
+                    <b>Objet :</b> {{facture.Objet}}
+                </div>
+            </div>
+            {% set taillePadding = "10" %}
+        {% endif %}
+
+        <div style="padding-top: {{taillePadding}}px">
+            <div class="col-sm" style="font-size: small;">
+                <b>Adresse chantier : <br/>
+                {{LigneAdresseChantier|nl2br }}<br/>
+                {{CPVilleAdresseChantier}}
+                </b>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                <th>Désignation</th>
+                <th>Unité</th>
+                <th>Qté</th>
+                <th>P.U</th>
+                <th>TVA</th>
+                <th>Montant HT</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% set cat = "" %}
+                {% for ligne in lignes %}
+                
+                {% if cat != ligne.Materiaux.Categorie.Libelle %}
+                    {% set cat = ligne.Materiaux.Categorie.Libelle %}
+                    <tr>
+                        <td><b><u>{{cat}}</u></b></td>
+                        <td style="text-align: center;"></td>
+                        <td style="text-align: center;"></td>
+                        <td style="text-align: center;"></td>
+                        <td style="text-align: center;"></td>
+                        <td style="text-align: center;"></td>
+                    </tr>    
+                {% endif %}
+                <tr>
+                    <td>{{ligne.Designation}}</td>
+                    <td style="text-align: center;">{{ligne.Materiaux.UniteMesure.Abreviation}}</td>
+                    <td style="text-align: center;">{{ligne.Qte}}</td>
+                    <td style="text-align: center;">{{ligne.PrixUnitaire}}</td>
+                    <td style="text-align: center;">{{ligne.TVA.Taux}}%</td>
+                    <td style="text-align: center;">{{(ligne.PrixUnitaire * ligne.Qte) - (ligne.Remise * ligne.Qte)}}€</td>
+                </tr>
+                {% endfor %} 
+            </tbody>
+        </table>
+       
+            {% if facture.TVAAutoliquidation %}
+                <div style="padding-top: 10px">
+                    <div class="col-sm" style="font-size: x-small;">
+                        TVA due par le preneur assujetti autoliquidation application article 242 nonies A, I-13° annexe au CGI
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="row" style="padding-top: 25px; padding-bottom: 30px;">
+                <div class="col-sm" style="font-size: small; text-align: right;">
+                    <b>Total Hors Taxes : {{MontantHT}} €<br/>
+                    Total TVA : {{TotalTVA}}€<br/>
+                    Total T.T.C. : {{MontantTTC}}€
+                    </b>
+                </div>
+            </div>
+
+            <div class="row" style="padding-top: 25px; padding-bottom: 30px;">
+                <div class="col-sm" style="font-size: medium;">
+                    <b><u>Conditions de règlement</u><br/></b>
+                    <p style="font-size: small">Echéance de 100% soit {{MontantTTC}}€</p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm" style="font-size: medium;">
+                    <p style="font-size: small">Bon pour accord</p>
+                </div>
+            </div>
+
+            <div style="font-size: x-small;float:left;width:50%;">
+                <p style="font-size: small">Client</p>
+            </div>   
+            <div style="font-size: x-small;float:left;width:50%;text-align:right">
+                <p style="font-size: small">Entreprise</p>
+            </div> 
+        <footer>
+            SARL CARNEIRO - 26 route de bissey cidex 112 - 71390 BUXY - Tél : 03.85.92.06.67 - Fax : 03.85.92.00.65
+            <br />SIRET : 43342011400020 - APE : 454A
+        </footer>
+    </body>
+   
+</html>

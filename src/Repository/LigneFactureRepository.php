@@ -66,10 +66,10 @@ class LigneFactureRepository extends ServiceEntityRepository
     public function findByIdFactureAndOrderByCategorie($value)
     {
         return $this->createQueryBuilder('l')
-            ->join('l.Facture', 'f')
+            ->join('l.facture', 'f')
             ->join('l.Materiaux', 'm')
             ->leftJoin('m.Categorie', 'c')
-            ->andWhere('d.id = :val')
+            ->andWhere('f.id = :val')
             ->setParameter('val', $value)
             ->OrderBy('c.Libelle', 'ASC')
             ->addOrderBy('m.Designation', 'ASC')

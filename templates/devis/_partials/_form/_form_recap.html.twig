@@ -138,8 +138,8 @@
             var MontantTVA = PrixTTC - PrixHT;
         }
 
-        document.getElementById('HT').innerHTML = 'Montant total du devis HT : ' + PrixHT + '€';
-        document.getElementById('TTC').innerHTML = 'Montant total du devis TTC : ' + PrixTTC + '€';
-        document.getElementById('TVA').innerHTML = 'Montant total de la TVA : ' + MontantTVA + '€';
+        document.getElementById('HT').innerHTML = 'Montant total du devis HT : ' + PrixHT.toFixed(2) + '€';
+        document.getElementById('TTC').innerHTML = 'Montant total du devis TTC : ' + PrixTTC.toFixed(2) + '€';
+        document.getElementById('TVA').innerHTML = 'Montant total de la TVA : ' + MontantTVA.toFixed(2) + '€';
     })
 </script>
