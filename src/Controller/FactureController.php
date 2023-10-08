@@ -84,10 +84,8 @@ class FactureController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        $parametrageFacture = $parametrageFactureRepository->findOneBy(['TypeDocument' => 'Facture']);
-
         $facture = new Facture();
-
+        $parametrageFacture = $parametrageFactureRepository->findOneBy(['TypeDocument' => 'Facture']);
         if ($parametrageFacture) {
             $numFacture = $parametrageFacture->getPrefixe();
             if ($parametrageFacture->isAnneeEnCours()){
@@ -506,7 +504,6 @@ class FactureController extends AbstractController
         }
 
         $lignes = $ligneFactureRepository->findByIdFactureAndOrderByCategorie($facture->getId());
-        dump($lignes); 
 
         $pdfOptions = new Options();
         $pdfOptions->set('defaultFont', 'Arial');

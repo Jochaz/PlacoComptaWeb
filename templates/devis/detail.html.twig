@@ -10,7 +10,11 @@
             <h2>Devis : {{devis.numDevis}}</h2>
             <hr>
             <a href="/quote/updatecontent/{{devis.id}}"><button type="button" class="btn btn-primary">Modifier le contenu du devis</button></a>
+            {% if not devis.facture %}
             <a href="/quote/transform/{{devis.id}}"><button type="button" class="btn btn-info">Transformer en facture</button></a>
+            {% else %}
+            <a href="/invoice/detail/{{devis.facture.id}}"><button type="button" class="btn btn-info">Voir la facture</button></a>
+            {% endif %}
             <a href="/quote/generatePDF/{{devis.id}}" target="_blank"><button type="button" class="btn btn-info">Générer le document</button></a>
             <a href="/quote/disable/{{devis.id}}"><button type="button" class="btn btn-secondary">Désactiver le devis</button></a>
 

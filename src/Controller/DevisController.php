@@ -5,7 +5,10 @@ namespace App\Controller;
 use App\Entity\AdresseDocument;
 use App\Entity\AdresseFacturation;
 use App\Entity\Devis;
+use App\Entity\Facture;
 use App\Entity\LigneDevis;
+use App\Entity\LigneFacture;
+use App\Entity\ParametrageFacture;
 use App\Form\AdresseChantierType;
 use App\Form\AdresseFacturationType;
 use App\Form\DevisDetailType;
@@ -17,10 +20,13 @@ use App\Repository\AdresseDocumentRepository;
 use App\Repository\AdresseFacturationRepository;
 use App\Repository\DevisRepository;
 use App\Repository\EnteteDocumentRepository;
+use App\Repository\FactureRepository;
 use App\Repository\LigneDevisRepository;
+use App\Repository\LigneFactureRepository;
 use App\Repository\MateriauxRepository;
 use App\Repository\ModelePieceRepository;
 use App\Repository\ParametrageDevisRepository;
+use App\Repository\ParametrageFactureRepository;
 use App\Repository\TVARepository;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -567,4 +573,113 @@ class DevisController extends AbstractController
         ]);
         return new Response("The PDF file has been succesfully generated !");
     }
+
+    #[Route('/quote/transform/{id}', name: 'app_devis_transform')]
+    public function transformDevis(string $id, Request $request, DevisRepository $devisRepository,
+    FactureRepository $factureRepository,
+    ParametrageFactureRepository $parametrageFactureRepository,
+    LigneFactureRepository $ligneFactureRepository,
+    AdresseDocumentRepository $adresseDocumentRepository,
+    AdresseFacturationRepository $adresseFacturationRepository): Response
+    {
+
+        function insertToStr(string $mainstr,string $insertstr,int $index):string
+        {
+            return substr($mainstr, 0, $index) . $insertstr . substr($mainstr, $index);
+        }
+        
+
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        $devis = $devisRepository->findOneBy(["id" => $id]);
+        if (!$devis) {
+            return $this->redirectToRoute('app_devis');
+        }
+
+        if ($devis->getFacture()){
+            return $this->redirectToRoute('app_facture_detail', ["id" => $devis->getFacture()->getId()]);
+        }
+
+        $facture = new Facture();
+        $facture->setObjet($devis->getObjet());
+        $facture->setNumDossier($devis->getNumDossier());
+        $facture->setTVAAutoliquidation($devis->isTVAAutoliquidation());
+        $facture->setDateFacture(new \DateTime());
+
+        $adresseChantier = new AdresseDocument();
+        $adresseChantier->setLigne1($devis->getAdresseChantier()->getLigne1());
+        $adresseChantier->setLigne2($devis->getAdresseChantier()->getLigne2());
+        $adresseChantier->setLigne3($devis->getAdresseChantier()->getLigne3());
+        $adresseChantier->setCP($devis->getAdresseChantier()->getCP());
+        $adresseChantier->setVille($devis->getAdresseChantier()->getVille());
+        $adresseChantier->setBoitePostale($devis->getAdresseChantier()->getBoitePostale());
+        $adresseDocumentRepository->save($adresseChantier, true);
+
+        $adresseFacturation = new AdresseFacturation();
+        $adresseFacturation->setLigne1($devis->getAdresseFacturation()->getLigne1());
+        $adresseFacturation->setLigne2($devis->getAdresseFacturation()->getLigne2());
+        $adresseFacturation->setLigne3($devis->getAdresseFacturation()->getLigne3());
+        $adresseFacturation->setCP($devis->getAdresseFacturation()->getCP());
+        $adresseFacturation->setVille($devis->getAdresseFacturation()->getVille());
+        $adresseFacturation->setBoitePostale($devis->getAdresseFacturation()->getBoitePostale());
+        $adresseFacturationRepository->save($adresseFacturation, true);
+
+        $facture->setAdresseChantier($adresseChantier);
+        $facture->setAdresseFacturation($adresseFacturation);
+
+        $facture->setParticulier($devis->getParticulier());
+        $facture->setProfessionnel($devis->getProfessionnel());
+
+        foreach ($devis->getLigneDevis() as $ligneDevis){
+            $ligneFacture = new LigneFacture();
+            $ligneFacture->setMateriaux($ligneDevis->getMateriaux());
+            $ligneFacture->setDesignation($ligneDevis->getDesignation());
+            $ligneFacture->setPrixUnitaire($ligneDevis->getPrixUnitaire());
+            $ligneFacture->setQte($ligneDevis->getQte());
+            $ligneFacture->setRemise($ligneDevis->getRemise());
+            $ligneFacture->setTVA($ligneDevis->getTVA());
+            $ligneFacture->setFacture($facture);
+            $facture->addLigneFacture($ligneFacture);
+        }
+
+        $parametrageFacture = $parametrageFactureRepository->findOneBy(['TypeDocument' => 'Facture']);
+        if ($parametrageFacture) {
+            $numFacture = $parametrageFacture->getPrefixe();
+            if ($parametrageFacture->isAnneeEnCours()){
+                $numFacture = $numFacture.date("Y");
+            }
+
+            $numFacture = $numFacture.$parametrageFacture->getNumeroAGenerer();
+
+            if ($parametrageFacture->isCompletionAvecZero() && 
+                strlen($numFacture) < $parametrageFacture->getNombreCaractereTotal()){
+                $nbZeroAMettre = $parametrageFacture->getNombreCaractereTotal() - strlen($numFacture);
+                
+                $lesZeros = '';
+                for ($i = 1; $i <= $nbZeroAMettre; $i++){
+                    $lesZeros = $lesZeros.'0';
+                }                
+                $numFacture = insertToStr($numFacture, $lesZeros, (strlen($numFacture) - strlen($parametrageFacture->getNumeroAGenerer())));
+            }
+
+            $facture->setNumFacture($numFacture);
+            $parametrageFacture->setNumeroAGenerer($parametrageFacture->getNumeroAGenerer() + 1);
+            $parametrageFactureRepository->save($parametrageFacture, true);
+        }
+
+        $facture->setRemise($devis->getRemise());
+        $facture->setPrixHT($devis->getPrixHT());
+        $facture->setPrixTTC($devis->getPrixTTC());
+
+        $facture->setPlusutilise(false);
+
+        $facture->setDevis($devis);
+        $factureRepository->save($facture, true);
+
+        $this->addFlash('success', 'Transformation du devis en facture réussie'); 
+        return $this->redirectToRoute('app_facture_detail', ["id" => $facture->getId()]);
+    }
+
 }
