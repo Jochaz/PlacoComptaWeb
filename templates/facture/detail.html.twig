@@ -9,14 +9,25 @@
         <div class="col-12" id="principal">
             <h2>Facture : {{facture.numFacture}}</h2>
             <hr>
-            <a href="/invoice/updatecontent/{{facture.id}}"><button type="button" class="btn btn-primary">Modifier le contenu de la facture</button></a>
+            <div style="padding-bottom: 10px">
+                <a href="/invoice/updatecontent/{{facture.id}}"><button type="button" class="btn btn-primary">Modifier le contenu de la facture</button></a>
+            </div>
+             <div style="padding-bottom: 10px">
             {% if facture.devis %}
                 <a href="/quote/detail/{{facture.devis.id}}"><button type="button" class="btn btn-info">Voir le devis</button></a>
             {% endif %}
             <a href="/invoice/generatePDF/{{facture.id}}" target="_blank"><button type="button" class="btn btn-info">Générer le document</button></a>
-            <a href="/invoice/disable/{{facture.id}}"><button type="button" class="btn btn-secondary">Désactiver la facture</button></a>
-
+            {% if not facture.isEditer %}
+                <a href="/invoice/generate/{{facture.id}}"><button type="button" class="btn btn-info">Editer définitivement la facture</button></a>
+            {% endif %}
+            </div>
+             <div style="padding-bottom: 10px">
+                <a href="/invoice/disable/{{facture.id}}"><button type="button" class="btn btn-secondary">Désactiver la facture</button></a>
+            </div>
             <hr>
+            {% if facture.isEditer %}
+                <p style="color: red">Cette facture est éditée définitivement et ne peut plus être modifiée</p>
+            {% endif %}
             {% include "_partials/_flash.html.twig"%}
             {% include "facture/_form.html.twig" with {'button_label': 'Modifier la facture'} %}
         </div>

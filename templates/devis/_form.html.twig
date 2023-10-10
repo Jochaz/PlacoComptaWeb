@@ -68,7 +68,9 @@
                 {% if devis.AdresseChantier.BoitePostale %}
                 <br/>{{ devis.AdresseChantier.BoitePostale }}
                 {% endif %}
+                {% if (not devis.facture) or (not devis.facture.isEditer) %}
                 <br/><a href="/adressechantier/{{devis.AdresseChantier.id}}">Modifier l'adresse du chantier</a>
+                {% endif %}
             </div>
             <div class="col">
                  <h6>Adresse de facturation</h6>
@@ -84,8 +86,9 @@
                 {% if devis.AdresseFacturation.BoitePostale %}
                 <br/>{{ devis.AdresseFacturation.BoitePostale }}
                 {% endif %}
-
-                 <br/><a href="/adressefacturation/{{devis.AdresseFacturation.id}}">Modifier l'adresse de facturation</a>
+                {% if (not devis.facture) or (not devis.facture.isEditer) %}
+                <br/><a href="/adressefacturation/{{devis.AdresseFacturation.id}}">Modifier l'adresse de facturation</a>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -145,6 +148,7 @@
             </div>
         </div>
     </div>
-
+    {% if (not devis.facture) or (not devis.facture.isEditer) %}
     <button type="submit" class="btn btn-primary">{{ button_label|default('Créer le client')}}</button>
+    {% endif %}
 {{ form_end(form)}}

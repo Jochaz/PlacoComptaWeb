@@ -9,16 +9,25 @@
         <div class="col-12" id="principal">
             <h2>Devis : {{devis.numDevis}}</h2>
             <hr>
-            <a href="/quote/updatecontent/{{devis.id}}"><button type="button" class="btn btn-primary">Modifier le contenu du devis</button></a>
-            {% if not devis.facture %}
-            <a href="/quote/transform/{{devis.id}}"><button type="button" class="btn btn-info">Transformer en facture</button></a>
-            {% else %}
-            <a href="/invoice/detail/{{devis.facture.id}}"><button type="button" class="btn btn-info">Voir la facture</button></a>
-            {% endif %}
-            <a href="/quote/generatePDF/{{devis.id}}" target="_blank"><button type="button" class="btn btn-info">Générer le document</button></a>
-            <a href="/quote/disable/{{devis.id}}"><button type="button" class="btn btn-secondary">Désactiver le devis</button></a>
+            <div style="padding-bottom: 10px">
+                <a href="/quote/updatecontent/{{devis.id}}"><button type="button" class="btn btn-primary">Modifier le contenu du devis</button></a>
+            </div>
+            <div style="padding-bottom: 10px">
+                {% if not devis.facture %}
+                <a href="/quote/transform/{{devis.id}}"><button type="button" class="btn btn-info">Transformer en facture</button></a>
+                {% else %}
+                <a href="/invoice/detail/{{devis.facture.id}}"><button type="button" class="btn btn-info">Voir la facture</button></a>
+                {% endif %}
+                <a href="/quote/generatePDF/{{devis.id}}" target="_blank"><button type="button" class="btn btn-info">Générer le document</button></a>
+            </div>
+            <div style="padding-bottom: 10px">
+                <a href="/quote/disable/{{devis.id}}"><button type="button" class="btn btn-secondary">Désactiver le devis</button></a>
+            </div>
 
             <hr>
+            {% if (devis.facture) and (devis.facture.isEditer) %}
+                <p style="color: red">La facture lié à ce devis est éditée définitivement et ne peut plus être modifiée</p>
+            {% endif %}
             {% include "_partials/_flash.html.twig"%}
             {% include "devis/_form.html.twig" with {'button_label': 'Modifier le devis'} %}
         </div>

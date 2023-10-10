@@ -344,7 +344,13 @@ class DevisController extends AbstractController
             $devis->setRemise(0);
         }
        
-        $form = $this->createForm(DevisDetailType::class, $devis);
+        $isFactureEditee = "0";
+        if ($devis->getFacture()){
+            if ($devis->getFacture()->isIsEditer()) {
+                $isFactureEditee = "1";
+            };
+        }
+        $form = $this->createForm(DevisDetailType::class, $devis, ["disabled" => $isFactureEditee]);
         $form->handleRequest($request);        
         if($form->isSubmitted() && $form->isvalid()){
             $devis->setPrixHT($devis->getPrixHT());
@@ -578,7 +584,6 @@ class DevisController extends AbstractController
     public function transformDevis(string $id, Request $request, DevisRepository $devisRepository,
     FactureRepository $factureRepository,
     ParametrageFactureRepository $parametrageFactureRepository,
-    LigneFactureRepository $ligneFactureRepository,
     AdresseDocumentRepository $adresseDocumentRepository,
     AdresseFacturationRepository $adresseFacturationRepository): Response
     {

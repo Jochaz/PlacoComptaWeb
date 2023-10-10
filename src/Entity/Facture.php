@@ -64,9 +64,13 @@ class Facture
     #[ORM\OneToOne(inversedBy: 'facture', cascade: ['persist', 'remove'])]
     private ?Devis $Devis = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $isEditer = null;
+
     public function __construct()
     {
         $this->LigneFacture = new ArrayCollection();
+        $this->setIsEditer(false);
     }
 
     public function getId(): ?int
@@ -333,6 +337,18 @@ class Facture
     public function setDevis(?Devis $Devis): self
     {
         $this->Devis = $Devis;
+
+        return $this;
+    }
+
+    public function isIsEditer(): ?bool
+    {
+        return $this->isEditer;
+    }
+
+    public function setIsEditer(?bool $isEditer): self
+    {
+        $this->isEditer = $isEditer;
 
         return $this;
     }

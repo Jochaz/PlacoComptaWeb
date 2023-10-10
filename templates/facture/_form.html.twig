@@ -68,7 +68,9 @@
                 {% if facture.AdresseChantier.BoitePostale %}
                 <br/>{{ facture.AdresseChantier.BoitePostale }}
                 {% endif %}
+                {% if not facture.isEditer %}
                 <br/><a href="/adressechantier/{{facture.AdresseChantier.id}}">Modifier l'adresse du chantier</a>
+                {% endif %}
             </div>
             <div class="col">
                  <h6>Adresse de facturation</h6>
@@ -84,8 +86,9 @@
                 {% if facture.AdresseFacturation.BoitePostale %}
                 <br/>{{ facture.AdresseFacturation.BoitePostale }}
                 {% endif %}
-
-                 <br/><a href="/adressefacturation/{{facture.AdresseFacturation.id}}">Modifier l'adresse de facturation</a>
+                {% if not facture.isEditer %}
+                <br/><a href="/adressefacturation/{{facture.AdresseFacturation.id}}">Modifier l'adresse de facturation</a>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -145,6 +148,7 @@
             </div>
         </div>
     </div>
-
+    {% if not facture.isEditer %}
     <button type="submit" class="btn btn-primary">{{ button_label|default('Créer le client')}}</button>
+    {% endif %}
 {{ form_end(form)}}

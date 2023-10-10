@@ -336,8 +336,8 @@ class FactureController extends AbstractController
         if (!$facture->getRemise()){
             $facture->setRemise(0);
         }
-       
-        $form = $this->createForm(FactureDetailType::class, $facture);
+
+        $form = $this->createForm(FactureDetailType::class, $facture, ['disabled' => $facture->isIsEditer()]);
         $form->handleRequest($request);        
         if($form->isSubmitted() && $form->isvalid()){
             $facture->setPrixHT($facture->getPrixHT());
@@ -564,4 +564,27 @@ class FactureController extends AbstractController
         ]);
         return new Response("The PDF file has been succesfully generated !");
     }
+
+    #[Route('/invoice/generate/{id}', name: 'app_facture_edition_finale')]
+    public function invoiceGenerate(string $id, FactureRepository $factureRepository, EnteteDocumentRepository $enteteDocumentRepository, LigneFactureRepository $ligneFactureRepository): Response
+    {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+        $facture = $factureRepository->findOneBy(["id" => $id]);
+
+        if (!$facture){
+            return $this->redirectToRoute('app_facture');
+        }
+
+        if ($facture->isIsEditer()){
+            return $this->redirectToRoute('app_facture_PDF', ["id" => $facture->getId()]); 
+        }
+
+        $facture->setIsEditer(true);
+        $factureRepository->save($facture, true);
+        return $this->redirectToRoute('app_facture_PDF', ["id" => $facture->getId()]);     
+    }
+
+    
 }

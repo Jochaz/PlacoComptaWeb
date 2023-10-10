@@ -21,6 +21,7 @@ class DevisDetailType extends AbstractType
             ->add('DateDevis', options:[
                 'label' => 'Date de création du devis',
                 'required' => false,
+                'disabled' => false,
                 'widget' => 'single_text',
                 'html5' => false,
                 'attr' => ['class' => 'js-datepicker'],
