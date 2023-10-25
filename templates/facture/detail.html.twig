@@ -17,7 +17,7 @@
                 <a href="/quote/detail/{{facture.devis.id}}"><button type="button" class="btn btn-info">Voir le devis</button></a>
             {% endif %}
             <a href="/invoice/generatePDF/{{facture.id}}" target="_blank"><button type="button" class="btn btn-info">Générer le document</button></a>
-            {% if not facture.isEditer %}
+            {% if facture.peutModifierDocument %}
                 <a href="/invoice/generate/{{facture.id}}"><button type="button" class="btn btn-info">Editer définitivement la facture</button></a>
             {% endif %}
             </div>
@@ -25,8 +25,8 @@
                 <a href="/invoice/disable/{{facture.id}}"><button type="button" class="btn btn-secondary">Désactiver la facture</button></a>
             </div>
             <hr>
-            {% if facture.isEditer %}
-                <p style="color: red">Cette facture est éditée définitivement et ne peut plus être modifiée</p>
+            {% if not facture.peutModifierDocument %}
+                <p style="color: red">Cette facture est éditée définitivement ou a au moins échéance réglée et ne peut plus être modifiée</p>
             {% endif %}
             {% include "_partials/_flash.html.twig"%}
             {% include "facture/_form.html.twig" with {'button_label': 'Modifier la facture'} %}

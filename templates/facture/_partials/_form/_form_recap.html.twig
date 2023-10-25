@@ -115,6 +115,22 @@
             </div>
         </div>
         <br />
+        <div class="row" id="div_echeance1">
+            <p><b>Echéancier :</b></p>
+            <div class="col">
+                <p>Mode de réglement</p>
+                <select class="form-select" id="mode_reglement_ech1" name="mode_reglement_ech1">
+                    {% for modereglement in modereglements %}
+                    <option value={{modereglement.id}}>
+                        {{modereglement.Libelle}}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <br/>
+            <p id="p_echeance_1" name="p_echeance_1">Echéance de 100% soit {{facture.PrixTTC}}€</p>
+        </div>
+        <br />
     </div>
     <button type="submit" class="btn btn-primary">{{ button_label|default('Créer la facture')}}</button>
 {{ form_end(form)}}
@@ -141,5 +157,6 @@
         document.getElementById('HT').innerHTML = 'Montant total de la facture HT : ' + PrixHT.toFixed(2) + '€';
         document.getElementById('TTC').innerHTML = 'Montant total de la facture TTC : ' + PrixTTC.toFixed(2) + '€';
         document.getElementById('TVA').innerHTML = 'Montant total de la TVA : ' + MontantTVA.toFixed(2) + '€';
+        document.getElementById('p_echeance_1').innerHTML = 'Echéance de 100% soit ' + PrixTTC.toFixed(2) + '€';
     })
 </script>

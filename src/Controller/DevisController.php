@@ -344,13 +344,13 @@ class DevisController extends AbstractController
             $devis->setRemise(0);
         }
        
-        $isFactureEditee = "0";
+        $peutPasModifier = "0";
         if ($devis->getFacture()){
-            if ($devis->getFacture()->isIsEditer()) {
-                $isFactureEditee = "1";
+            if (!$devis->getFacture()->peutModifierDocument()) {
+                $peutPasModifier = "1";
             };
         }
-        $form = $this->createForm(DevisDetailType::class, $devis, ["disabled" => $isFactureEditee]);
+        $form = $this->createForm(DevisDetailType::class, $devis, ["disabled" => $peutPasModifier]);
         $form->handleRequest($request);        
         if($form->isSubmitted() && $form->isvalid()){
             $devis->setPrixHT($devis->getPrixHT());

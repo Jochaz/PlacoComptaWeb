@@ -162,7 +162,9 @@
             <div class="row" style="padding-top: 25px; padding-bottom: 30px;">
                 <div class="col-sm" style="font-size: medium;">
                     <b><u>Conditions de règlement</u><br/></b>
-                    <p style="font-size: small">Echéance de 100% soit {{MontantTTC}}€</p>
+                    {% for echeance in facture.echeances %}
+                    <p style="font-size: small">Echéance de 100% soit {{echeance.Montant}}€ par {{echeance.ModeReglement.Libelle}}{% if echeance.IsRegle %} : Réglée{% endif %}</p>
+                    {% endfor %}
                 </div>
             </div>
 

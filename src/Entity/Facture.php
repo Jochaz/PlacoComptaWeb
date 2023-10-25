@@ -7,6 +7,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\PseudoTypes\True_;
+use phpDocumentor\Reflection\Types\Boolean;
 
 #[ORM\Entity(repositoryClass: FactureRepository::class)]
 class Facture
@@ -67,10 +69,14 @@ class Facture
     #[ORM\Column(nullable: true)]
     private ?bool $isEditer = null;
 
+    #[ORM\OneToMany(mappedBy: 'Facture', targetEntity: Echeance::class)]
+    private Collection $echeances;
+
     public function __construct()
     {
         $this->LigneFacture = new ArrayCollection();
         $this->setIsEditer(false);
+        $this->echeances = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -351,5 +357,52 @@ class Facture
         $this->isEditer = $isEditer;
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Echeance>
+     */
+    public function getEcheances(): Collection
+    {
+        return $this->echeances;
+    }
+
+    public function addEcheance(Echeance $echeance): self
+    {
+        if (!$this->echeances->contains($echeance)) {
+            $this->echeances->add($echeance);
+            $echeance->setFacture($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEcheance(Echeance $echeance): self
+    {
+        if ($this->echeances->removeElement($echeance)) {
+            // set the owning side to null (unless already changed)
+            if ($echeance->getFacture() === $this) {
+                $echeance->setFacture(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function peutModifierDocument(): ?bool
+    {
+        $result = true;
+        foreach ($this->echeances as $echeance){
+            if ($echeance->isIsRegle()){
+                $result = false;
+                break;
+            }
+        }
+
+        if ($result){
+            $result = !$this->isEditer;
+        }
+
+        return $result;
     }
 }

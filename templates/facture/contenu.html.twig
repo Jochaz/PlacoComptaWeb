@@ -12,7 +12,7 @@
             <hr>
             <a href="/invoice/detail/{{facture.id}}"><button type="button" class="btn btn-info">Info. générales de la facture</button></a>
             <hr> 
-            {% if facture.isEditer %}
+            {% if not facture.peutModifierDocument %}
                 <p style="color: red">Cette facture est éditée définitivement et ne peut plus être modifiée</p>
             {% endif %}
             <div class="accordion" id="accordionPanelsStayOpenExample">
@@ -36,7 +36,7 @@
                         </div>
                     </div>
                 </div>
-                {% if (not facture.isEditer) %}
+                {% if (facture.peutModifierDocument) %}
                 <div class="accordion-item">
                     <h2 class="accordion-header">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
@@ -119,12 +119,12 @@
                                         {% for ligne in facture.ligneFacture %}
                                         <tr>
                                             <input type="hidden" id="ligne_{{ligne.id}}" name="ligne_{{ligne.id}}" value="{{ligne.id}}" />
-                                            <td><input type="text" class="form-control" id="des_{{ligne.id}}" name="des_{{ligne.id}}" value="{{ ligne.Designation }}" {% if (facture.isEditer) %}disabled{% endif %}></input></td> 
-                                            <td><input type="number" step="0.01" class="form-control" id="pu_{{ligne.id}}" name="pu_{{ligne.id}}" value="{{ ligne.PrixUnitaire }}" {% if (facture.isEditer) %}disabled{% endif %}></input></td> 
-                                            <td><input type="number" class="form-control" id="qte_{{ligne.id}}" name="qte_{{ligne.id}}" value="{{ ligne.Qte}}" {% if (facture.isEditer) %}disabled{% endif %}></input></td> 
-                                            <td><input type="number" step="0.01" class="form-control" id="remise_{{ligne.id}}" name="remise_{{ligne.id}}" value="{{ligne.Remise}}" {% if (facture.isEditer) %}disabled{% endif %}></input></td> 
+                                            <td><input type="text" class="form-control" id="des_{{ligne.id}}" name="des_{{ligne.id}}" value="{{ ligne.Designation }}" {% if (not facture.peutModifierDocument) %}disabled{% endif %}></input></td> 
+                                            <td><input type="number" step="0.01" class="form-control" id="pu_{{ligne.id}}" name="pu_{{ligne.id}}" value="{{ ligne.PrixUnitaire }}" {% if (not facture.peutModifierDocument) %}disabled{% endif %}></input></td> 
+                                            <td><input type="number" class="form-control" id="qte_{{ligne.id}}" name="qte_{{ligne.id}}" value="{{ ligne.Qte}}" {% if (not facture.peutModifierDocument) %}disabled{% endif %}></input></td> 
+                                            <td><input type="number" step="0.01" class="form-control" id="remise_{{ligne.id}}" name="remise_{{ligne.id}}" value="{{ligne.Remise}}" {% if (not facture.peutModifierDocument) %}disabled{% endif %}></input></td> 
                                             <td>
-                                                <select class="form-select" id="tva_{{ligne.id}}" name="tva_{{ligne.id}}" {% if (facture.isEditer) %}disabled{% endif %}>
+                                                <select class="form-select" id="tva_{{ligne.id}}" name="tva_{{ligne.id}}" {% if (not facture.peutModifierDocument) %}disabled{% endif %}>
                                                     {% for tva in tvas %}
                                                     <option value={{tva.id}} {% if tva.id == ligne.tva.id %}selected{% endif %}>
                                                         {{tva.Libelle}} ({{tva.Taux}}%)
@@ -133,7 +133,7 @@
                                                 </select>
                                             </td>
                                             <td>
-                                                {% if (not facture.isEditer) %}
+                                                {% if (facture.peutModifierDocument) %}
                                                 <a href="/invoice/delete/ligne/{{ligne.id}}" class="btn btn-primary">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                                                     <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
@@ -146,7 +146,7 @@
                                         {% endfor %}
                                     </tbody>
                                 </table>
-                                {% if (not facture.isEditer) %}
+                                {% if (facture.peutModifierDocument) %}
                                 <button type="submit" class="btn btn-primary">{{ button_label|default('Sauvegarder')}}</button>
                                 {% endif %}
                             </form> 

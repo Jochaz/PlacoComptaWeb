@@ -25,7 +25,7 @@
             </div>
 
             <hr>
-            {% if (devis.facture) and (devis.facture.isEditer) %}
+            {% if (devis.facture) and (not devis.facture.peutModifierDocument) %}
                 <p style="color: red">La facture lié à ce devis est éditée définitivement et ne peut plus être modifiée</p>
             {% endif %}
             {% include "_partials/_flash.html.twig"%}

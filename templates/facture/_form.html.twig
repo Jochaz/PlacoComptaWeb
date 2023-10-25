@@ -68,7 +68,7 @@
                 {% if facture.AdresseChantier.BoitePostale %}
                 <br/>{{ facture.AdresseChantier.BoitePostale }}
                 {% endif %}
-                {% if not facture.isEditer %}
+                {% if facture.peutModifierDocument %}
                 <br/><a href="/adressechantier/{{facture.AdresseChantier.id}}">Modifier l'adresse du chantier</a>
                 {% endif %}
             </div>
@@ -86,7 +86,7 @@
                 {% if facture.AdresseFacturation.BoitePostale %}
                 <br/>{{ facture.AdresseFacturation.BoitePostale }}
                 {% endif %}
-                {% if not facture.isEditer %}
+                {% if facture.peutModifierDocument %}
                 <br/><a href="/adressefacturation/{{facture.AdresseFacturation.id}}">Modifier l'adresse de facturation</a>
                 {% endif %}
             </div>
@@ -135,6 +135,20 @@
 
     <div class="container">
         <div class="row">
+            {% for echeance in facture.echeances %}
+            <div class="col">
+                Echéance de 100% soit <b>{{echeance.Montant}}€</b> par <b>{{echeance.ModeReglement.libelle}}</b>{% if echeance.IsRegle %} : Echéance réglée{% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% if facture.peutModifierDocument %}
+        <a href="/echeancier/{{facture.id}}">Gérer l'échéancier de la facture</a>
+        {% endif %}
+    </div>
+    <br/>
+
+    <div class="container">
+        <div class="row">
             <div class="col">
                 {{ form_row(form.Objet)}}
             </div>
@@ -148,7 +162,9 @@
             </div>
         </div>
     </div>
-    {% if not facture.isEditer %}
-    <button type="submit" class="btn btn-primary">{{ button_label|default('Créer le client')}}</button>
+
+    <br />
+    {% if facture.peutModifierDocument %}
+    <button type="submit" class="btn btn-primary">{{ button_label|default('Créer la facture')}}</button>
     {% endif %}
 {{ form_end(form)}}

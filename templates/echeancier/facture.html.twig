@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Echéancier : PlacoCompta{% endblock %}
+
+{% block body %}
+    
+    <main class="container">
+        <section class="row">
+        <div class="col-12" id="principal">
+            <h4>Echéancier pour la facture n°{{facture.numFacture}}</h4>
+            <h6>Nombre d'échéance : {{facture.echeances|length}}</h6>
+            <br />
+            <form method="POST" action="/echeancier/{{facture.id}}" id="formEcheance" name="formEcheance">
+                {% set cpt = 0 %}
+                {% for echeance in facture.echeances %}
+                    {% set cpt = cpt + 1 %}
+                             <div class="row">
+                    <div class="col">
+                        {% if cpt == 1 %}  <p><b>Première échéance</b></p>{% endif %}
+                        {% if cpt == 2 %}  <p><b>Deuxième échéance</b></p>{% endif %}
+                        {% if cpt == 3 %}  <p><b>Troisième échéance</b></p>{% endif %}
+                        {% if facture.echeances|length == 2 %}
+                            <p id="p_echeance_{{cpt}}" name="p_echeance_{{cpt}}">Echéance de 50%</p>
+                        {% elseif facture.echeances|length == 3 %}
+                            <p id="p_echeance_{{cpt}}" name="p_echeance_{{cpt}}">Echéance de 33%</p>
+                        {% else %}
+                            <p id="p_echeance_{{cpt}}" name="p_echeance_{{cpt}}">Echéance de 100%</p>
+                        {% endif %}
+                        <label for="montant_echeance_{{cpt}}" class="col-form-label">Montant de l'échéance en €</label>
+                        {# <div class="col"> #}
+                        <input type="number" class="form-control" id="montant_echeance_{{cpt}}" readonly="" value="{{facture.PrixTTC}}">
+                        {# </div> #}
+                        <label for="mode_reglement_ech{{cpt}}" class="col-form-label">Mode de règlement de l'échéance</label>
+                        <select class="form-select" id="mode_reglement_ech{{cpt}}" name="mode_reglement_ech{{cpt}}" {% if not facture.peutModifierDocument %}disabled{% endif %}>
+                            {% for modereglement in modereglements %}
+                            <option value={{modereglement.id}} {% if modereglement.id == echeance.modereglement.id %}selected{% endif %}>
+                                {{modereglement.Libelle}}
+                            </option>
+                            {% endfor %}
+                        </select>     
+                        <br />     
+                        
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="chk_echeance{{cpt}}" id="chk_echeance{{cpt}}" {% if not facture.peutModifierDocument %}disabled{% endif %}{% if echeance.IsRegle %} checked{% endif %}>
+                            <label class="form-check-label" for="chk_echeance{{cpt}}">Echeance réglée</label>
+                        </div>
+                        <br />
+                    </diV>
+                {% endfor %}
+                <br />
+                <button type="submit" class="btn btn-primary">Sauvegarder</button>
+            </form>
+        </div>
+        </section>
+    </main>
+{% endblock %}

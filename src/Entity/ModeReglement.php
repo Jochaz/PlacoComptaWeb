@@ -18,6 +18,14 @@ class ModeReglement
     #[ORM\Column(length: 255)]
     private ?string $Libelle = null;
 
+    #[ORM\OneToMany(mappedBy: 'ModeReglement', targetEntity: Echeance::class)]
+    private Collection $echeances;
+
+    public function __construct()
+    {
+        $this->echeances = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -38,5 +46,35 @@ class ModeReglement
     public function __toString(): string
     {
         return $this->getLibelle();
+    }
+
+    /**
+     * @return Collection<int, Echeance>
+     */
+    public function getEcheances(): Collection
+    {
+        return $this->echeances;
+    }
+
+    public function addEcheance(Echeance $echeance): self
+    {
+        if (!$this->echeances->contains($echeance)) {
+            $this->echeances->add($echeance);
+            $echeance->setModeReglement($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEcheance(Echeance $echeance): self
+    {
+        if ($this->echeances->removeElement($echeance)) {
+            // set the owning side to null (unless already changed)
+            if ($echeance->getModeReglement() === $this) {
+                $echeance->setModeReglement(null);
+            }
+        }
+
+        return $this;
     }
 }

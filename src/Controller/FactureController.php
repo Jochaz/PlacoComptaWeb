@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\AdresseDocument;
 use App\Entity\AdresseFacturation;
+use App\Entity\Echeance;
 use App\Entity\Facture;
 use App\Entity\LigneFacture;
 use App\Form\AdresseChantierType;
@@ -15,11 +16,13 @@ use App\Form\SearchFactureType;
 use App\Model\SearchFactureData;
 use App\Repository\AdresseDocumentRepository;
 use App\Repository\AdresseFacturationRepository;
+use App\Repository\EcheanceRepository;
 use App\Repository\EnteteDocumentRepository;
 use App\Repository\FactureRepository;
 use App\Repository\LigneFactureRepository;
 use App\Repository\MateriauxRepository;
 use App\Repository\ModelePieceRepository;
+use App\Repository\ModeReglementRepository;
 use App\Repository\ParametrageFactureRepository;
 use App\Repository\TVARepository;
 use Dompdf\Dompdf;
@@ -294,7 +297,7 @@ class FactureController extends AbstractController
     }
 
     #[Route('/invoice/add/recap', name: 'app_facture_add_recap')]
-    public function addRecapFacture(Request $request, FactureRepository $factureRepository): Response
+    public function addRecapFacture(Request $request, FactureRepository $factureRepository, ModeReglementRepository $modeReglementRepository, EcheanceRepository $echeanceRepository): Response
     {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
@@ -302,22 +305,31 @@ class FactureController extends AbstractController
         if (!$request->query->get('facture')){
             return $this->redirectToRoute('app_facture_add_info');
         }
+
+        $modeReglement = $modeReglementRepository->findAll();
       
         $facture = unserialize($request->query->get('facture'));
         $facture = $factureRepository->findOneBy(["id" => $facture->getId()]);
         $form= $this->createForm(FactureRemiseType::class, $facture);
         $form->handleRequest($request);        
         if($form->isSubmitted() && $form->isvalid()){
+            $echeance = new Echeance();
+            $echeance->setModeReglement($modeReglementRepository->find($request->request->get('mode_reglement_ech1')));
+            $echeance->setIsRegle(false);
+            $echeance->setMontant($facture->getPrixTTC());
+            $echeance->setFacture($facture);
+            $echeanceRepository->save($echeance, true);
+
             $facture->setPrixHT($facture->getPrixHT());
             $facture->setPrixTTC($facture->getPrixTTC());
             $factureRepository->save($facture, true);
             return $this->redirectToRoute('app_facture');     
         }
         
-        dump($facture);
         return $this->render('facture/add/recap.html.twig', [
             'facture' => $facture,
             'form' => $form->createView(),
+            'modereglements' => $modeReglement
         ]);
     }
 
@@ -337,7 +349,7 @@ class FactureController extends AbstractController
             $facture->setRemise(0);
         }
 
-        $form = $this->createForm(FactureDetailType::class, $facture, ['disabled' => $facture->isIsEditer()]);
+        $form = $this->createForm(FactureDetailType::class, $facture, ['disabled' => !$facture->peutModifierDocument()]);
         $form->handleRequest($request);        
         if($form->isSubmitted() && $form->isvalid()){
             $facture->setPrixHT($facture->getPrixHT());
@@ -577,7 +589,7 @@ class FactureController extends AbstractController
             return $this->redirectToRoute('app_facture');
         }
 
-        if ($facture->isIsEditer()){
+        if (!$facture->peutModifierDocument()){
             return $this->redirectToRoute('app_facture_PDF', ["id" => $facture->getId()]); 
         }
 
