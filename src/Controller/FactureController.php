@@ -514,6 +514,24 @@ class FactureController extends AbstractController
         } else if ($facture->getProfessionnel()){
             $nomprenom = $facture->getProfessionnel()->getNomsociete();
         }
+        $montantHT  = $facture->getPrixHT();
+        $montantTTC = $facture->getPrixTTC();
+        if (($facture->getDevis() && ($facture->getDevis()->getAcompte()))){
+            $montantHT  = $montantHT - $facture->getDevis()->getAcompte()->getMontant();
+            $montantTTC  = $montantTTC - $facture->getDevis()->getAcompte()->getMontant();
+            if ($montantHT < 0){
+                $montantHT = 0;
+            }
+
+            if ($montantTTC < 0) {
+                $montantTTC = 0;
+            }
+        }
+
+        $acompte = '';
+        if (($facture->getDevis() && ($facture->getDevis()->getAcompte()))){
+            $acompte = 'Un acompte a déjà été versé pour un montant de '.$facture->getDevis()->getAcompte()->getMontant().'€ par '.$facture->getDevis()->getAcompte()->getModeReglement()->getLibelle();
+        }
 
         $lignes = $ligneFactureRepository->findByIdFactureAndOrderByCategorie($facture->getId());
 
@@ -552,9 +570,10 @@ class FactureController extends AbstractController
             'LigneAdresseChantier' => $LigneAdresseChantier,
             'CPVilleAdresseChantier' => $facture->getAdresseChantier()->getCP().' '.$facture->getAdresseChantier()->getVille(),
 
-            'MontantHT' => $facture->getPrixHT(),
-            'MontantTTC' => $facture->getPrixTTC(),
-            'TotalTVA' => $facture->getPrixTTC() - $facture->getPrixHT(),
+            'MontantHT' => $montantHT,
+            'MontantTTC' => $montantTTC,
+            'TotalTVA' => $montantTTC - $montantHT,
+            'acompte' => $acompte,
 
             'lignes' => $lignes,
             'facture' => $facture

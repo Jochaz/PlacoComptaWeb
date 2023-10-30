@@ -148,6 +148,18 @@
             </div>
         </div>
     </div>
+    
+    {% if devis.acompte %}
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <b>L'acompte de <u>{{devis.acompte.Montant}}€</u> a été réglé par <u>{{devis.acompte.modereglement.Libelle}}</u></b>
+            </div>
+        </div>
+    </div>
+    <br />
+    {% endif %}
+
     {% if (not devis.facture) or (devis.facture.peutModifierDocument) %}
     <button type="submit" class="btn btn-primary">{{ button_label|default('Créer le client')}}</button>
     {% endif %}

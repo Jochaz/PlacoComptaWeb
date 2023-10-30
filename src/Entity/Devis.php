@@ -64,6 +64,9 @@ class Devis
     #[ORM\OneToOne(mappedBy: 'Devis', cascade: ['persist', 'remove'])]
     private ?Facture $facture = null;
 
+    #[ORM\OneToOne(mappedBy: 'devis', cascade: ['persist', 'remove'])]
+    private ?Acompte $acompte = null;
+
     public function __construct()
     {
         $this->ligneDevis = new ArrayCollection();
@@ -343,6 +346,28 @@ class Devis
         }
 
         $this->facture = $facture;
+
+        return $this;
+    }
+
+    public function getAcompte(): ?Acompte
+    {
+        return $this->acompte;
+    }
+
+    public function setAcompte(?Acompte $acompte): self
+    {
+        // unset the owning side of the relation if necessary
+        if ($acompte === null && $this->acompte !== null) {
+            $this->acompte->setDevis(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($acompte !== null && $acompte->getDevis() !== $this) {
+            $acompte->setDevis($this);
+        }
+
+        $this->acompte = $acompte;
 
         return $this;
     }

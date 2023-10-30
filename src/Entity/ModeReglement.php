@@ -21,9 +21,13 @@ class ModeReglement
     #[ORM\OneToMany(mappedBy: 'ModeReglement', targetEntity: Echeance::class)]
     private Collection $echeances;
 
+    #[ORM\OneToMany(mappedBy: 'ModeReglement', targetEntity: Acompte::class)]
+    private Collection $acomptes;
+
     public function __construct()
     {
         $this->echeances = new ArrayCollection();
+        $this->acomptes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -72,6 +76,36 @@ class ModeReglement
             // set the owning side to null (unless already changed)
             if ($echeance->getModeReglement() === $this) {
                 $echeance->setModeReglement(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Acompte>
+     */
+    public function getAcomptes(): Collection
+    {
+        return $this->acomptes;
+    }
+
+    public function addAcompte(Acompte $acompte): self
+    {
+        if (!$this->acomptes->contains($acompte)) {
+            $this->acomptes->add($acompte);
+            $acompte->setModeReglement($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAcompte(Acompte $acompte): self
+    {
+        if ($this->acomptes->removeElement($acompte)) {
+            // set the owning side to null (unless already changed)
+            if ($acompte->getModeReglement() === $this) {
+                $acompte->setModeReglement(null);
             }
         }
 

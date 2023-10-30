@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Acompte;
 use App\Entity\AdresseDocument;
 use App\Entity\AdresseFacturation;
 use App\Entity\Devis;
@@ -9,6 +10,7 @@ use App\Entity\Facture;
 use App\Entity\LigneDevis;
 use App\Entity\LigneFacture;
 use App\Entity\ParametrageFacture;
+use App\Form\AcompteType;
 use App\Form\AdresseChantierType;
 use App\Form\AdresseFacturationType;
 use App\Form\DevisDetailType;
@@ -25,6 +27,7 @@ use App\Repository\LigneDevisRepository;
 use App\Repository\LigneFactureRepository;
 use App\Repository\MateriauxRepository;
 use App\Repository\ModelePieceRepository;
+use App\Repository\ModeReglementRepository;
 use App\Repository\ParametrageDevisRepository;
 use App\Repository\ParametrageFactureRepository;
 use App\Repository\TVARepository;
@@ -463,6 +466,45 @@ class DevisController extends AbstractController
 
         $this->addFlash('success', 'Devis désactivé avec succès');    
         return $this->redirectToRoute('app_devis');   
+    }
+
+    #[Route('/quote/acompte/{id}', name: 'app_devis_acompte')]
+    public function quoteAcompte(string $id, DevisRepository $devisRepository, Request $request, ModeReglementRepository $modeReglementRepository): Response
+    {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+        $devis = $devisRepository->findOneBy(["id" => $id]);
+
+        if (!$devis){
+            return $this->redirectToRoute('app_devis');
+        }
+
+        if ($devis->getAcompte()){
+            $acompte = $devis->getAcompte();
+        } else {
+            $acompte = new Acompte();
+        }
+
+        $acompte->setMontant(round((($devis->getPrixTTC() / 10)), 2));
+        dump($acompte->getMontant());
+        $modesReglement = $modeReglementRepository->findAll(); 
+        
+        $form = $this->createForm(AcompteType::class, $acompte);
+        $form->handleRequest($request);        
+        if($form->isSubmitted() && $form->isvalid()){
+            $devis->setAcompte($acompte);
+            $devisRepository->save($devis, true);
+            $this->addFlash('success', 'Acompte géré avec succès'); 
+            return $this->redirectToRoute('app_devis_detail', ["id" => $devis->getId()]);     
+        }
+
+   
+        return $this->render('devis/acompte.html.twig', [
+            'devis' => $devis, 
+            'form' => $form,
+            'modesReglement' => $modesReglement,
+        ]); 
     }
 
     #[Route('/quote/delete/ligne/{id}', name: 'app_devis_disable')]

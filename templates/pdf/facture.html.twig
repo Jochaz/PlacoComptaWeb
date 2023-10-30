@@ -152,6 +152,9 @@
 
             <div class="row" style="padding-top: 25px; padding-bottom: 30px;">
                 <div class="col-sm" style="font-size: small; text-align: right;">
+                    {% if acompte %}
+                        <p style="font-size: x-small;">{{acompte}}</p>
+                    {% endif %}
                     <b>Total Hors Taxes : {{MontantHT}} €<br/>
                     Total TVA : {{TotalTVA}}€<br/>
                     Total T.T.C. : {{MontantTTC}}€

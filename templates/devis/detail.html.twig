@@ -19,6 +19,13 @@
                 <a href="/invoice/detail/{{devis.facture.id}}"><button type="button" class="btn btn-info">Voir la facture</button></a>
                 {% endif %}
                 <a href="/quote/generatePDF/{{devis.id}}" target="_blank"><button type="button" class="btn btn-info">Générer le document</button></a>
+                {% set acomptePossible = true %}
+                {% if (devis.facture) and (not devis.facture.peutModifierDocument) %}
+                    {% set acomptePossible = false %}
+                {% endif %}
+                {% if acomptePossible %}
+                <a href="/quote/acompte/{{devis.id}}"><button type="button" class="btn btn-info">{% if not devis.acompte %}Créer{% else %}Modifier{% endif %} l'acompte</button></a>
+                {% endif %}
             </div>
             <div style="padding-bottom: 10px">
                 <a href="/quote/disable/{{devis.id}}"><button type="button" class="btn btn-secondary">Désactiver le devis</button></a>

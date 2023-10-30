@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Devis : PlacoCompta{% endblock %}
+
+{% block body %}
+
+<main class="container">
+    <section class="row">
+        <div class="col-12" id="principal">
+            <h2>Création de l'acompte pour le devis : {{devis.numDevis}}</h2>
+            <hr>
+            {% include "_partials/_flash.html.twig"%}
+            {% include "devis/_form_acompte.html.twig" with {'button_label': 'Créer l\'acompte du devis'} %}
+        </div>
+    </section>
+</main> 
+
+{% endblock %}
