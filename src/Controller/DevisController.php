@@ -6,6 +6,7 @@ use App\Entity\Acompte;
 use App\Entity\AdresseDocument;
 use App\Entity\AdresseFacturation;
 use App\Entity\Devis;
+use App\Entity\Echeance;
 use App\Entity\Facture;
 use App\Entity\LigneDevis;
 use App\Entity\LigneFacture;
@@ -21,6 +22,7 @@ use App\Model\SearchDevisData;
 use App\Repository\AdresseDocumentRepository;
 use App\Repository\AdresseFacturationRepository;
 use App\Repository\DevisRepository;
+use App\Repository\EcheanceRepository;
 use App\Repository\EnteteDocumentRepository;
 use App\Repository\FactureRepository;
 use App\Repository\LigneDevisRepository;
@@ -627,7 +629,9 @@ class DevisController extends AbstractController
     FactureRepository $factureRepository,
     ParametrageFactureRepository $parametrageFactureRepository,
     AdresseDocumentRepository $adresseDocumentRepository,
-    AdresseFacturationRepository $adresseFacturationRepository): Response
+    AdresseFacturationRepository $adresseFacturationRepository,
+    EcheanceRepository $echeanceRepository,
+    ModeReglementRepository $modeReglementRepository): Response
     {
 
         function insertToStr(string $mainstr,string $insertstr,int $index):string
@@ -654,6 +658,15 @@ class DevisController extends AbstractController
         $facture->setNumDossier($devis->getNumDossier());
         $facture->setTVAAutoliquidation($devis->isTVAAutoliquidation());
         $facture->setDateFacture(new \DateTime());
+
+        $modeReglementDefaut = $modeReglementRepository->findOneBy(["Libelle" => "Virement"]);
+
+        $echeance = new Echeance();
+        $echeance->setModeReglement($modeReglementDefaut);
+        $echeance->setIsRegle(false);
+        $echeance->setMontant($facture->getPrixTTC());
+        $echeance->setFacture($facture);
+        $echeanceRepository->save($echeance, true);
 
         $adresseChantier = new AdresseDocument();
         $adresseChantier->setLigne1($devis->getAdresseChantier()->getLigne1());
