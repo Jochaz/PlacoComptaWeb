@@ -15,14 +15,13 @@
     {% set nomclientfacture = facture.NomSociete %}
 {% endif %}
 
-
-
 <br />
 <div class="container">
-    <div class="row">
+    <div class="row">     
         <div class="col">
             <div class="card">
                 <div class="card-body">
+                    {% if devis %}
                     <h4 class="card-title">Dernier devis créé</h4>
                     <h6 class="card-subtitle mb-2 text-muted">Créé le {{devis.DateDevis|date("d/m/Y")}} pour {{nomclientdevis}}</h6>
                     <p class="card-text">
@@ -31,13 +30,16 @@
                         Montant total TTC de {{devis.PrixTTC}}€ <br/>
                     </p>
                     <a href="/quote/detail/{{devis.id}}" class="card-link">Voir le devis</a>
+                    {% else %}
+                    <h4 class="card-title">Aucun devis créé</h4>
+                    {% endif %}
                 </div>
             </div>
-        </div>
-
+        </div>      
         <div class="col">
             <div class="card">
                 <div class="card-body">
+                    {% if facture %}
                     <h4 class="card-title">Dernière facture créée</h4>
                     <h6 class="card-subtitle mb-2 text-muted">Créée le {{facture.DateFacture|date("d/m/Y")}} pour {{nomclientfacture}}</h6>
                     <p class="card-text">
@@ -46,6 +48,9 @@
                         Montant total TTC de {{facture.PrixTTC}}€ <br/>
                     </p>
                     <a href="/invoice/detail/{{facture.id}}" class="card-link">Voir la facture</a>
+                    {% else %}
+                        <h4 class="card-title">Aucune facture créée</h4>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -57,6 +62,9 @@
         <div class="col">
             <div class="card">
                 <div class="card-body">
+                    {% if not particulier %}
+                        <h4 class="card-title">Aucun client particulier créé</h4>
+                    {% else %}
                     <h4 class="card-title">Dernier client particulier créé</h4>
                     <h6 class="card-subtitle mb-2 text-muted">Créé le {{particulier.createdAt|date("d/m/Y")}}</h6>
                     <p class="card-text">{{particulier.Nom}} {{particulier.prenom}}, adresse email principale : {{particulier.adresseemail1}} <br />
@@ -68,12 +76,16 @@
                     <br />  
                     </p>
                     <a href="/customer/detail/{{particulier.id}}" class="card-link">Voir la fiche client</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
         <div class="col">
             <div class="card">
                 <div class="card-body">
+                    {% if not particulier %}
+                    <h4 class="card-title">Aucun client professionnel créé</h4>
+                    {% else %}
                     <h4 class="card-title">Dernier client professionnel créé</h4>
                     <h6 class="card-subtitle mb-2 text-muted">Créé le {{professionnel.createdAt|date("d/m/Y")}}</h6>
                     <p class="card-text">{{professionnel.NomSociete}}, adresse email principale : {{professionnel.adresseemail1}} <br />
@@ -84,6 +96,7 @@
                     Numéro de téléphone fixe principal : {{professionnel.numerotelephonefixe1}}    
                     </p>
                     <a href="/professional/detail/{{professionnel.id}}" class="card-link">Voir la fiche client</a>
+                    {% endif %}
                 </div>           
             </div>
         </div>
