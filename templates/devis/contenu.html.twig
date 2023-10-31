@@ -122,7 +122,7 @@
                                             <td><input type="text" class="form-control" id="des_{{ligne.id}}" name="des_{{ligne.id}}" value="{{ ligne.Designation }}" {% if devis.facture and not devis.facture.peutModifierDocument %} disabled {% endif %}></input></td> 
                                             <td><input type="number" step="0.01" class="form-control" id="pu_{{ligne.id}}" name="pu_{{ligne.id}}" value="{{ ligne.PrixUnitaire }}" {% if devis.facture and not devis.facture.peutModifierDocument %} disabled {% endif %}></input></td> 
                                             <td><input type="number" class="form-control" id="qte_{{ligne.id}}" name="qte_{{ligne.id}}" value="{{ ligne.Qte}}" {% if devis.facture and not devis.facture.peutModifierDocument %} disabled {% endif %}></input></td> 
-                                            <td><input type="number" step="0.01" class="form-control" id="remise_{{ligne.id}}" name="remise_{{ligne.id}}" value="{{ligne.Remise}}" {% if devis.facture and not devis.facture.peutModifierDocumentr %} disabled {% endif %}></input></td> 
+                                            <td><input type="number" step="0.01" class="form-control" id="remise_{{ligne.id}}" name="remise_{{ligne.id}}" value="{{ligne.Remise}}" {% if devis.facture and not devis.facture.peutModifierDocument %} disabled {% endif %}></input></td> 
                                             <td>
                                                 <select class="form-select" id="tva_{{ligne.id}}" name="tva_{{ligne.id}}" {% if devis.facture and not devis.facture.peutModifierDocument %} disabled {% endif %}>
                                                     {% for tva in tvas %}
