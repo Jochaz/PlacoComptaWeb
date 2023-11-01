@@ -9,6 +9,8 @@
         <div class="col-12" id="principal">
             <h2>Modification : {{particulier.nom}} {{particulier.prenom}}</h2>
             <hr>
+            <a href="/quote?client={{particulier.nom}}+{{particulier.prenom}}"><button type="button" class="btn btn-primary">Voir les devis du client</button></a>
+            <a href="/invoice?client={{particulier.nom}}+{{particulier.prenom}}"><button type="button" class="btn btn-primary">Voir les factures du client</button></a>
             <a href="/customer/disable/{{particulier.id}}"><button type="button" class="btn btn-secondary">Désactiver le client</button></a>
             <hr>
             {% include "_partials/_flash.html.twig"%}

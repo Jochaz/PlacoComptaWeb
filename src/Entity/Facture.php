@@ -69,7 +69,7 @@ class Facture
     #[ORM\Column(nullable: true)]
     private ?bool $isEditer = null;
 
-    #[ORM\OneToMany(mappedBy: 'Facture', targetEntity: Echeance::class)]
+    #[ORM\OneToMany(mappedBy: 'Facture', cascade:["persist"], targetEntity: Echeance::class)]
     private Collection $echeances;
 
     public function __construct()

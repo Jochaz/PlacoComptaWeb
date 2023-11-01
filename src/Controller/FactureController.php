@@ -358,6 +358,7 @@ class FactureController extends AbstractController
             return $this->redirectToRoute('app_facture_detail', ["id" => $facture->getId()]);     
         }
 
+        dump($facture);
         return $this->render('facture/detail.html.twig', [
             'facture' => $facture,
             'form' => $form->createView(),

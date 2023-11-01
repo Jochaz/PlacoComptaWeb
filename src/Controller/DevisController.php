@@ -659,15 +659,6 @@ class DevisController extends AbstractController
         $facture->setTVAAutoliquidation($devis->isTVAAutoliquidation());
         $facture->setDateFacture(new \DateTime());
 
-        $modeReglementDefaut = $modeReglementRepository->findOneBy(["Libelle" => "Virement"]);
-
-        $echeance = new Echeance();
-        $echeance->setModeReglement($modeReglementDefaut);
-        $echeance->setIsRegle(false);
-        $echeance->setMontant($facture->getPrixTTC());
-        $echeance->setFacture($facture);
-        $echeanceRepository->save($echeance, true);
-
         $adresseChantier = new AdresseDocument();
         $adresseChantier->setLigne1($devis->getAdresseChantier()->getLigne1());
         $adresseChantier->setLigne2($devis->getAdresseChantier()->getLigne2());
@@ -736,6 +727,15 @@ class DevisController extends AbstractController
         $facture->setPlusutilise(false);
 
         $facture->setDevis($devis);
+
+        $modeReglementDefaut = $modeReglementRepository->findOneBy(["Libelle" => "Virement bancaire"]);
+        $echeance = new Echeance();
+        $echeance->setModeReglement($modeReglementDefaut);
+        $echeance->setIsRegle(false);
+        $echeance->setMontant($facture->getPrixTTC());
+
+        $facture->addEcheance($echeance);
+
         $factureRepository->save($facture, true);
 
         $this->addFlash('success', 'Transformation du devis en facture réussie'); 
