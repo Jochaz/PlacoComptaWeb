@@ -7,12 +7,12 @@
 {% if devis.particulier %}
     {% set nomclientdevis = devis.particulier.nom ~ ' ' ~ devis.particulier.prenom %}
 {% else %}
-    {% set nomclientdevis = devis.NomSociete %}
+    {% set nomclientdevis = devis.professionnel.NomSociete %}
 {% endif %}
 {% if facture.particulier %}
     {% set nomclientfacture = facture.particulier.nom ~ ' ' ~ facture.particulier.prenom %}
 {% else %}
-    {% set nomclientfacture = facture.NomSociete %}
+    {% set nomclientfacture = facture.professionnel.NomSociete %}
 {% endif %}
 
 <br />

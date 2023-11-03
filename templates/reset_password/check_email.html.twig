@@ -1,0 +1,25 @@
+{% extends 'baselogin.html.twig' %}
+
+{% block title %}Password Reset Email Sent{% endblock %}
+
+{% block body %}
+    <div class="container" style="padding-top:15px">
+        {% for flash_error in app.flashes('reset_password_error') %}
+            <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+        {% endfor %}    <div class="container">
+        <div class="ms-xl-4" style="padding-bottom: 15px">
+            <img src={{ asset('build/images/IconePng.ico') }}
+            alt="Login image" height="65px" width="65px" style="object-fit: cover; object-position: left;">
+          <i class="fas fa-crow fa-2x me-3 pt-5 mt-xl-4" style="color: #709085;"></i>
+          <span class="h2 fw-bold mb-0">PlacoCompta</span>
+        </div>
+
+        <h3>Reinitialisation de votre mot de passe</h3>
+        <p>
+            Si votre adresse email existe dans notre base de données, un email va vous être envoyé contenant un lien que vous devez utiliser pour le mot de passe.
+            Le lien expirera dans {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.
+        </p>
+        <p>Si vous ne recevez pas l'email, vérifiez dans vos spams ou veuillez <a href="{{ path('app_forgot_password_request') }}">réessayer</a>.</p>
+
+    </div>
+{% endblock %}

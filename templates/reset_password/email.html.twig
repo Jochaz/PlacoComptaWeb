@@ -1,0 +1,8 @@
+<h1>Reinitialisation de votre mot de passe</h1>
+
+<p>Pour Réinitialiser votre mot de passe, merci de suivre le lien ci-desssous : </p>
+
+<a href="{{ url('app_reset_password', {token: resetToken.token}) }}">{{ url('app_reset_password', {token: resetToken.token}) }}</a>
+<p>Ce lien expire {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.</p>
+
+<p>PlacoCompta</p>

@@ -1,0 +1,26 @@
+{% extends 'baselogin.html.twig' %}
+
+{% block title %}Reinitialisation de votre mot de passe{% endblock %}
+
+{% block body %}
+
+  <div class="container" style="padding-top:15px">
+        {% for flash_error in app.flashes('reset_password_error') %}
+            <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+        {% endfor %}    <div class="container">
+        <div class="ms-xl-4" style="padding-bottom: 15px">
+            <img src={{ asset('build/images/IconePng.ico') }}
+            alt="Login image" height="65px" width="65px" style="object-fit: cover; object-position: left;">
+          <i class="fas fa-crow fa-2x me-3 pt-5 mt-xl-4" style="color: #709085;"></i>
+          <span class="h2 fw-bold mb-0">PlacoCompta</span>
+        </div>
+
+    <div class="container">
+        <h3>Reinitialisation de votre mot de passe</h3>
+
+        {{ form_start(resetForm) }}
+            {{ form_row(resetForm.plainPassword) }}
+            <button class="btn btn-primary">Réinitialiser le mot de passe</button>
+        {{ form_end(resetForm) }}
+    </div>
+{% endblock %}
