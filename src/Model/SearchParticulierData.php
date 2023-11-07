@@ -2,7 +2,7 @@
 
 namespace App\Model;
 
-class SearchDataParticulier{
+class SearchParticulierData{
     public $page = 1;
     public string $nom = '';
     public string $prenom = '';

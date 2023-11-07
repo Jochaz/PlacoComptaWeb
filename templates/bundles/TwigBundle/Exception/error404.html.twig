@@ -1,0 +1,23 @@
+{# templates/bundles/TwigBundle/Exception/error404.html.twig #}
+{% extends 'baselogin.html.twig' %}
+
+{% block title %}PlacoCompta : Page introuvable{% endblock %}
+
+{% block body %}
+    <div class="container" style="padding-top:15px">
+        <div class="ms-xl-4" style="padding-bottom: 15px">
+            <img src={{ asset('build/images/IconePng.ico') }}
+            alt="Login image" height="65px" width="65px" style="object-fit: cover; object-position: left;">
+          <i class="fas fa-crow fa-2x me-3 pt-5 mt-xl-4" style="color: #709085;"></i>
+          <span class="h2 fw-bold mb-0">PlacoCompta</span>
+        </div>
+
+        <h3>Page introuvable (Erreur 404)</h3>
+        <p>
+            La page demandée est introuvable. Merci de vérifier le lien URL saisie dans le navigateur ou de
+            <a href="{{ path('app_home') }}">retourner sur la page d'accueil</a>.
+        </p>
+    </div>
+{% endblock %}
+
+

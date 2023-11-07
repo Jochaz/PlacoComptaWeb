@@ -3,7 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Particulier;
-use App\Model\SearchDataParticulier;
+use App\Model\SearchParticulierData;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -50,7 +50,7 @@ class ParticulierRepository extends ServiceEntityRepository
         ;
     }
 
-    public function findBySearch(SearchDataParticulier $searchData){
+    public function findBySearch(SearchParticulierData $searchData){
         $data =  $this->createQueryBuilder('p')
             ->andWhere('p.actif = :val')
             ->setParameter('val', true)

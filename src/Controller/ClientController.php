@@ -8,7 +8,7 @@ use App\Form\CustomerType;
 use App\Form\ProfessionalType;
 use App\Form\SearchParticulierType;
 use App\Form\SearchProfessionnelType;
-use App\Model\SearchDataParticulier;
+use App\Model\SearchParticulierData;
 use App\Model\SearchDataProfessionnel;
 use App\Repository\ParticulierRepository;
 use App\Repository\ProfessionnelRepository;
@@ -30,7 +30,7 @@ class ClientController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        $searchData = new SearchDataParticulier();
+        $searchData = new SearchParticulierData();
         $form = $this->createForm(SearchParticulierType::class, $searchData);
         $form->handleRequest($request);
 
