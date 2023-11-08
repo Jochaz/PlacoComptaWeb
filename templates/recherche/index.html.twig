@@ -1,0 +1,113 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Resultat de votre recherche : PlacoCompta{% endblock %}
+
+{% block body %}
+<main class="container">
+    <section class="row" style="padding-top:20px">    
+        <h3>Résultat de votre recherche</h3>
+        {% if totalFound == 0 %}
+            <h5>Aucun résultat n'a été trouvé pour votre recherche</h5>
+        {% else %}
+            {% if Materiaux|length > 0 %}
+                <h5>Les matériaux</h5>
+                {% for materiau in Materiaux %}
+                    <div class="card border-primary mb-3"  onclick="window.location='/material/detail/{{materiau.id}}'">
+                        <div class="card-body">
+                            <h6 class="card-title">{{materiau.Designation}}</h6>
+                            <p class="card-text">
+                                Prix d'achat : {{materiau.PrixAchat}}€<br/>
+                                Prix unitaire : {{materiau.PrixUnitaire}}€<br />
+                                Catégorie : {{materiau.Categorie.Libelle}}<br />
+                                TVA : {{materiau.TVA.Libelle}}
+                            </p>
+                        </div>
+                    </div>
+
+                {% endfor %}
+            {% endif %}
+
+            {% if Particuliers|length > 0 %}
+                <h5>Les clients particuliers</h5>
+                {% for particulier in Particuliers %}
+                    <div class="card border-primary mb-3"  onclick="window.location='/customer/detail/{{particulier.id}}'">
+                        <div class="card-body">
+                            <h6 class="card-title">{{particulier.Nom}} {{particulier.Prenom}}</h6>
+                            <p class="card-text">
+                                Adresse email : {{particulier.adresseemail1}}<br/>
+                                Numéro téléphone portable : {{particulier.numerotelephoneportable1}}<br />
+                                Numéro téléphone fixe : {{particulier.numerotelephonefixe1}}
+                            </p>
+                        </div>
+                    </div>
+
+                {% endfor %}
+            {% endif %}
+
+            {% if Professionnels|length > 0 %}
+                <h5>Les clients professionnels</h5>
+                {% for pro in Professionnels %}
+                    <div class="card border-primary mb-3"  onclick="window.location='/professional/detail/{{pro.id}}'">
+                        <div class="card-body">
+                            <h6 class="card-title">{{pro.NomSociete}}</h6>
+                            <p class="card-text">
+                                Adresse email : {{pro.adresseemail1}}<br/>
+                                Numéro téléphone portable : {{pro.numerotelephoneportable1}}<br />
+                                Numéro téléphone fixe : {{pro.numerotelephonefixe1}}
+                            </p>
+                        </div>
+                    </div>
+
+                {% endfor %}
+            {% endif %}
+
+            {% if Devis|length > 0 %}
+                <h5>Les devis</h5>
+                {% for d in Devis %}
+                    <div class="card border-primary mb-3"  onclick="window.location='/quote/detail/{{d.id}}'">
+                        <div class="card-body">
+                            {% if d.particulier %}
+                            <h6 class="card-title">Devis pour {{d.particulier.nom}} {{d.particulier.prenom}}</h6>
+                            {% else %}
+                            {% endif %}
+                            <p class="card-text">
+                                Date de création du devis : {{d.DateDevis|date('d/m/Y')}}<br/>
+                                Date de signature du devis : {{d.DateSignature|date('d/m/Y')}}<br/>
+                                Prix TTC du devis : {{d.PrixTTC}}€<br /> 
+                                Objet : {{d.Objet}}
+                                {% if d.facture %}
+                                    <br /><br />Une facture est liée à ce devis
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+
+                {% endfor %}
+            {% endif %}
+
+            {% if Facture|length > 0 %}
+                <h5>Les factures</h5>
+                {% for f in Facture %}
+                    <div class="card border-primary mb-3"  onclick="window.location='/invoice/detail/{{f.id}}'">
+                        <div class="card-body">
+                            {% if f.particulier %}
+                            <h6 class="card-title">Facture pour {{f.particulier.nom}} {{f.particulier.prenom}}</h6>
+                            {% else %}
+                            <h6 class="card-title">Facture pour {{f.professionnel.NomSociete}}</h6>
+                            {% endif %}
+                            <p class="card-text">
+                                Date de création de la facture : {{f.DateFacture|date('d/m/Y')}}<br/>
+                                Date de réglement de la facture : {{f.DatePaiementFacture|date('d/m/Y')}}<br/>
+                                Prix TTC de la facture : {{f.PrixTTC}}€<br /> 
+                                Objet : {{f.Objet}}
+                            </p>
+                        </div>
+                    </div>
+
+                {% endfor %}
+            {% endif %}
+        {% endif %}
+    </section>
+</main>     
+
+{% endblock %}

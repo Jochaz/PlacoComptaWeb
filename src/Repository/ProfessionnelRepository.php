@@ -94,6 +94,22 @@ class ProfessionnelRepository extends ServiceEntityRepository
         return $data;
     }
 
+    public function findByRecherche(string $searchData){
+        $data =  $this->createQueryBuilder('p')
+            ->andWhere('p.actif = :val')
+            ->setParameter('val', true)
+            ->addOrderby('p.nomsociete', 'asc');
+
+        if (!empty($searchData)){
+            $data = $data 
+                ->andwhere ('p.nomsociete LIKE :nomsociete')
+                ->setParameter('nomsociete', "%{$searchData}%");
+        }
+
+        $data = $data->getQuery()->getResult();
+        return $data;
+    }
+
 //    /**
 //     * @return Professionnel[] Returns an array of Professionnel objects
 //     */

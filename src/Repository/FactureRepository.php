@@ -78,7 +78,7 @@ class FactureRepository extends ServiceEntityRepository
 
         if (!empty($search->NumFacture)){
             $data = $data 
-                ->andwhere ('d.NumFacture LIKE :NumFacture')
+                ->andwhere ('f.NumFacture LIKE :NumFacture')
                 ->setParameter('NumFacture', "%{$search->NumFacture}%");
         }
 
@@ -100,6 +100,26 @@ class FactureRepository extends ServiceEntityRepository
             $data = $data 
                 ->andwhere ('f.PrixTTC <= :prixmaxTTC')
                 ->setParameter('prixmaxTTC', $search->prixmaxTTC);
+        }
+
+       return $data = $data->getQuery()->getResult();;
+    }
+ /**
+    * @return Facture[] Returns an array of Facture objects
+    */
+    public function findByRecherche(SearchFactureData $search): array
+    {
+        $data = $this->createQueryBuilder('f')
+           ->andWhere('f.Plusutilise = :val')
+           ->leftJoin('f.Particulier', 'part')
+           ->leftJoin('f.Professionnel', 'pro')
+           ->setParameter('val', false)
+           ->orderBy('f.id', 'ASC');
+
+        if (!empty($search->NumFacture)){
+            $data = $data 
+                ->andwhere ('f.NumFacture LIKE :NumFacture')
+                ->setParameter('NumFacture', "%{$search->NumFacture}%");
         }
 
        return $data = $data->getQuery()->getResult();;

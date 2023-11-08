@@ -39,7 +39,25 @@ class DevisRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+    /**
+    * @return Devis[] Returns an array of Devis objects
+    */
+    public function findByRecherche(SearchDevisData $search): array
+    {
+        $data = $this->createQueryBuilder('d')
+           ->andWhere('d.Plusutilise = :val')
+           ->leftJoin('d.Particulier', 'part')
+           ->leftJoin('d.Professionnel', 'pro')
+           ->setParameter('val', false)
+           ->orderBy('d.id', 'ASC');
 
+        if (!empty($search->numDevis)){
+            $data = $data 
+                ->andwhere ('d.NumDevis LIKE :NumDevis')
+                ->setParameter('NumDevis', "%{$search->numDevis}%");
+        }
+        return $data = $data->getQuery()->getResult();;
+    }
    /**
     * @return Devis[] Returns an array of Devis objects
     */
