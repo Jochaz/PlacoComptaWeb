@@ -4,15 +4,19 @@
 
 {% block body %}
 
-{% if devis.particulier %}
-    {% set nomclientdevis = devis.particulier.nom ~ ' ' ~ devis.particulier.prenom %}
-{% else %}
-    {% set nomclientdevis = devis.professionnel.NomSociete %}
+{% if devis %}
+    {% if devis.particulier %}
+        {% set nomclientdevis = devis.particulier.nom ~ ' ' ~ devis.particulier.prenom %}
+    {% else %}
+        {% set nomclientdevis = devis.professionnel.NomSociete %}
+    {% endif %}
 {% endif %}
-{% if facture.particulier %}
-    {% set nomclientfacture = facture.particulier.nom ~ ' ' ~ facture.particulier.prenom %}
-{% else %}
-    {% set nomclientfacture = facture.professionnel.NomSociete %}
+{% if facture %}
+    {% if facture.particulier %}
+        {% set nomclientfacture = facture.particulier.nom ~ ' ' ~ facture.particulier.prenom %}
+    {% else %}
+        {% set nomclientfacture = facture.professionnel.NomSociete %}
+    {% endif %}
 {% endif %}
 
 <br />
