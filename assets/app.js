@@ -8,7 +8,8 @@
 // any CSS you import will output into a single css file (app.css in this case)
 
 import './styles/app.scss';
-import 'bootswatch/dist/Minty/bootstrap.min.css'; // Added this :boom:
+//import 'bootswatch/dist/Minty/bootstrap.min.css'; // Added this :boom:
+import './styles/bootstrap.min.css'; // Added this :boom:
 
 import { Tooltip, Toast, Popover } from 'bootstrap';
 
