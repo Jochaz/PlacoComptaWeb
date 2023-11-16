@@ -83,16 +83,13 @@ class MateriauxRepository extends ServiceEntityRepository
                 ->andwhere ('c.id IN ( :categories )')
                 ->setParameter('categories', "{$cat}");
         }
-        dump($searchData->prixmaxachat);
         if (!empty($searchData->prixminachat) && $searchData->prixminachat != 0) {
-            dump(1);
             $data = $data 
             ->andwhere ('m.PrixAchat >= :prixminachat')
             ->setParameter('prixminachat', "{$searchData->prixminachat}");
         }
 
         if (!empty($searchData->prixmaxachat) && $searchData->prixmaxachat != 0) {
-            dump(2);
             $data = $data 
             ->andwhere ('m.PrixAchat <= :prixmaxachat')
             ->setParameter('prixmaxachat', "{$searchData->prixmaxachat}");
@@ -100,14 +97,12 @@ class MateriauxRepository extends ServiceEntityRepository
 
         
         if (!empty($searchData->prixminachat) && $searchData->prixminunitaire != 0) {
-            dump(3);
             $data = $data 
             ->andwhere ('m.PrixUnitaire >= :prixminunitaire')
             ->setParameter('prixminunitaire', "{$searchData->prixminunitaire}");
         }
 
         if (!empty($searchData->prixmaxachat && $searchData->prixmaxunitaire != 0)) {
-            dump(4);
             $data = $data 
             ->andwhere ('m.PrixUnitaire <= :prixmaxunitaire')
             ->setParameter('prixmaxunitaire', "{$searchData->prixmaxunitaire}");

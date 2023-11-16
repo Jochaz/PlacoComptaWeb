@@ -77,7 +77,6 @@ class DevisRepository extends ServiceEntityRepository
         }
 
         if (!empty($search->client)){
-            dump($search->client);
             $data = $data 
                 ->andwhere ("(concat(part.nom, ' ', part.prenom) LIKE :client) or 
                              (pro.nomsociete LIKE :client)")

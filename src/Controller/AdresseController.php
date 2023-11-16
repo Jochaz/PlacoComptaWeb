@@ -40,7 +40,6 @@ class AdresseController extends AbstractController
             return $this->redirectToRoute('app_adresse_chantier', ["id" => $adresseChantier->getId()]);     
         }
 
-        dump($adresseChantier);
         return $this->render('adresse/index.html.twig', [
             'adresseChantier' => $adresseChantier,
             'form' => $form,

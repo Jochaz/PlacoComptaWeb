@@ -326,7 +326,7 @@ class DevisController extends AbstractController
             $devisRepository->save($devis, true);
             return $this->redirectToRoute('app_devis');     
         }
-        dump($devis);
+
         return $this->render('devis/add/recap.html.twig', [
             'devis' => $devis,
             'form' => $form->createView(),
@@ -489,7 +489,6 @@ class DevisController extends AbstractController
         }
 
         $acompte->setMontant(round((($devis->getPrixTTC() / 10)), 2));
-        dump($acompte->getMontant());
         $modesReglement = $modeReglementRepository->findAll(); 
         
         $form = $this->createForm(AcompteType::class, $acompte);
@@ -561,7 +560,6 @@ class DevisController extends AbstractController
         }
 
         $lignes = $ligneDevisRepository->findByIdDevisAndOrderByCategorie($devis->getId());
-        dump($lignes); 
 
         $pdfOptions = new Options();
         $pdfOptions->set('defaultFont', 'Arial');

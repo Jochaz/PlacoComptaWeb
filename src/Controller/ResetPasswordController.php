@@ -67,7 +67,6 @@ class ResetPasswordController extends AbstractController
 
         $tokentest = $request->query->get('tokenTest');
 
-        dump($tokentest);
         return $this->render('reset_password/check_email.html.twig', [
             'resetToken' => $resetToken,
         ]);
