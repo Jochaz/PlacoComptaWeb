@@ -92,11 +92,12 @@ class MateriauxController extends AbstractController
         $form->handleRequest($request);
         
         if($form->isSubmitted() && $form->isvalid()){
+            $materiaux->isPlusUtilise(false);
             $em->persist($materiaux);
             $em->flush();
 
             $this->addFlash('success', 'Matériaux ajouté avec succès');
-           // return $this->redirectToRoute('app_materiaux');
+            return $this->redirectToRoute('app_materiaux_id', ["id" => $materiaux->getId()]);
         }
 
         return $this->render('materiaux/ajout.html.twig', [

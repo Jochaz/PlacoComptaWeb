@@ -131,7 +131,7 @@ class ClientController extends AbstractController
         $em->flush();
 
         $this->addFlash('success', 'Client modifié avec succès');
-        return $this->redirectToRoute('app_customer');
+        return $this->redirectToRoute('app_customer_detail', ["id" => $particulier->getId()]);
     
         return $this->render('client/customer/detail.html.twig', [
             'particulier' => $particulier
@@ -225,7 +225,7 @@ class ClientController extends AbstractController
             $em->flush();
 
             $this->addFlash('success', 'Client ajouté avec succès');
-           // return $this->redirectToRoute('app_materiaux');
+            return $this->redirectToRoute('app_professional_detail', ["id" => $professionnel->getId()]);
         }
 
         return $this->render('client/professional/ajout.html.twig', [
