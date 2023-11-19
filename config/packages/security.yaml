@@ -22,7 +22,8 @@ security:
                 target: app_login
                 # where to redirect after logout
                 # target: app_any_route
-
+            login_throttling:
+                max_attempts: 2
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
 
