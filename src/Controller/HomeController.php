@@ -32,7 +32,6 @@ class HomeController extends AbstractController
              ->text('test email')
              ->html('test');
 
-        dump($email);
         $mailer->send($email);
 
 
