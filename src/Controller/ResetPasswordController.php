@@ -160,7 +160,7 @@ class ResetPasswordController extends AbstractController
             return $this->redirectToRoute('app_check_email');
         }
         $email = (new TemplatedEmail())
-            ->from(new Address('comptaplaco@gmail.com', 'PlacoCompta'))
+            ->from(new Address('admin@placocompta.fr', 'PlacoCompta'))
             ->to($user->getEmail())
             ->subject('La réinitialisation de votre mot de passe')
             ->htmlTemplate('reset_password/email.html.twig')
