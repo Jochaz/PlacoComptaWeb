@@ -24,18 +24,6 @@ class HomeController extends AbstractController
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
         }
-
-        $email = (new Email())
-             ->from('admin@placocompta.fr')
-             ->to('jordan.chariot@gmail.com')
-             ->subject('test')
-             ->text('test email')
-             ->html('test');
-
-        dump($email);
-        $mailer->send($email);
-
-
         $devis = $devisRepository->findOneBy([], ["DateDevis" => "DESC"]);
         $facture = $factureRepository->findOneBy([], ["DateFacture" => "DESC"]);
         $particulier = $particulierRepository->findOneBy([], ["createdAt" => "DESC"]);
