@@ -8,8 +8,6 @@ use App\Repository\ParticulierRepository;
 use App\Repository\ProfessionnelRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
 
 class HomeController extends AbstractController
@@ -18,22 +16,11 @@ class HomeController extends AbstractController
     public function index(ParticulierRepository $particulierRepository, 
                           ProfessionnelRepository $professionnelRepository, 
                           DevisRepository $devisRepository, 
-                          FactureRepository $factureRepository,
-                          MailerInterface $mailer): Response
+                          FactureRepository $factureRepository): Response
     {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
         }
-
-        $email = (new Email())
-             ->from('admin@placocompta.fr')
-             ->to('jordan.chariot@gmail.com')
-             ->subject('test')
-             ->text('test email')
-             ->html('test');
-
-        $mailer->send($email);
-
 
         $devis = $devisRepository->findOneBy([], ["DateDevis" => "DESC"]);
         $facture = $factureRepository->findOneBy([], ["DateFacture" => "DESC"]);
