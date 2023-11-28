@@ -10,6 +10,7 @@ use App\Entity\Echeance;
 use App\Entity\Facture;
 use App\Entity\LigneDevis;
 use App\Entity\LigneFacture;
+use App\Entity\ModelePiece;
 use App\Entity\ParametrageFacture;
 use App\Form\AcompteType;
 use App\Form\AdresseChantierType;
@@ -40,16 +41,22 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use Symfony\Component\Validator\Constraints\IsNull;
 
 use function PHPUnit\Framework\isNull;
 
 class DevisController extends AbstractController
 {
     #[Route('/quote', name: 'app_devis')]
-    public function index(DevisRepository $devisRepository, Request $request, PaginatorInterface $paginator): Response
+    public function index(DevisRepository $devisRepository, Request $request, PaginatorInterface $paginator, ModelePieceRepository $modelePieceRepository): Response
     {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
+        }
+        $peutCreerDevis = true;
+        $modeles = $modelePieceRepository->findAll();
+        if (count($modeles) == 0){
+            $peutCreerDevis = false;
         }
 
         $searchData = new SearchDevisData();
@@ -65,7 +72,8 @@ class DevisController extends AbstractController
     
             return $this->render('devis/index.html.twig', [
                 'pagination' => $pagination,
-                'form' => $form
+                'form' => $form,
+                'peutCreerDevis' => $peutCreerDevis
             ]);
         }
 
@@ -77,22 +85,27 @@ class DevisController extends AbstractController
 
         return $this->render('devis/index.html.twig', [
             'pagination' => $pagination,
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'peutCreerDevis' => $peutCreerDevis
         ]);
     }
 
     #[Route('/quote/add/info', name: 'app_devis_add_info')]
     public function addInfo(Request $request, DevisRepository $devisRepository, 
-                            ParametrageDevisRepository $parametrageDevisRepository): Response
+                            ParametrageDevisRepository $parametrageDevisRepository, ModelePieceRepository $modelePieceRepository): Response
     {
         function insertToString(string $mainstr,string $insertstr,int $index):string
         {
             return substr($mainstr, 0, $index) . $insertstr . substr($mainstr, $index);
         }
-        
 
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
+        }
+
+        $modeles = $modelePieceRepository->findAll();
+        if (count($modeles) == 0){
+            return $this->redirectToRoute('app_devis');
         }
 
         $parametrageDevis = $parametrageDevisRepository->findOneBy(['TypeDocument' => 'Devis']);
@@ -540,7 +553,7 @@ class DevisController extends AbstractController
 
         $entete = $enteteDocumentRepository->findAll()[0];
         $LigneAdresseChantier = $devis->getAdresseChantier()->getLigne1();
-        if (!isNull($devis->getAdresseChantier()->getLigne2())){
+        if (!IsNull($devis->getAdresseChantier()->getLigne2())){
             $LigneAdresseChantier = $LigneAdresseChantier.'\n'.$devis->getAdresseChantier()->getLigne2();
         }
         if (!isNull($devis->getAdresseChantier()->getLigne3())){
