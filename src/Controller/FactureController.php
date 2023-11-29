@@ -38,10 +38,16 @@ use function PHPUnit\Framework\isNull;
 class FactureController extends AbstractController
 {
     #[Route('/invoice', name: 'app_facture')]
-    public function index(FactureRepository $factureRepository, Request $request, PaginatorInterface $paginator): Response
+    public function index(FactureRepository $factureRepository, Request $request, PaginatorInterface $paginator, ModelePieceRepository $modelePieceRepository): Response
     {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
+        }
+
+        $peutCreerDevis = true;
+        $modeles = $modelePieceRepository->findAll();
+        if (count($modeles) == 0){
+            $peutCreerDevis = false;
         }
 
         $searchData = new SearchFactureData();
@@ -57,7 +63,8 @@ class FactureController extends AbstractController
     
             return $this->render('facture/index.html.twig', [
                 'pagination' => $pagination,
-                'form' => $form
+                'form' => $form,
+                'peutCreerDevis' => $peutCreerDevis
             ]);
         }
 
@@ -69,22 +76,28 @@ class FactureController extends AbstractController
 
         return $this->render('facture/index.html.twig', [
             'pagination' => $pagination,
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'peutCreerDevis' => $peutCreerDevis
         ]);
     }
 
     #[Route('/invoice/add/info', name: 'app_facture_add_info')]
     public function addInfo(Request $request, FactureRepository $factureRepository, 
-                            ParametrageFactureRepository $parametrageFactureRepository): Response
+                            ParametrageFactureRepository $parametrageFactureRepository,
+                            ModelePieceRepository $modelePieceRepository): Response
     {
         function insertToString(string $mainstr,string $insertstr,int $index):string
         {
             return substr($mainstr, 0, $index) . $insertstr . substr($mainstr, $index);
         }
-        
 
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
+        }
+
+        $modeles = $modelePieceRepository->findAll();
+        if (count($modeles) == 0){
+            return $this->redirectToRoute('app_facture');
         }
 
         $facture = new Facture();

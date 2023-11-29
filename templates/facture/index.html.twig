@@ -9,7 +9,11 @@
         <div class="col-12" id="principal">
             <div class="sidenav">    
                 <h5>Panneau de gestion</h5>
-                <a href="/invoice/add/info"><button type="button" class="btn btn-info">Nouvelle facture</button></a>
+                {% if peutCreerDevis %}
+                    <a href="/invoice/add/info"><button type="button" class="btn btn-info">Nouvelle facture</button></a>
+                {% else %}
+                    <p>Impossible de créer une facture car il n'y a pas de matériaux de créé ou de modèle de pièce.</p> 
+                {% endif %}
                 <br />
                 <hr>
                 {% include "facture/_partials/_search_facture_data.html.twig" %} 

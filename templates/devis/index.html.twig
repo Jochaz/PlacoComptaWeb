@@ -9,7 +9,11 @@
         <div class="col-12" id="principal">
             <div class="sidenav">    
                 <h5>Panneau de gestion</h5>
-                <a href="/quote/add/info"><button type="button" class="btn btn-info">Nouveau devis</button></a>
+                {% if peutCreerDevis %}
+                    <a href="/quote/add/info"><button type="button" class="btn btn-info">Nouveau devis</button></a>
+                {% else %}
+                    <p>Impossible de créer un devis car il n'y a pas de matériaux de créé ou de modèle de pièce.</p> 
+                {% endif %}
                 <br />
                 <hr>
                 {% include "devis/_partials/_search_devis_data.html.twig" %} 
