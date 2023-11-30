@@ -10,8 +10,6 @@ use App\Entity\Echeance;
 use App\Entity\Facture;
 use App\Entity\LigneDevis;
 use App\Entity\LigneFacture;
-use App\Entity\ModelePiece;
-use App\Entity\ParametrageFacture;
 use App\Form\AcompteType;
 use App\Form\AdresseChantierType;
 use App\Form\AdresseFacturationType;
@@ -27,7 +25,6 @@ use App\Repository\EcheanceRepository;
 use App\Repository\EnteteDocumentRepository;
 use App\Repository\FactureRepository;
 use App\Repository\LigneDevisRepository;
-use App\Repository\LigneFactureRepository;
 use App\Repository\MateriauxRepository;
 use App\Repository\ModelePieceRepository;
 use App\Repository\ModeReglementRepository;
@@ -43,7 +40,6 @@ use Dompdf\Dompdf;
 use Dompdf\Options;
 use Symfony\Component\Validator\Constraints\IsNull;
 
-use function PHPUnit\Framework\isNull;
 
 class DevisController extends AbstractController
 {
@@ -553,17 +549,17 @@ class DevisController extends AbstractController
 
         $entete = $enteteDocumentRepository->findAll()[0];
         $LigneAdresseChantier = $devis->getAdresseChantier()->getLigne1();
-        if (!IsNull($devis->getAdresseChantier()->getLigne2())){
+        if (!is_null($devis->getAdresseChantier()->getLigne2())){
             $LigneAdresseChantier = $LigneAdresseChantier.'\n'.$devis->getAdresseChantier()->getLigne2();
         }
-        if (!isNull($devis->getAdresseChantier()->getLigne3())){
+        if (!is_null($devis->getAdresseChantier()->getLigne3())){
             $LigneAdresseChantier = $LigneAdresseChantier.'\n'.$devis->getAdresseChantier()->getLigne3();
         }
         $LigneAdresseFacturation = $devis->getAdresseFacturation()->getLigne1();
-        if (!isNull($devis->getAdresseFacturation()->getLigne2())){
+        if (!is_null($devis->getAdresseFacturation()->getLigne2())){
             $LigneAdresseFacturation = $LigneAdresseFacturation.'\n'.$devis->getAdresseFacturation()->getLigne2();
         }
-        if (!isNull($devis->getAdresseFacturation()->getLigne3())){
+        if (!is_null($devis->getAdresseFacturation()->getLigne3())){
             $LigneAdresseFacturation = $LigneAdresseFacturation.'\n'.$devis->getAdresseFacturation()->getLigne3();
         }
         if($devis->getParticulier()){
