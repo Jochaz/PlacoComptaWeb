@@ -104,7 +104,7 @@ class DevisController extends AbstractController
         }
 
         $modeles = $modelePieceRepository->findAll();
-        if (count($modeles) == 0){
+        if ($modeles && count($modeles) == 0){
             return $this->redirectToRoute('app_devis');
         }
 
