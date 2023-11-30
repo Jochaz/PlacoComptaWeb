@@ -38,22 +38,24 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Dompdf\Dompdf;
 use Dompdf\Options;
-use Symfony\Component\Validator\Constraints\IsNull;
-
 
 class DevisController extends AbstractController
 {
     #[Route('/quote', name: 'app_devis')]
-    public function index(DevisRepository $devisRepository, Request $request, PaginatorInterface $paginator, ModelePieceRepository $modelePieceRepository): Response
+    public function index(DevisRepository $devisRepository, 
+                          ModelePieceRepository $modelePieceRepository,
+                          Request $request, 
+                          PaginatorInterface $paginator 
+                          ): Response
     {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
         }
         $peutCreerDevis = true;
-        $modeles = $modelePieceRepository->findAll();
-        if (count($modeles) == 0){
-            $peutCreerDevis = false;
-        }
+        // $modeles = $modelePieceRepository->findAll();
+        // if (count($modeles) == 0){
+        //     $peutCreerDevis = false;
+        // }
 
         $searchData = new SearchDevisData();
         $form = $this->createForm(SearchDevisType::class, $searchData);
