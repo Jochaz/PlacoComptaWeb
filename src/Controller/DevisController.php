@@ -43,7 +43,7 @@ class DevisController extends AbstractController
 {
     #[Route('/quote', name: 'app_devis')]
     public function index(DevisRepository $devisRepository, 
-                          ModelePieceRepository $modelePieceRepository,
+                          
                           Request $request, 
                           PaginatorInterface $paginator 
                           ): Response
