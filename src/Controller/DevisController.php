@@ -43,7 +43,7 @@ class DevisController extends AbstractController
 {
     #[Route('/quote', name: 'app_devis')]
     public function index(DevisRepository $devisRepository, 
-                          
+                          ModelePieceRepository $modelePieceRepository,
                           Request $request, 
                           PaginatorInterface $paginator 
                           ): Response
@@ -52,10 +52,10 @@ class DevisController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
         $peutCreerDevis = true;
-        // $modeles = $modelePieceRepository->findAll();
-        // if (count($modeles) == 0){
-        //     $peutCreerDevis = false;
-        // }
+        $modeles = $modelePieceRepository->findAll();
+        if (count($modeles) == 0){
+            $peutCreerDevis = false;
+        }
 
         $searchData = new SearchDevisData();
         $form = $this->createForm(SearchDevisType::class, $searchData);
