@@ -81,7 +81,7 @@ class MateriauxController extends AbstractController
     }
 
     #[Route('/material/add', name: 'app_materiaux_add')]
-    public function add(Request $request, EntityManagerInterface $em): Response
+    public function add(Request $request, MateriauxRepository $materiauxRepository): Response
     {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
@@ -92,9 +92,8 @@ class MateriauxController extends AbstractController
         $form->handleRequest($request);
         
         if($form->isSubmitted() && $form->isvalid()){
-            $materiaux->isPlusUtilise(false);
-            $em->persist($materiaux);
-            $em->flush();
+            $materiaux->setPlusUtilise(false);
+            $materiauxRepository->save($materiaux, true);
 
             $this->addFlash('success', 'Matériaux ajouté avec succès');
             return $this->redirectToRoute('app_materiaux_id', ["id" => $materiaux->getId()]);
@@ -106,7 +105,7 @@ class MateriauxController extends AbstractController
     }
 
     #[Route('/material/delete/{id}', name: 'app_materiaux_delete')]
-    public function delete(string $id, MateriauxRepository $materiauxRepository, Request $request, EntityManagerInterface $em): Response
+    public function delete(string $id, MateriauxRepository $materiauxRepository): Response
     {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
@@ -116,8 +115,7 @@ class MateriauxController extends AbstractController
            return $this->redirectToRoute('app_materiaux');
         }
         $materiaux->setPlusUtilise(true);
-        $em->persist($materiaux);
-        $em->flush();
+        $materiauxRepository->save($materiaux, true);
 
         $this->addFlash('success', 'Matériaux modifié avec succès');
         return $this->redirectToRoute('app_materiaux');

@@ -5,12 +5,9 @@ namespace App\Repository;
 use App\Entity\Materiaux;
 use App\Entity\Devis;
 use App\Entity\Facture;
-use App\Entity\LigneDevis;
 use App\Model\SearchData;
-use App\Model\SearchDate;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Knp\Component\Pager\Pagination\PaginationInterface;
 
 /**
  * @extends ServiceEntityRepository<Materiaux>

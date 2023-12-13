@@ -15,6 +15,7 @@ use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Positive;
+use Symfony\Component\Validator\Constraints\PositiveOrZero;
 use Symfony\Component\Validator\Constraints\Regex;
 
 class MateriauxType extends AbstractType
@@ -28,7 +29,7 @@ class MateriauxType extends AbstractType
             ->add('PrixAchat', MoneyType::class, options:[
                 'label' => 'Prix d\'achat fournisseur',
                 'constraints' => [
-                    new Positive(
+                    new PositiveOrZero(
                         message: 'Le prix d\'achat ne peut pas être négatif'
                     )
                 ],
@@ -38,7 +39,7 @@ class MateriauxType extends AbstractType
             ->add('PrixUnitaire', MoneyType::class, options:[
                 'label' => 'Prix unitaire (HT)',
                 'constraints' => [
-                    new Positive(
+                    new PositiveOrZero(
                         message: 'Le prix unitaire ne peut pas être négatif'
                     )
                 ],
