@@ -160,15 +160,15 @@
 <script>
     function chargeMateriaux() {
         var shownVal = document.getElementById('id_ligne_add_select').value;
-        var value2send = document.querySelector("#ligne_add_select option[value='" + shownVal + "']").dataset.value;
+        var value2send = document.querySelector("#ligne_add_select option[value='" + CSS.escape(shownVal) + "']").dataset.value;
 
         if (value2send) {
             document.getElementById('materiaux_id').value = value2send;
             document.getElementById('des_add').value = shownVal;
-            document.getElementById('pu_add').value = document.querySelector("#ligne_add_select option[value='" + shownVal + "']").dataset.pu;
+            document.getElementById('pu_add').value = document.querySelector("#ligne_add_select option[value='" + CSS.escape(shownVal) + "']").dataset.pu;
             document.getElementById('qte_add').value = 1;
             document.getElementById('remise_add').value = "";
-            document.getElementById('tva_add').value = document.querySelector("#ligne_add_select option[value='" + shownVal + "']").dataset.tva;
+            document.getElementById('tva_add').value = document.querySelector("#ligne_add_select option[value='" + CSS.escape(shownVal) + "']").dataset.tva;
         }
     }
 </script>
