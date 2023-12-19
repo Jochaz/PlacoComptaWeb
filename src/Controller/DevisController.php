@@ -399,22 +399,28 @@ class DevisController extends AbstractController
         if ($request->getMethod() == Request::METHOD_POST){
             //Si on est sur un ajout de materiaux    
             if ($request->request->get('materiaux_id'))
-            {
+            {   
                 $materiaux = $materiauxRepository->find($request->request->get('materiaux_id'));
-                $tva = $tVARepository->find($request->request->get('tva_add'));
-
-                $ligneDevis = new LigneDevis();
-                $ligneDevis->setMateriaux($materiaux);
-                $ligneDevis->setTVA($tva);
-                $ligneDevis->setDesignation($request->request->get('des_add'));
-                $ligneDevis->setQte($request->request->get('qte_add'));
-                if ($request->request->get('remise_add')) {
-                    $ligneDevis->setRemise($request->request->get('remise_add'));
+                if ($materiaux){                                               
+                    $tva = $tVARepository->find($request->request->get('tva_add'));
+                
+                    $ligneDevis = new LigneDevis();
+                    $ligneDevis->setMateriaux($materiaux);
+                    $ligneDevis->setTVA($tva);
+                    $ligneDevis->setDesignation($request->request->get('des_add'));
+                    $ligneDevis->setQte($request->request->get('qte_add'));
+                    if ($request->request->get('remise_add')) {
+                        $ligneDevis->setRemise($request->request->get('remise_add'));
+                    } else {
+                        $ligneDevis->setRemise(0);
+                    }                   
+                    $ligneDevis->setPrixUnitaire($request->request->get('pu_add'));
+                    $devis->addLigneDevi($ligneDevis);
+                    
+                    $this->addFlash('success', 'Devis modifié avec succès');
                 } else {
-                    $ligneDevis->setRemise(0);
-                }                   
-                $ligneDevis->setPrixUnitaire($request->request->get('pu_add'));
-                $devis->addLigneDevi($ligneDevis);
+                    $this->addFlash('danger', 'Devis non modifié : Matériaux inconnu');    
+                }
             } else {
                 foreach ($request->request as $key => $value){
                     if (str_contains($key, 'ligne_')){
@@ -446,12 +452,13 @@ class DevisController extends AbstractController
                         }
                     }
                 }
+                
+                $this->addFlash('success', 'Devis modifié avec succès');
             }
             $devis->setPrixHT($devis->getPrixHT());
             $devis->setPrixTTC($devis->getPrixTTC());
             $devisRepository->save($devis, true);
-
-            $this->addFlash('success', 'Devis modifié avec succès');    
+    
             return $this->redirectToRoute('app_devis_contenu', ["id" => $devis->getId()]);     
         }
 
