@@ -10,15 +10,6 @@
             <h2>Assistant de création de devis</h2>
             <h6>Contenu du devis</h6>
             <hr>
-
-
-            {# {{ form_start(form)}}
-                {{ form_row(form.Libelle)}}
-                {% for modele in modelesPiece %}
-                    <p>{{modele.Libelle}}</p>
-                {% endfor %}
-                <button type="submit" class="btn btn-primary">{{ button_label|default('Créer les lignes du devis')}}</button>
-            {{ form_end(form, {'render_rest': false})}} #}
             <form method="POST" action="/quote/add/ligne" name="formLigne" id="formLigne">
                 <input type="hidden" id="devis" name="devis" value="{{devis.id}}"/>
                 {% if devis.AdresseChantier %}

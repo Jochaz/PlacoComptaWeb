@@ -18,6 +18,9 @@
     <div class="form-check form-switch">
         <label class="form-check-label" for="copieAdresseChantierSurFacturation">L'adresse de facturation est la même que celle du chantier ?</label>
         <input class="form-check-input" type="checkbox" name="copieAdresseChantierSurFacturation" id="copieAdresseChantierSurFacturation" checked="true">  
+        <br/>
+        <label class="form-check-label" for="gestionMateriauxModele" id="labelGestionMateriauxModele">Gérer l'ajout des lignes via les modèles ?</label>
+        <input class="form-check-input" type="checkbox" name="gestionMateriauxModele" id="gestionMateriauxModele" checked="true"> 
     </div>
     {% endif %}
     <br />
@@ -29,8 +32,14 @@
     $("#copieAdresseChantierSurFacturation").click(function() {
         if($(this).is(':checked')) {
             $("#btnSuivant").text("Continuer vers les articles");
+            $("#gestionMateriauxModele").prop('checked', true);
+            $("#gestionMateriauxModele").show();
+            $("#labelGestionMateriauxModele").show();
         } else {
             $("#btnSuivant").text("Continuer vers l'adresse de facturation");
+            $("#gestionMateriauxModele").prop('checked', false);
+            $("#gestionMateriauxModele").hide();
+            $("#labelGestionMateriauxModele").hide();
         }
     });
 </script>

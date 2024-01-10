@@ -8,6 +8,7 @@ use App\Entity\Echeance;
 use App\Entity\Facture;
 use App\Entity\LigneFacture;
 use App\Form\AdresseChantierType;
+use App\Form\AdresseFacturationType;
 use App\Form\FactureDetailType;
 use App\Form\FactureInfoGeneraleType;
 use App\Form\FactureRemiseType;
@@ -179,7 +180,12 @@ class FactureController extends AbstractController
 
                 $facture->setAdresseFacturation($adresseFacturation);  
                 $adresseFacturationRepository->save($adresseFacturation, true);  
-                return $this->redirectToRoute('app_facture_add_ligne', ["facture" => serialize($facture)]);     
+                 
+                if (!$request->request->get('gestionMateriauxModele')) { 
+                    return $this->redirectToRoute('app_facture_add_ligne_sans_modele', ["id" => $facture->getId(), "facture" => serialize($facture)]);     
+                } else {
+                    return $this->redirectToRoute('app_facture_add_ligne', ["facture" => serialize($facture)]);   
+                } 
             } else {
                 return $this->redirectToRoute('app_facture_add_adresse_facturation_facture', ["facture" => serialize($facture)]);
             }
@@ -193,7 +199,7 @@ class FactureController extends AbstractController
     }
 
     #[Route('/invoice/add/adressefacturation', name: 'app_facture_add_adresse_facturation_facture')]
-    public function addAdresseFacturation(Request $request, AdresseFacturationRepository $adresseFacturationRepository, FactureRepository $factureRepository): Response
+    public function addAdresseFacturation(Request $request, AdresseFacturationRepository $adresseFacturationRepository): Response
     {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
@@ -209,13 +215,128 @@ class FactureController extends AbstractController
         if($form->isSubmitted() && $form->isvalid()){
             $facture->setAdresseFacturation($adresse);
             $adresseFacturationRepository->save($adresse, true); 
-            $factureRepository->save($facture, true); 
-            return $this->redirectToRoute('app_facture_add_ligne', ["facture" => serialize($facture)]);     
+
+            if (!$request->request->get('gestionMateriauxModele')) {
+                return $this->redirectToRoute('app_facture_add_ligne_sans_modele', ["id" => $facture->getId(), "facture" => serialize($facture)]); 
+            } else {
+                return $this->redirectToRoute('app_facture_add_ligne', ["facture" => serialize($facture)]);    
+            }
+               
         }
 
-        return $this->render('facture/add/adresse_chantier.html.twig', [
+        return $this->render('facture/add/adresse_facturation.html.twig', [
             'form' => $form->createView(),
             'modif' => false,
+        ]);
+    }
+
+    #[Route('/invoice/add/lignesansmodele/{id}', name: 'app_facture_add_ligne_sans_modele')]
+    public function addFactureLigneSansModele(
+        string $id,
+        Request $request, 
+        TVARepository $tVARepository, 
+        FactureRepository $factureRepository,
+        MateriauxRepository $materiauxRepository,
+        AdresseDocumentRepository $adresseChantierRepository,
+        AdresseFacturationRepository $adresseFacturationRepository,
+        LigneFactureRepository $ligneFactureRepository): Response
+    {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        $facture = unserialize($request->query->get('facture'));
+        if (!$facture){
+            $facture = $factureRepository->find($id);
+
+            if (!$facture){
+                return $this->redirectToRoute('app_facture_add_info');
+            }
+        }    
+
+        $idfacture = $facture->getId();
+
+        $tvas = $tVARepository->findAll();
+        $ligneAdd = $materiauxRepository->findByMateriauxManquantFacture($facture->getId());
+     
+        if ($request->getMethod() == Request::METHOD_POST){
+            $facture = $factureRepository->findWithJoin($idfacture);
+            if ($facture){
+                if ($request->request->get('adresseC')){
+
+                    $AdresseChantier = $adresseChantierRepository->find($request->request->get('adresseC'));
+                    $facture->setAdresseChantier($AdresseChantier);
+                }
+
+                if ($request->request->get('adresseF')){
+                
+                    $AdresseFacturation = $adresseFacturationRepository->find($request->request->get('adresseF'));
+                    $facture->setAdresseFacturation($AdresseFacturation);
+                }
+
+                //Si on est sur un ajout de materiaux    
+                if ($request->request->get('materiaux_id'))
+                {
+                    $materiaux = $materiauxRepository->find($request->request->get('materiaux_id'));
+                    $tva = $tVARepository->find($request->request->get('tva_add'));
+
+                    $ligneFacture = new LigneFacture();
+                    $ligneFacture->setMateriaux($materiaux);
+                    $ligneFacture->setTVA($tva);
+                    $ligneFacture->setDesignation($request->request->get('des_add'));
+                    $ligneFacture->setQte($request->request->get('qte_add'));
+                    if ($request->request->get('remise_add')) {
+                        $ligneFacture->setRemise($request->request->get('remise_add'));
+                    } else {
+                        $ligneFacture->setRemise(0);
+                    }                   
+                    $ligneFacture->setPrixUnitaire($request->request->get('pu_add'));
+                    $facture->addLigneFacture($ligneFacture);
+                } else {
+                    foreach ($request->request as $key => $value){
+                        if (str_contains($key, 'ligne_')){
+                            $identifiant = $value;
+                            foreach($facture->getLigneFacture() as $ligne){
+                                if ($ligne->getId() == $identifiant){
+                                    if ($request->request->get('des_'.$identifiant)){
+                                        $ligne->setDesignation($request->request->get('des_'.$identifiant));
+                                    } 
+
+                                    if ($request->request->get('qte_'.$identifiant)){
+                                        $ligne->setQte($request->request->get('qte_'.$identifiant));
+                                    } 
+
+                                    if ($request->request->get('pu_'.$identifiant)){
+                                        $ligne->setPrixUnitaire($request->request->get('pu_'.$identifiant));
+                                    } 
+
+                                    if ($request->request->get('remise_'.$identifiant)){
+                                        $ligne->setRemise($request->request->get('remise_'.$identifiant));
+                                    }
+                                    
+                                    if ($request->request->get('tva_'.$identifiant)){
+                                        $ligne->setTVA($tVARepository->findOneBy(["id" => $request->request->get('tva_'.$identifiant)]));
+                                    }
+                                    
+                                    $ligneFactureRepository->save($ligne, true);
+                                }
+                            }
+                        }
+                    }
+                }
+                $facture->setPrixHT($facture->getPrixHT());
+                $facture->setPrixTTC($facture->getPrixTTC());
+                $factureRepository->save($facture, true);
+
+                $this->addFlash('success', 'Facture modifiée avec succès');    
+                return $this->redirectToRoute('app_facture_add_ligne_sans_modele', ["id" => $facture->getId()]);   
+            }  
+        }
+
+        return $this->render('facture/add/lignes_sans_modele.html.twig', [
+            'facture' => $facture, 
+            'tvas' => $tvas,
+            'ligneAdd' => $ligneAdd
         ]);
     }
 
@@ -296,7 +417,7 @@ class FactureController extends AbstractController
                 }
             }
             $factureRepository->save($facture, true);
-            return $this->redirectToRoute('app_facture_add_recap', ["facture" => serialize($facture)]);
+            return $this->redirectToRoute('app_facture_add_recap', ["id" => $facture->getId()]);
         } 
         $modelesPiece = $modelePieceRepository->findByUse();
         $tvas = $tVARepository->findAll();
@@ -309,20 +430,19 @@ class FactureController extends AbstractController
 
     }
 
-    #[Route('/invoice/add/recap', name: 'app_facture_add_recap')]
-    public function addRecapFacture(Request $request, FactureRepository $factureRepository, ModeReglementRepository $modeReglementRepository, EcheanceRepository $echeanceRepository): Response
+    #[Route('/invoice/add/recap/{id}', name: 'app_facture_add_recap')]
+    public function addRecapFacture(string $id, Request $request, FactureRepository $factureRepository, ModeReglementRepository $modeReglementRepository, EcheanceRepository $echeanceRepository): Response
     {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
         }
-        if (!$request->query->get('facture')){
+
+        $facture = $factureRepository->findOneBy(["id" => $id]);
+        if (!$facture){
             return $this->redirectToRoute('app_facture_add_info');
         }
 
         $modeReglement = $modeReglementRepository->findAll();
-      
-        $facture = unserialize($request->query->get('facture'));
-        $facture = $factureRepository->findOneBy(["id" => $facture->getId()]);
         $form= $this->createForm(FactureRemiseType::class, $facture);
         $form->handleRequest($request);        
         if($form->isSubmitted() && $form->isvalid()){
@@ -336,7 +456,7 @@ class FactureController extends AbstractController
             $facture->setPrixHT($facture->getPrixHT());
             $facture->setPrixTTC($facture->getPrixTTC());
             $factureRepository->save($facture, true);
-            return $this->redirectToRoute('app_facture');     
+            return $this->redirectToRoute('app_facture_detail', ["id" => $facture->getId()]);     
         }
         
         return $this->render('facture/add/recap.html.twig', [
@@ -493,6 +613,24 @@ class FactureController extends AbstractController
         
         $this->addFlash('success', 'Ligne de facture supprimé avec succès');    
         return $this->redirectToRoute('app_facture_contenu', ["id" => $ligne->getFacture()->getId()]);      
+    }
+
+    #[Route('/invoice/add/delete/ligne/{id}', name: 'app_facture_ligne_disable')]
+    public function invoiceDisableLineAdd(string $id, LigneFactureRepository $LigneFactureRepository): Response
+    {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+        $ligne = $LigneFactureRepository->findOneBy(["id" => $id]);
+
+        if (!$ligne){
+            return $this->redirectToRoute('app_facture');
+        }
+        
+        $LigneFactureRepository->remove($ligne, true);
+        
+        $this->addFlash('success', 'Ligne de facture supprimé avec succès');    
+        return $this->redirectToRoute('app_facture_add_ligne_sans_modele', ["id" => $ligne->getFacture()->getId()]);      
     }
 
     #[Route('/invoice/generatePDF/{id}', name: 'app_facture_PDF')]
