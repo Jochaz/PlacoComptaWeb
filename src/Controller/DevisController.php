@@ -52,7 +52,7 @@ class DevisController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
         $peutCreerDevis = true;
-        $modeles = $modelePieceRepository->findAll();
+        $modeles = $modelePieceRepository->findByUse();
         if (count($modeles) == 0){
             $peutCreerDevis = false;
         }
