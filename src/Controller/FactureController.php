@@ -39,15 +39,19 @@ use function PHPUnit\Framework\isNull;
 class FactureController extends AbstractController
 {
     #[Route('/invoice', name: 'app_facture')]
-    public function index(FactureRepository $factureRepository, Request $request, PaginatorInterface $paginator, ModelePieceRepository $modelePieceRepository): Response
+    public function index(FactureRepository $factureRepository, Request $request, PaginatorInterface $paginator, 
+                        ModelePieceRepository $modelePieceRepository,
+                          MateriauxRepository $materiauxRepository): Response
     {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
         }
 
         $peutCreerDevis = true;
-        $modeles = $modelePieceRepository->findAll();
-        if (count($modeles) == 0){
+        $modeles = $modelePieceRepository->findByUse();
+        $materiaux = $materiauxRepository->findByUse();
+
+        if (count($modeles) == 0 && count($materiaux) == 0){
             $peutCreerDevis = false;
         }
 
@@ -152,7 +156,8 @@ class FactureController extends AbstractController
 
     #[Route('/invoice/add/adressefacture', name: 'app_facture_add_adresse_facture')]
     public function addAdresseChantier(Request $request, AdresseDocumentRepository $adresseChantierRepository, 
-    AdresseFacturationRepository $adresseFacturationRepository): Response
+    AdresseFacturationRepository $adresseFacturationRepository,
+    ModelePieceRepository $modelePieceRepository): Response
     {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
@@ -162,6 +167,9 @@ class FactureController extends AbstractController
         }
         $facture = unserialize($request->query->get('facture'));
         $adresseFacture = new AdresseDocument();
+
+        $modeles = $modelePieceRepository->findByUse();
+        $bModeleDispo = (count($modeles) != 0);
 
         $form= $this->createForm(AdresseChantierType::class, $adresseFacture);
         $form->handleRequest($request);        
@@ -195,11 +203,13 @@ class FactureController extends AbstractController
         return $this->render('facture/add/adresse_chantier.html.twig', [
             'form' => $form->createView(),
             'modif' => false,
+            'bModeleDispo' => $bModeleDispo
         ]);
     }
 
     #[Route('/invoice/add/adressefacturation', name: 'app_facture_add_adresse_facturation_facture')]
-    public function addAdresseFacturation(Request $request, AdresseFacturationRepository $adresseFacturationRepository): Response
+    public function addAdresseFacturation(Request $request, AdresseFacturationRepository $adresseFacturationRepository,
+                                          ModelePieceRepository $modelePieceRepository): Response
     {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
@@ -209,6 +219,9 @@ class FactureController extends AbstractController
         }
         $facture = unserialize($request->query->get('facture'));
         $adresse = new AdresseFacturation();
+
+        $modeles = $modelePieceRepository->findByUse();
+        $bModeleDispo = (count($modeles) != 0);
 
         $form= $this->createForm(AdresseFacturationType::class, $adresse);
         $form->handleRequest($request);        
@@ -227,6 +240,7 @@ class FactureController extends AbstractController
         return $this->render('facture/add/adresse_facturation.html.twig', [
             'form' => $form->createView(),
             'modif' => false,
+            'bModeleDispo' => $bModeleDispo
         ]);
     }
 

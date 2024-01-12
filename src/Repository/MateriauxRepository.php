@@ -55,6 +55,16 @@ class MateriauxRepository extends ServiceEntityRepository
        ;
    }
 
+   public function findByUse(): array
+   {
+        return $this->createQueryBuilder('m')
+           ->andWhere('m.Plus_utilise = false')
+           ->orderBy('m.Designation', 'ASC')
+           ->getQuery()
+           ->getResult()
+       ;
+   }
+
     public function findBySearch(SearchData $searchData){
         $data =  $this->createQueryBuilder('m')
             ->orderBy('m.Designation', 'ASC')

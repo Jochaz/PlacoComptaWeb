@@ -44,6 +44,7 @@ class DevisController extends AbstractController
     #[Route('/quote', name: 'app_devis')]
     public function index(DevisRepository $devisRepository, 
                           ModelePieceRepository $modelePieceRepository,
+                          MateriauxRepository $materiauxRepository,
                           Request $request, 
                           PaginatorInterface $paginator 
                           ): Response
@@ -53,7 +54,9 @@ class DevisController extends AbstractController
         }
         $peutCreerDevis = true;
         $modeles = $modelePieceRepository->findByUse();
-        if (count($modeles) == 0){
+        $materiaux = $materiauxRepository->findByUse();
+
+        if (count($modeles) == 0 && count($materiaux) == 0){
             $peutCreerDevis = false;
         }
 
