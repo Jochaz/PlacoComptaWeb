@@ -162,7 +162,8 @@ class DevisController extends AbstractController
 
     #[Route('/quote/add/adressedevis', name: 'app_devis_add_adresse_devis')]
     public function addAdresseChantier(Request $request, AdresseDocumentRepository $adresseChantierRepository, 
-    AdresseFacturationRepository $adresseFacturationRepository): Response
+    AdresseFacturationRepository $adresseFacturationRepository,
+    ModelePieceRepository $modelePieceRepository): Response
     {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
@@ -172,6 +173,9 @@ class DevisController extends AbstractController
         }
         $devis = unserialize($request->query->get('devis'));
         $adresseDevis = new AdresseDocument();
+
+        $modeles = $modelePieceRepository->findByUse();
+        $bModeleDispo = (count($modeles) != 0);
 
         $form= $this->createForm(AdresseChantierType::class, $adresseDevis);
         $form->handleRequest($request);        
@@ -204,11 +208,12 @@ class DevisController extends AbstractController
         return $this->render('devis/add/adresse_chantier.html.twig', [
             'form' => $form->createView(),
             'modif' => false,
+            'bModeleDispo' => $bModeleDispo,
         ]);
     }
 
     #[Route('/quote/add/adressefacturation', name: 'app_devis_add_adresse_facturation_devis')]
-    public function addAdresseFacturation(Request $request, AdresseFacturationRepository $adresseFacturationRepository, DevisRepository $devisRepository): Response
+    public function addAdresseFacturation(Request $request, ModelePieceRepository $modelePieceRepository, AdresseFacturationRepository $adresseFacturationRepository, DevisRepository $devisRepository): Response
     {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
@@ -218,6 +223,9 @@ class DevisController extends AbstractController
         }
         $devis = unserialize($request->query->get('devis'));
         $adresse = new AdresseFacturation();
+
+        $modeles = $modelePieceRepository->findByUse();
+        $bModeleDispo = (count($modeles) != 0);
 
         $form= $this->createForm(AdresseFacturationType::class, $adresse);
         $form->handleRequest($request);        
@@ -235,6 +243,7 @@ class DevisController extends AbstractController
         return $this->render('devis/add/adresse_facturation.html.twig', [
             'form' => $form->createView(),
             'modif' => false,
+            'bModeleDispo' => $bModeleDispo,
         ]);
     }
 
@@ -649,7 +658,7 @@ class DevisController extends AbstractController
         ]); 
     }
 
-    #[Route('/quote/delete/ligne/{id}', name: 'app_devis_disable')]
+    #[Route('/quote/delete/ligne/{id}', name: 'app_devis_ligne_disable')]
     public function quoteDisableLine(string $id, LigneDevisRepository $LigneDevisRepository): Response
     {
         if (!$this->getUser()) {
