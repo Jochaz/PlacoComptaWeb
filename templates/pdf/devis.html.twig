@@ -86,14 +86,6 @@
             {% set taillePadding = "10" %}
         {% endif %}
 
-        {% if devis.Objet %}
-            <div style="padding-top: {{taillePadding}}px">
-                <div class="col-sm" style="font-size: small;">
-                    <b>Objet :</b> {{devis.Objet}}
-                </div>
-            </div>
-            {% set taillePadding = "10" %}
-        {% endif %}
 
         <div style="padding-top: {{taillePadding}}px">
             <div class="col-sm" style="font-size: small;">
@@ -103,14 +95,24 @@
                 </b>
             </div>
         </div>
+        {% set taillePadding = "10" %}
+
+        {% if devis.Objet %}
+            <div style="padding-top: {{taillePadding}}px">
+                <div class="col-sm" style="font-size: small;">
+                    <b>Objet :</b> {{devis.Objet}}
+                </div>
+            </div>
+            {% set taillePadding = "10" %}
+        {% endif %}
 
         <table>
             <thead>
                 <tr>
                 <th>Désignation</th>
-                <th>Unité</th>
-                <th>Qté</th>
-                <th>P.U</th>
+                <th>U</th>
+                <th>Quantité</th>
+                <th>Prix unit.</th>
                 <th>TVA</th>
                 <th>Montant HT</th>
                 </tr>
@@ -122,21 +124,21 @@
                 {% if cat != ligne.Materiaux.Categorie.Libelle %}
                     {% set cat = ligne.Materiaux.Categorie.Libelle %}
                     <tr>
-                        <td><b><u>{{cat}}</u></b></td>
-                        <td style="text-align: center;"></td>
-                        <td style="text-align: center;"></td>
-                        <td style="text-align: center;"></td>
-                        <td style="text-align: center;"></td>
-                        <td style="text-align: center;"></td>
+                        <td style="padding: 5px 10px 10px 10px;"><b><u>{{cat}}</u></b></td>
+                        <td style="text-align: center; padding: 0 10px 10px 10px;"></td>
+                        <td style="text-align: center; padding: 0 10px 10px 10px;"></td>
+                        <td style="text-align: center; padding: 0 10px 10px 10px;"></td>
+                        <td style="text-align: center; padding: 0 10px 10px 10px;"></td>
+                        <td style="text-align: center; padding: 0 10px 10px 10px;"></td>
                     </tr>    
                 {% endif %}
                 <tr>
-                    <td>{{ligne.Designation}}</td>
-                    <td style="text-align: center;">{{ligne.Materiaux.UniteMesure.Abreviation}}</td>
-                    <td style="text-align: center;">{{ligne.Qte}}</td>
-                    <td style="text-align: center;">{{ligne.PrixUnitaire}}</td>
-                    <td style="text-align: center;">{{ligne.TVA.Taux}}%</td>
-                    <td style="text-align: center;">{{(ligne.PrixUnitaire * ligne.Qte) - (ligne.Remise * ligne.Qte)}}€</td>
+                    <td style="padding: 0 10px 10px 10px;">{{ligne.Designation}}</td>
+                    <td style="text-align: center; padding: 0 10px 10px 10px;">{{ligne.Materiaux.UniteMesure.Abreviation}}</td>
+                    <td style="text-align: center; padding: 0 10px 10px 10px;">{{ligne.Qte}}</td>
+                    <td style="text-align: center; padding: 0 10px 10px 10px;">{{ligne.PrixUnitaire}}</td>
+                    <td style="text-align: center; padding: 0 10px 10px 10px;">{{ligne.TVA.Taux}}%</td>
+                    <td style="text-align: center; padding: 0 10px 10px 10px;">{{(ligne.PrixUnitaire * ligne.Qte) - (ligne.Remise * ligne.Qte)}}€</td>
                 </tr>
                 {% endfor %} 
             </tbody>
