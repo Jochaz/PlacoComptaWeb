@@ -49,8 +49,8 @@
                                         <td></td> 
                                         <td><input type="text" class="form-control" id="des_{{modele.id}}_{{materiaux.id}}" name="des_{{modele.id}}_{{materiaux.id}}" value="{{ materiaux.Designation }}"></input></td> 
                                         <td><input type="text" class="form-control" id="pu_{{modele.id}}_{{materiaux.id}}" name="pu_{{modele.id}}_{{materiaux.id}}" value="{{ materiaux.PrixUnitaire }}"></input></td> 
-                                        <td><input type="text" class="form-control" id="qte_{{modele.id}}_{{materiaux.id}}" name="qte_{{modele.id}}_{{materiaux.id}}"></input></td> 
-                                        <td><input type="text" class="form-control" id="remise_{{modele.id}}_{{materiaux.id}}" name="remise_{{modele.id}}_{{materiaux.id}}"></input></td> 
+                                        <td><input type="text" class="form-control" id="qte_{{modele.id}}_{{materiaux.id}}" name="qte_{{modele.id}}_{{materiaux.id}}" value="1"></input></td> 
+                                        <td><input type="text" class="form-control" id="remise_{{modele.id}}_{{materiaux.id}}" name="remise_{{modele.id}}_{{materiaux.id}}" value="0"></input></td> 
                                         <td>
                                             <select class="form-select" id="tva_{{modele.id}}_{{materiaux.id}}" name="tva_{{modele.id}}_{{materiaux.id}}">
                                                 {% for tva in tvas %}
