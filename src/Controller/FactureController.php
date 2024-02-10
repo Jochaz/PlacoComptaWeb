@@ -88,8 +88,7 @@ class FactureController extends AbstractController
 
     #[Route('/invoice/add/info', name: 'app_facture_add_info')]
     public function addInfo(Request $request, FactureRepository $factureRepository, 
-                            ParametrageFactureRepository $parametrageFactureRepository,
-                            ModelePieceRepository $modelePieceRepository): Response
+                            ParametrageFactureRepository $parametrageFactureRepository): Response
     {
         function insertToString(string $mainstr,string $insertstr,int $index):string
         {
@@ -98,11 +97,6 @@ class FactureController extends AbstractController
 
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
-        }
-
-        $modeles = $modelePieceRepository->findAll();
-        if (count($modeles) == 0){
-            return $this->redirectToRoute('app_facture');
         }
 
         $facture = new Facture();
