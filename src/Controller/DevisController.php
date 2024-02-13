@@ -676,7 +676,7 @@ class DevisController extends AbstractController
         return $this->redirectToRoute('app_devis_contenu', ["id" => $ligne->getDevis()->getId()]);      
     }
 
-    #[Route('/quote/add/delete/ligne/{id}', name: 'app_devis_ligne_disable')]
+    #[Route('/quote/add/delete/ligne/{id}', name: 'app_devis_add_ligne_disable')]
     public function quoteDisableLineAdd(string $id, LigneDevisRepository $LigneDevisRepository): Response
     {
         if (!$this->getUser()) {
