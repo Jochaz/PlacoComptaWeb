@@ -782,6 +782,9 @@ class DevisController extends AbstractController
         // Render the HTML as PDF
         $dompdf->render();
 
+        $canvas = $dompdf->getCanvas();
+        $canvas->page_text(555, 815, "{PAGE_NUM} / {PAGE_COUNT}", null, 10, array(0, 0, 0));
+
         // Output the generated PDF to Browser (force download)
         ob_end_clean();
         $dompdf->stream($devis->getNumDevis().".pdf", [
@@ -791,12 +794,11 @@ class DevisController extends AbstractController
     }
 
     #[Route('/quote/transform/{id}', name: 'app_devis_transform')]
-    public function transformDevis(string $id, Request $request, DevisRepository $devisRepository,
+    public function transformDevis(string $id, DevisRepository $devisRepository,
     FactureRepository $factureRepository,
     ParametrageFactureRepository $parametrageFactureRepository,
     AdresseDocumentRepository $adresseDocumentRepository,
     AdresseFacturationRepository $adresseFacturationRepository,
-    EcheanceRepository $echeanceRepository,
     ModeReglementRepository $modeReglementRepository): Response
     {
 
