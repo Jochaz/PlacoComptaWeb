@@ -56,38 +56,41 @@
         <div class="row">
             <div class="col">
                 <h6>Adresse du chantier</h6>
-                
-                {{devis.AdresseChantier.Ligne1}}
-                {% if devis.AdresseChantier.Ligne2 %}
-                <br/>{{devis.AdresseChantier.Ligne2}}
-                {% endif %}
-                {% if devis.AdresseChantier.Ligne3 %}
-                <br/>{{ devis.AdresseChantier.Ligne3 }}
-                {% endif %}
-                <br />{{ devis.AdresseChantier.CP}}, {{ devis.AdresseChantier.Ville}}
-                {% if devis.AdresseChantier.BoitePostale %}
-                <br/>{{ devis.AdresseChantier.BoitePostale }}
-                {% endif %}
-                {% if (not devis.facture) or (devis.facture.peutModifierDocument) %}
-                <br/><a href="/adressechantier/{{devis.AdresseChantier.id}}">Modifier l'adresse du chantier</a>
+                {% if devis.AdresseChantier %}
+                    {{devis.AdresseChantier.Ligne1}}
+            
+                    {% if devis.AdresseChantier.Ligne2 %}
+                    <br/>{{devis.AdresseChantier.Ligne2}}
+                    {% endif %}
+                    {% if devis.AdresseChantier.Ligne3 %}
+                    <br/>{{ devis.AdresseChantier.Ligne3 }}
+                    {% endif %}
+                    <br />{{ devis.AdresseChantier.CP}}, {{ devis.AdresseChantier.Ville}}
+                    {% if devis.AdresseChantier.BoitePostale %}
+                    <br/>{{ devis.AdresseChantier.BoitePostale }}
+                    {% endif %}
+                    {% if (not devis.facture) or (devis.facture.peutModifierDocument) %}
+                    <br/><a href="/adressechantier/{{devis.AdresseChantier.id}}">Modifier l'adresse du chantier</a>
+                    {% endif %}
                 {% endif %}
             </div>
             <div class="col">
-                 <h6>Adresse de facturation</h6>
-               
-                {{devis.AdresseFacturation.Ligne1}}
-                {% if devis.AdresseFacturation.Ligne2 %}
-                <br/>{{devis.AdresseFacturation.Ligne2}}
-                {% endif %}
-                {% if devis.AdresseFacturation.Ligne3 %}
-                <br/>{{ devis.AdresseFacturation.Ligne3 }}
-                {% endif %}
-                <br />{{ devis.AdresseFacturation.CP}}, {{ devis.AdresseFacturation.Ville}}
-                {% if devis.AdresseFacturation.BoitePostale %}
-                <br/>{{ devis.AdresseFacturation.BoitePostale }}
-                {% endif %}
-                {% if (not devis.facture) or (devis.facture.peutModifierDocument) %}
-                <br/><a href="/adressefacturation/{{devis.AdresseFacturation.id}}">Modifier l'adresse de facturation</a>
+                <h6>Adresse de facturation</h6>
+                {% if devis.AdresseFacturation %}
+                    {{devis.AdresseFacturation.Ligne1}}
+                    {% if devis.AdresseFacturation.Ligne2 %}
+                    <br/>{{devis.AdresseFacturation.Ligne2}}
+                    {% endif %}
+                    {% if devis.AdresseFacturation.Ligne3 %}
+                    <br/>{{ devis.AdresseFacturation.Ligne3 }}
+                    {% endif %}
+                    <br />{{ devis.AdresseFacturation.CP}}, {{ devis.AdresseFacturation.Ville}}
+                    {% if devis.AdresseFacturation.BoitePostale %}
+                    <br/>{{ devis.AdresseFacturation.BoitePostale }}
+                    {% endif %}
+                    {% if (not devis.facture) or (devis.facture.peutModifierDocument) %}
+                    <br/><a href="/adressefacturation/{{devis.AdresseFacturation.id}}">Modifier l'adresse de facturation</a>
+                    {% endif %}
                 {% endif %}
             </div>
         </div>

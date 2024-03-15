@@ -56,38 +56,40 @@
         <div class="row">
             <div class="col">
                 <h6>Adresse du chantier</h6>
-                
-                {{facture.AdresseChantier.Ligne1}}
-                {% if facture.AdresseChantier.Ligne2 %}
-                <br/>{{facture.AdresseChantier.Ligne2}}
-                {% endif %}
-                {% if facture.AdresseChantier.Ligne3 %}
-                <br/>{{ facture.AdresseChantier.Ligne3 }}
-                {% endif %}
-                <br />{{ facture.AdresseChantier.CP}}, {{ facture.AdresseChantier.Ville}}
-                {% if facture.AdresseChantier.BoitePostale %}
-                <br/>{{ facture.AdresseChantier.BoitePostale }}
-                {% endif %}
-                {% if facture.peutModifierDocument %}
-                <br/><a href="/adressechantier/{{facture.AdresseChantier.id}}">Modifier l'adresse du chantier</a>
+                {% if facture.AdresseChantier %}
+                    {{facture.AdresseChantier.Ligne1}}
+                    {% if facture.AdresseChantier.Ligne2 %}
+                    <br/>{{facture.AdresseChantier.Ligne2}}
+                    {% endif %}
+                    {% if facture.AdresseChantier.Ligne3 %}
+                    <br/>{{ facture.AdresseChantier.Ligne3 }}
+                    {% endif %}
+                    <br />{{ facture.AdresseChantier.CP}}, {{ facture.AdresseChantier.Ville}}
+                    {% if facture.AdresseChantier.BoitePostale %}
+                    <br/>{{ facture.AdresseChantier.BoitePostale }}
+                    {% endif %}
+                    {% if facture.peutModifierDocument %}
+                    <br/><a href="/adressechantier/{{facture.AdresseChantier.id}}">Modifier l'adresse du chantier</a>
+                    {% endif %}
                 {% endif %}
             </div>
             <div class="col">
                  <h6>Adresse de facturation</h6>
-               
-                {{facture.AdresseFacturation.Ligne1}}
-                {% if facture.AdresseFacturation.Ligne2 %}
-                <br/>{{facture.AdresseFacturation.Ligne2}}
-                {% endif %}
-                {% if facture.AdresseFacturation.Ligne3 %}
-                <br/>{{ facture.AdresseFacturation.Ligne3 }}
-                {% endif %}
-                <br />{{ facture.AdresseFacturation.CP}}, {{ facture.AdresseFacturation.Ville}}
-                {% if facture.AdresseFacturation.BoitePostale %}
-                <br/>{{ facture.AdresseFacturation.BoitePostale }}
-                {% endif %}
-                {% if facture.peutModifierDocument %}
-                <br/><a href="/adressefacturation/{{facture.AdresseFacturation.id}}">Modifier l'adresse de facturation</a>
+                {% if facture.AdresseChantier %}
+                    {{facture.AdresseFacturation.Ligne1}}
+                    {% if facture.AdresseFacturation.Ligne2 %}
+                    <br/>{{facture.AdresseFacturation.Ligne2}}
+                    {% endif %}
+                    {% if facture.AdresseFacturation.Ligne3 %}
+                    <br/>{{ facture.AdresseFacturation.Ligne3 }}
+                    {% endif %}
+                    <br />{{ facture.AdresseFacturation.CP}}, {{ facture.AdresseFacturation.Ville}}
+                    {% if facture.AdresseFacturation.BoitePostale %}
+                    <br/>{{ facture.AdresseFacturation.BoitePostale }}
+                    {% endif %}
+                    {% if facture.peutModifierDocument %}
+                    <br/><a href="/adressefacturation/{{facture.AdresseFacturation.id}}">Modifier l'adresse de facturation</a>
+                    {% endif %}
                 {% endif %}
             </div>
         </div>
