@@ -4,33 +4,40 @@
 
 {% block body %}
 
-<main class="container">
+<main class="container" >
     <section class="row">
         <div class="col-12" id="principal">
+            <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+            <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasExampleLabel">Gestion du devis</h5>
+                    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <div class="list-group">
+                    <a href="/quote/updatecontent/{{devis.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-pen"></i> Modifier le contenu du devis</a>
+                    {% if not devis.facture %}
+                    <a href="/quote/transform/{{devis.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-gear"></i> Transformer en facture</a>
+                    {% else %}
+                    <a href="/invoice/detail/{{devis.facture.id}}" class="list-group-item list-group-item-action"><button type="button" class="btn btn-info"><i class="fa-solid fa-file-invoice"></i> Voir la facture</button></a>
+                    {% endif %}
+                    <a href="/quote/generatePDF/{{devis.id}}" target="_blank" class="list-group-item list-group-item-action"><i class="fa-solid fa-file-pdf"></i> Générer le document</a>
+                    {% set acomptePossible = true %}
+                    {% if (devis.facture) and (not devis.facture.peutModifierDocument) %}
+                        {% set acomptePossible = false %}
+                    {% endif %}
+                    {% if acomptePossible %}
+                    <a href="/quote/acompte/{{devis.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-coins"></i> {% if not devis.acompte %}Créer{% else %}Modifier{% endif %} l'acompte</a>
+                    {% endif %}
+                    <a href="/quote/disable/{{devis.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-eye-slash"></i> Désactiver le devis</a> 
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12" id="principal">
             <h2>Devis : {{devis.numDevis}}</h2>
-            <hr>
-            <div style="padding-bottom: 10px">
-                <a href="/quote/updatecontent/{{devis.id}}"><button type="button" class="btn btn-primary">Modifier le contenu du devis</button></a>
-            </div>
-            <div style="padding-bottom: 10px">
-                {% if not devis.facture %}
-                <a href="/quote/transform/{{devis.id}}"><button type="button" class="btn btn-info">Transformer en facture</button></a>
-                {% else %}
-                <a href="/invoice/detail/{{devis.facture.id}}"><button type="button" class="btn btn-info">Voir la facture</button></a>
-                {% endif %}
-                <a href="/quote/generatePDF/{{devis.id}}" target="_blank"><button type="button" class="btn btn-info">Générer le document</button></a>
-                {% set acomptePossible = true %}
-                {% if (devis.facture) and (not devis.facture.peutModifierDocument) %}
-                    {% set acomptePossible = false %}
-                {% endif %}
-                {% if acomptePossible %}
-                <a href="/quote/acompte/{{devis.id}}"><button type="button" class="btn btn-info">{% if not devis.acompte %}Créer{% else %}Modifier{% endif %} l'acompte</button></a>
-                {% endif %}
-            </div>
-            <div style="padding-bottom: 10px">
-                <a href="/quote/disable/{{devis.id}}"><button type="button" class="btn btn-secondary">Désactiver le devis</button></a>
-            </div>
-
             <hr>
             {% if (devis.facture) and (not devis.facture.peutModifierDocument) %}
                 <p style="color: red">La facture lié à ce devis est éditée définitivement et ne peut plus être modifiée</p>
