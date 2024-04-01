@@ -81,7 +81,7 @@ class DevisController extends AbstractController
         $pagination = $paginator->paginate(
             $devisRepository->paginationQuery(),
             $request->query->get('page', 1),
-            10
+            12
         );
 
         return $this->render('devis/index.html.twig', [

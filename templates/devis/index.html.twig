@@ -7,63 +7,105 @@
 <main class="container">
     <section class="row">
         <div class="col-12" id="principal">
-            <div class="sidenav">    
-                <h5>Panneau de gestion</h5>
-                {% if peutCreerDevis %}
-                    <a href="/quote/add/info"><button type="button" class="btn btn-info">Nouveau devis</button></a>
-                {% else %}
-                    <p>Impossible de créer un devis car il n'y a pas de matériaux de créé ou de modèle de pièce.</p> 
-                {% endif %}
-                <br />
-                <hr>
-                {% include "devis/_partials/_search_devis_data.html.twig" %} 
+            <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasMenuLabel">Panneau de configuration</h5>
+                    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <div class="list-group">
+                        {% if peutCreerDevis %}
+                            <a href="/quote/add/info" class="list-group-item list-group-item-action"><i class="fa-solid fa-file-circle-plus"></i> Nouveau devis</a>
+                        {% else %}
+                            <p>Impossible de créer un devis car il n'y a pas de matériaux de créé ou de modèle de pièce.</p> 
+                        {% endif %}
+                    </div>
+                    <hr>
+                    {% include "devis/_partials/_search_devis_data.html.twig" %} 
+                </div>
+            </div>
+        </div>
+        <div class="col-12" id="principal">
+            <h2>Liste des devis</h2>
+            {% if pagination|length > 0 %}
+            <div class="container">
+                <div class="row">
+                    {% for devis in pagination %}
+                    <div class="col-md-6 col-lg-3" onclick="window.location='/quote/detail/{{devis.id}}'" style="margin-bottom:10px">
+                        <div class="card shadow-sm border-light mb-4 h-100">
+                            <div class="card-body"  id="div-card-listing">
+                                <h5 class="font-weight-normal">Devis n°{{devis.NumDevis}}</h5>
+                                <p class="fst-italic fs-6">{{devis.DateDevis|date('d/m/Y')}}</p>
+                        
+                                {% if devis.particulier %}
+                                <a href="/customer/detail/{{devis.particulier.id}}" style="text-decoration: none;">
+                                    <h6 class="font-weight-normal"><i class="fa-solid fa-user mr-2"></i> {{devis.particulier.nom}} {{devis.particulier.prenom}}</h5>
+                                </a>
+                                {% else %}
+                                <a href="/professional/detail/{{devis.professionnel.id}}">
+                                    <h6 class="font-weight-normal"><i class="fa-solid fa-user-tie mr-2"></i> {{devis.professionnel.NomSociete}}</h5>
+                                </a>
+                                {% endif %}
+                                {% if devis.AdresseChantier %}
+                                <div class="post-meta"><span class="small lh-120"><i class="fas fa-map-marker-alt mr-2"></i> {{devis.AdresseChantier.Ligne1}}, {{devis.AdresseChantier.CP}}, {{devis.AdresseChantier.Ville}}</span></div>
+                                {% else %}
+                                <div class="post-meta"><span class="small lh-120"><i class="fas fa-map-marker-alt mr-2"></i> Sans adresse de chantier</span></div>
+                                {% endif %}
+                                <div class="d-flex justify-content-between">
+                                    <div class="col pl-0"><span class="text-muted font-small d-block mb-2">Prix HT</span> <span class="h6 text-dark font-weight-bold">{{devis.PrixHT}}€</span></div>
+                                    <div class="col"><span class="text-muted font-small d-block mb-2">Prix TTC</span> <span class="h6 text-dark font-weight-bold">{{devis.PrixTTC}}€</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
 
-            <div class="main">
-                <h2>Liste des devis</h2>
-                {% if pagination|length > 0 %}
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th scope="col">N° du devis</th>
-                            <th scope="col">Client</th>
-                            <th scope="col">Prix HT</th>
-                            <th scope="col">Prix TTC</th>
-                            <th scope="col">Date devis</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for devis in pagination %}
-                        <tr onclick="window.location='/quote/detail/{{devis.id}}'">
-                            <th scope="row">{{devis.NumDevis}}</th>
-                            {% if devis.particulier %}
-                            <td>{{devis.particulier.nom}} {{devis.particulier.prenom}}</td>
+            {# <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">N° du devis</th>
+                        <th scope="col">Client</th>
+                        <th scope="col">Prix HT</th>
+                        <th scope="col">Prix TTC</th>
+                        <th scope="col">Date devis</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for devis in pagination %}
+                    <tr onclick="window.location='/quote/detail/{{devis.id}}'">
+                        <th scope="row">{{devis.NumDevis}}</th>
+                        {% if devis.particulier %}
+                        <td>{{devis.particulier.nom}} {{devis.particulier.prenom}}</td>
+                        {% else %}
+                            {% if devis.professionnel %}
+                                <td>{{devis.professionnel.NomSociete}}</td>
                             {% else %}
-                                {% if devis.professionnel %}
-                                    <td>{{devis.professionnel.NomSociete}}</td>
-                                {% else %}
-                                    <td>Erreur</td>
-                                {% endif %}
+                                <td>Erreur</td>
                             {% endif %}
-                            <td>{{devis.PrixHT}}€</td>
-                            <td>{{devis.PrixTTC}}€</td>
-                            <td>{{devis.DateDevis|date('d/m/Y')}}</td>
-                        </tr>
-                        </a>
-                        {% endfor %}
-                    </tbody>
-                </table>   
-                <hr> 
-                <br />   
-                <div class="navigation flex justify-center mb-8">              
-                    {{ knp_pagination_render(pagination)}}
-                </div>
-                {% else %}
-                <div class="navigation flex justify-center mb-8">              
-                    <p>Aucun devis n'a été trouvé.</p>
-                </div>   
-                {% endif %}
+                        {% endif %}
+                        <td>{{devis.PrixHT}}€</td>
+                        <td>{{devis.PrixTTC}}€</td>
+                        <td>{{devis.DateDevis|date('d/m/Y')}}</td>
+                    </tr>
+                    </a>
+                    {% endfor %}
+                </tbody>
+            </table>   
+            <hr>  #}
+            <br />   
+            <div class="navigation flex justify-center mb-8">              
+                {{ knp_pagination_render(pagination)}}
             </div>
+            {% else %}
+            <div class="navigation flex justify-center mb-8">              
+                <p>Aucun devis n'a été trouvé.</p>
+            </div>   
+            {% endif %}
         </div>
     </section>
 </main>     
