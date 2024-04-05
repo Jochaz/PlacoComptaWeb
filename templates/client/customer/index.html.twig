@@ -50,28 +50,7 @@
                     {% endfor %}
                 </div>
             </div>
-            {# <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th scope="col">Nom du client</th>
-                        <th scope="col">Adresse email</th>
-                        <th scope="col">Numéro de téléphone portable</th>
-                        <th scope="col">Numéro de téléphone fixe</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for particulier in pagination %}
-                    <tr onclick="window.location='/customer/detail/{{particulier.id}}'">
-                        <th scope="row">{{particulier.nom}} {{particulier.prenom}}</th>
-                        <td>{{particulier.adresseemail1}}</td>
-                        <td>{{particulier.numerotelephoneportable1}}</td>
-                        <td>{{particulier.numerotelephonefixe1}}</td>
-                    </tr>
-                    </a>
-                    {% endfor %}
-                </tbody>
-            </table>   
-            <hr>  #}
+            <hr>  
             <br />   
             <div class="navigation flex justify-center mb-8">              
                 {{ knp_pagination_render(pagination)}}

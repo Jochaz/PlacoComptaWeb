@@ -6,20 +6,54 @@
 
 <main class="container">
     <section class="row">
-        <div class="col-12" id="principal">
-            <div class="sidenav">    
-             <h5>Panneau de gestion</h5>
-                <a href="/professional/add"><button type="button" class="btn btn-info">Nouveau client</button></a>
-                <br />
-                 <hr>
-                {% include "_partials/_searchprofessionnel_data.html.twig"%} 
-                  
+         <div class="col-12" id="principal">
+            <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasMenuLabel">Panneau de configuration</h5>
+                    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <div class="list-group">
+                        <a href="/professionnal/add" class="list-group-item list-group-item-action"><i class="fa-solid fa-user mr-2"></i> Nouveau client pro</a>
+                    </div>
+                    <hr>
+                    {% include "_partials/_searchprofessionnel_data.html.twig"%}
+                </div>
             </div>
-
-          
-            <div class="main">
-                <h2>Liste des clients professionnel</h2>
-                {% if pagination|length > 0 %}
+        </div>
+        <div class="col-12" id="principal">          
+            <h2>Liste des clients professionnel</h2>
+            {% if pagination|length > 0 %}
+            <div class="container">
+                <div class="row">
+                    {% for professionnel in pagination %}
+                    <div class="col-md-6 col-lg-3" onclick="window.location='/professional/detail/{{professionnel.id}}'" style="margin-bottom:10px">
+                        <div class="card shadow-sm border-light mb-4 h-100">
+                            <div class="card-body"  id="div-card-listing">
+                                <h5 class="font-weight-normal"><i class="fa-solid fa-user-tie"></i> {{professionnel.nomsociete}}</h5>
+                                <p class="fst-italic fs-6">Créé le {{professionnel.createdAt|date('d/m/Y')}}</p>
+                                <h6 class="font-weight-normal">SIRET : {{professionnel.SIRET}}</h5>
+                                <h6 class="font-weight-normal">SIREN : {{professionnel.SIREN}}</h5>
+                                <h6 class="font-weight-normal">TVA Intra. : {{professionnel.TVAIntra}}</h5>
+                                <h6 class="font-weight-normal"><i class="fa-solid fa-mobile"></i> {{professionnel.numerotelephoneportable1}}</h5>
+                                <h6 class="font-weight-normal"><i class="fa-solid fa-phone"></i> {{professionnel.numerotelephonefixe1}}</h5>
+                                <a href="mailto:{{professionnel.adresseemail1}}" style="text-decoration: none;">
+                                    <h6 class="font-weight-normal"><i class="fa-solid fa-envelope"></i> {{professionnel.adresseemail1}}</h5>
+                                </a>
+                                <div class="d-flex justify-content-between">
+                                    <div class="col pl-0"><span class="text-muted font-small d-block mb-2">Devis</span> <span class="h6 text-dark font-weight-bold">{% if professionnel.devis %}{{professionnel.devis|length}}{% else %}0{% endif %}</span></div>
+                                    <div class="col"><span class="text-muted font-small d-block mb-2">Factures</span> <span class="h6 text-dark font-weight-bold">{% if professionnel.factures %}{{professionnel.factures|length}}{% else %}0{% endif %}</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+                {# {% if pagination|length > 0 %}
                 <table class="table table-hover">
                     <thead>
                         <tr>
@@ -46,18 +80,17 @@
                         </a>
                         {% endfor %}
                     </tbody>
-                </table>   
-                <hr> 
-                <br />   
-                <div class="navigation flex justify-center mb-8">              
-                    {{ knp_pagination_render(pagination)}}
-                </div>
-                {% else %}
-                <div class="navigation flex justify-center mb-8">              
-                    <p>Aucun client professionnel n'a été trouvé.</p>
-                </div>   
-                {% endif %}
+                </table>    #}
+            <hr> 
+            <br />   
+            <div class="navigation flex justify-center mb-8">              
+                {{ knp_pagination_render(pagination)}}
             </div>
+            {% else %}
+            <div class="navigation flex justify-center mb-8">              
+                <p>Aucun client professionnel n'a été trouvé.</p>
+            </div>   
+            {% endif %}
         </div>
     </section>
 </main>     
