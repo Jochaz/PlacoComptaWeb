@@ -7,51 +7,80 @@
 <main class="container">
     <section class="row">
         <div class="col-12" id="principal">
-            <div class="sidenav">    
-             <h5>Panneau de gestion</h5>
-                <a href="/customer/add"><button type="button" class="btn btn-info">Nouveau client</button></a>
-                <br />
-                 <hr>
-                {% include "_partials/_searchparticulier_data.html.twig"%} 
-                  
-            </div>
-
-          
-            <div class="main">
-                <h2>Liste des clients particulier</h2>
-                {% if pagination|length > 0 %}
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th scope="col">Nom du client</th>
-                            <th scope="col">Adresse email</th>
-                            <th scope="col">Numéro de téléphone portable</th>
-                            <th scope="col">Numéro de téléphone fixe</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for particulier in pagination %}
-                        <tr onclick="window.location='/customer/detail/{{particulier.id}}'">
-                            <th scope="row">{{particulier.nom}} {{particulier.prenom}}</th>
-                            <td>{{particulier.adresseemail1}}</td>
-                            <td>{{particulier.numerotelephoneportable1}}</td>
-                            <td>{{particulier.numerotelephonefixe1}}</td>
-                        </tr>
-                        </a>
-                        {% endfor %}
-                    </tbody>
-                </table>   
-                <hr> 
-                <br />   
-                <div class="navigation flex justify-center mb-8">              
-                    {{ knp_pagination_render(pagination)}}
+            <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasMenuLabel">Panneau de configuration</h5>
+                    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                 </div>
-                {% else %}
-                <div class="navigation flex justify-center mb-8">              
-                    <p>Aucun client particulier n'a été trouvé.</p>
-                </div>   
-                {% endif %}
+                <div class="offcanvas-body">
+                    <div class="list-group">
+                        <a href="/customer/add" class="list-group-item list-group-item-action"><i class="fa-solid fa-user mr-2"></i> Nouveau client</a>
+                    </div>
+                    <hr>
+                    {% include "_partials/_searchparticulier_data.html.twig"%}
+                </div>
             </div>
+        </div>
+        <div class="col-12" id="principal">  
+            <h2>Liste des clients particulier</h2>
+            {% if pagination|length > 0 %}
+            <div class="container">
+                <div class="row">
+                    {% for particulier in pagination %}
+                    <div class="col-md-6 col-lg-3" onclick="window.location='/customer/detail/{{particulier.id}}'" style="margin-bottom:10px">
+                        <div class="card shadow-sm border-light mb-4 h-100">
+                            <div class="card-body"  id="div-card-listing">
+                                <h5 class="font-weight-normal"><i class="fa-solid fa-user mr-2"></i> {{particulier.nom}} {{particulier.prenom}}</h5>
+                                <p class="fst-italic fs-6">Créé le {{particulier.createdAt|date('d/m/Y')}}</p>
+                                <h6 class="font-weight-normal"><i class="fa-solid fa-mobile"></i> {{particulier.numerotelephoneportable1}}</h5>
+                                <h6 class="font-weight-normal"><i class="fa-solid fa-phone"></i> {{particulier.numerotelephonefixe1}}</h5>
+                                <a href="mailto:{{particulier.adresseemail1}}" style="text-decoration: none;">
+                                    <h6 class="font-weight-normal"><i class="fa-solid fa-envelope"></i> {{particulier.adresseemail1}}</h5>
+                                </a>
+                                <div class="d-flex justify-content-between">
+                                    <div class="col pl-0"><span class="text-muted font-small d-block mb-2">Devis</span> <span class="h6 text-dark font-weight-bold">{% if particulier.devis %}{{particulier.devis|length}}{% else %}0{% endif %}</span></div>
+                                    <div class="col"><span class="text-muted font-small d-block mb-2">Factures</span> <span class="h6 text-dark font-weight-bold">{% if particulier.factures %}{{particulier.factures|length}}{% else %}0{% endif %}</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {# <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Nom du client</th>
+                        <th scope="col">Adresse email</th>
+                        <th scope="col">Numéro de téléphone portable</th>
+                        <th scope="col">Numéro de téléphone fixe</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for particulier in pagination %}
+                    <tr onclick="window.location='/customer/detail/{{particulier.id}}'">
+                        <th scope="row">{{particulier.nom}} {{particulier.prenom}}</th>
+                        <td>{{particulier.adresseemail1}}</td>
+                        <td>{{particulier.numerotelephoneportable1}}</td>
+                        <td>{{particulier.numerotelephonefixe1}}</td>
+                    </tr>
+                    </a>
+                    {% endfor %}
+                </tbody>
+            </table>   
+            <hr>  #}
+            <br />   
+            <div class="navigation flex justify-center mb-8">              
+                {{ knp_pagination_render(pagination)}}
+            </div>
+            {% else %}
+            <div class="navigation flex justify-center mb-8">              
+                <p>Aucun client particulier n'a été trouvé.</p>
+            </div>   
+            {% endif %}
         </div>
     </section>
 </main>     

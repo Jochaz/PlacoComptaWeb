@@ -55,7 +55,7 @@ class Particulier
     #[ORM\Column]
     private ?bool $actif = null;
 
-    #[ORM\OneToMany(mappedBy: 'Client', targetEntity: Devis::class)]
+    #[ORM\OneToMany(mappedBy: 'Particulier', targetEntity: Devis::class)]
     private Collection $devis;
 
     #[ORM\OneToMany(mappedBy: 'Particulier', targetEntity: Facture::class)]
