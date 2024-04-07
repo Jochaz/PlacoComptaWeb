@@ -7,12 +7,25 @@
 <main class="container">
     <section class="row">
         <div class="col-12" id="principal">
+            <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasMenuLabel">Panneau de configuration</h5>
+                    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <div class="list-group">
+                        <a href="/quote?client={{particulier.nom}}+{{particulier.prenom}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-file"></i> Voir les devis du client</a>
+                        <a href="/invoice?client={{particulier.nom}}+{{particulier.prenom}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-file-invoice"></i> Voir les factures du client</a>
+                        <a href="/customer/disable/{{particulier.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-circle-xmark"></i> Désactiver le client</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12" id="principal">
             <h2>Modification : {{particulier.nom}} {{particulier.prenom}}</h2>
-            <hr>
-            <a href="/quote?client={{particulier.nom}}+{{particulier.prenom}}"><button type="button" class="btn btn-primary">Voir les devis du client</button></a>
-            <a href="/invoice?client={{particulier.nom}}+{{particulier.prenom}}"><button type="button" class="btn btn-primary">Voir les factures du client</button></a>
-            <a href="/customer/disable/{{particulier.id}}"><button type="button" class="btn btn-secondary">Désactiver le client</button></a>
-            <hr>
             {% include "_partials/_flash.html.twig"%}
             {% include "client/customer/_form.html.twig" with {'button_label': 'Modifier les données du client'} %}
         </div>
