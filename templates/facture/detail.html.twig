@@ -7,23 +7,31 @@
 <main class="container">
     <section class="row">
         <div class="col-12" id="principal">
+            <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu">
+            <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasMenuLabel">Gestion de la facture</h5>
+                    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <div class="list-group">
+                    <a href="/invoice/updatecontent/{{facture.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-pen"></i> Modifier le contenu de la facture</a>
+                    {% if facture.devis %}
+                    <a href="/quote/detail/{{facture.devis.id}}" class="list-group-item list-group-item-action"><button type="button" class="btn btn-info"><i class="fa-solid fa-file-invoice"></i> Voir le devis de la facture</button></a>
+                    {% endif %}
+                    <a href="/invoice/generatePDF/{{facture.id}}" target="_blank" class="list-group-item list-group-item-action"><i class="fa-solid fa-file-pdf"></i> Générer le document</a>
+                    {% if facture.peutModifierDocument %}
+                        <a href="/invoice/generate/{{facture.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-gear"></i> Editer définitivement la facture</a>
+                    {% endif %}
+                    <a href="/invoice/disable/{{facture.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-eye-slash"></i> Désactiver la facture</a> 
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12" id="principal">
             <h2>Facture : {{facture.numFacture}}</h2>
-            <hr>
-            <div style="padding-bottom: 10px">
-                <a href="/invoice/updatecontent/{{facture.id}}"><button type="button" class="btn btn-primary">Modifier le contenu de la facture</button></a>
-            </div>
-             <div style="padding-bottom: 10px">
-            {% if facture.devis %}
-                <a href="/quote/detail/{{facture.devis.id}}"><button type="button" class="btn btn-info">Voir le devis</button></a>
-            {% endif %}
-            <a href="/invoice/generatePDF/{{facture.id}}" target="_blank"><button type="button" class="btn btn-info">Générer le document</button></a>
-            {% if facture.peutModifierDocument %}
-                <a href="/invoice/generate/{{facture.id}}"><button type="button" class="btn btn-info">Editer définitivement la facture</button></a>
-            {% endif %}
-            </div>
-             <div style="padding-bottom: 10px">
-                <a href="/invoice/disable/{{facture.id}}"><button type="button" class="btn btn-secondary">Désactiver la facture</button></a>
-            </div>
             <hr>
             {% if not facture.peutModifierDocument %}
                 <p style="color: red">Cette facture est éditée définitivement ou a au moins échéance réglée et ne peut plus être modifiée</p>

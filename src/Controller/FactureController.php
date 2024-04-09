@@ -654,19 +654,25 @@ class FactureController extends AbstractController
         }
 
         $entete = $enteteDocumentRepository->findAll()[0];
-        $LigneAdresseChantier = $facture->getAdresseChantier()->getLigne1();
-        if (!isNull($facture->getAdresseChantier()->getLigne2())){
-            $LigneAdresseChantier = $LigneAdresseChantier.'\n'.$facture->getAdresseChantier()->getLigne2();
-        }
-        if (!isNull($facture->getAdresseChantier()->getLigne3())){
-            $LigneAdresseChantier = $LigneAdresseChantier.'\n'.$facture->getAdresseChantier()->getLigne3();
-        }
-        $LigneAdresseFacturation = $facture->getAdresseFacturation()->getLigne1();
-        if (!isNull($facture->getAdresseFacturation()->getLigne2())){
-            $LigneAdresseFacturation = $LigneAdresseFacturation.'\n'.$facture->getAdresseFacturation()->getLigne2();
-        }
-        if (!isNull($facture->getAdresseFacturation()->getLigne3())){
-            $LigneAdresseFacturation = $LigneAdresseFacturation.'\n'.$facture->getAdresseFacturation()->getLigne3();
+        $LigneAdresseChantier = 'Sans adresse';
+        $LigneAdresseFacturation = 'Sans adresse';
+        if (!isNull($facture->getAdresseChantier())) {
+            if (!isNull($facture->getAdresseChantier()->getLigne1())){
+                $LigneAdresseChantier = $facture->getAdresseChantier()->getLigne1();
+            }
+            if (!isNull($facture->getAdresseChantier()->getLigne2())){
+                $LigneAdresseChantier = $LigneAdresseChantier.'\n'.$facture->getAdresseChantier()->getLigne2();
+            }
+            if (!isNull($facture->getAdresseChantier()->getLigne3())){
+                $LigneAdresseChantier = $LigneAdresseChantier.'\n'.$facture->getAdresseChantier()->getLigne3();
+            }
+            $LigneAdresseFacturation = $facture->getAdresseFacturation()->getLigne1();
+            if (!isNull($facture->getAdresseFacturation()->getLigne2())){
+                $LigneAdresseFacturation = $LigneAdresseFacturation.'\n'.$facture->getAdresseFacturation()->getLigne2();
+            }
+            if (!isNull($facture->getAdresseFacturation()->getLigne3())){
+                $LigneAdresseFacturation = $LigneAdresseFacturation.'\n'.$facture->getAdresseFacturation()->getLigne3();
+            }
         }
         if($facture->getParticulier()){
             $nomprenom = $facture->getParticulier()->getNom()." ".$facture->getParticulier()->getPrenom();
@@ -692,6 +698,14 @@ class FactureController extends AbstractController
             $acompte = 'Un acompte a déjà été versé pour un montant de '.$facture->getDevis()->getAcompte()->getMontant().'€ par '.$facture->getDevis()->getAcompte()->getModeReglement()->getLibelle();
         }
 
+        $villeCPChantier = '';
+        if (!isNull($facture->getAdresseChantier())) {
+            $villeCPChantier = $facture->getAdresseChantier()->getCP().' '.$facture->getAdresseChantier()->getVille();
+        }
+        $villeCPFacturation = '';
+        if (!isNull($facture->getAdresseChantier())) {
+            $villeCPFacturation = $facture->getAdresseFacturation()->getCP().' '.$facture->getAdresseFacturation()->getVille();
+        }
         $lignes = $ligneFactureRepository->findByIdFactureAndOrderByCategorie($facture->getId());
 
         $pdfOptions = new Options();
@@ -723,11 +737,10 @@ class FactureController extends AbstractController
 
             'NomPrenom' => $nomprenom,
             'LigneAdresseClient' => $LigneAdresseFacturation,
-            
-            'VilleCP' => $facture->getAdresseFacturation()->getCP().' '.$facture->getAdresseFacturation()->getVille(),
+            'VilleCPFacturation' => $villeCPFacturation,
 
             'LigneAdresseChantier' => $LigneAdresseChantier,
-            'CPVilleAdresseChantier' => $facture->getAdresseChantier()->getCP().' '.$facture->getAdresseChantier()->getVille(),
+            'CPVilleAdresseChantier' => $villeCPChantier,
 
             'MontantHT' => $montantHT,
             'MontantTTC' => $montantTTC,

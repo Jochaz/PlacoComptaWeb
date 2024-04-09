@@ -108,6 +108,38 @@ class Facture
         return $this;
     }
 
+    public function AddressChantierIsFacturation(): bool
+    {
+        if (!$this->getAdresseFacturation()){
+            return false;
+        }
+
+        if (!$this->getAdresseChantier()){
+            return false;
+        }
+
+        if ($this->getAdresseChantier()->getLigne1() != $this->getAdresseFacturation()->getLigne1()){
+            return false;
+        }
+        if ($this->getAdresseChantier()->getLigne2() != $this->getAdresseFacturation()->getLigne2()){
+            return false;
+        }
+        if ($this->getAdresseChantier()->getLigne3() != $this->getAdresseFacturation()->getLigne3()){
+            return false;
+        }
+        if ($this->getAdresseChantier()->getVille() != $this->getAdresseFacturation()->getVille()){
+            return false;
+        }
+        if ($this->getAdresseChantier()->getCP() != $this->getAdresseFacturation()->getCP()){
+            return false;
+        }
+        if ($this->getAdresseChantier()->getBoitePostale() != $this->getAdresseFacturation()->getBoitePostale()){
+            return false;
+        }
+
+        return true;
+    }
+
     public function getDatePaiementFacture(): ?\DateTimeInterface
     {
         return $this->DatePaiementFacture;
