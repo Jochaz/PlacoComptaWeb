@@ -7,10 +7,24 @@
 <main class="container">
     <section class="row">
         <div class="col-12" id="principal">
+            <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasMenuLabel">Gestion du devis</h5>
+                    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <div class="list-group">
+                        <a href="/invoice/detail/{{facture.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-file-invoice"></i> Info. générales de la facture</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12" id="principal">
             <h2>Modification de la facture : {{facture.NumFacture}}</h2>
             {% include "_partials/_flash.html.twig"%}
-            <hr>
-            <a href="/invoice/detail/{{facture.id}}"><button type="button" class="btn btn-info">Info. générales de la facture</button></a>
             <hr> 
             {% if not facture.peutModifierDocument %}
                 <p style="color: red">Cette facture est éditée définitivement et ne peut plus être modifiée</p>
