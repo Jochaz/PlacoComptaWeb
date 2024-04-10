@@ -3,10 +3,71 @@
 {% block title %}Page de connexion : PlacoCompta{% endblock %}
 
 {% block body %}
-<section class="vh-100">
+
+<section class="vh-100" style="background-color: #78c2ad;"
+  <div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col col-xl-10">
+        <div class="card" style="border-radius: 1rem;">
+          <div class="row g-0">
+            <div class="col-md-6 col-lg-5 d-none d-md-block">
+              <img src="https://local-fr-public.s3.eu-west-3.amazonaws.com/prod/webtool/userfiles/31080/J%C3%A9r%C3%B4me%20Paulsen,%20plaquistes%20%C3%A0%20Cardet%20%203.jpg"
+                alt="login form" class="img-fluid" style="height: 100%; border-radius: 1rem 0 0 1rem;" />
+            </div>
+            <div class="col-md-6 col-lg-7 d-flex align-items-center">
+              <div class="card-body p-4 p-lg-5 text-black">
+
+                <form method="post">
+
+                  <div class="d-flex align-items-center mb-3 pb-1">
+                    <i class="fas fa-cubes fa-2x me-3" style="color: #ff6219;"></i>
+                    <img src={{ asset('build/images/IconePng.ico') }}
+                      alt="Login image" height="65px" width="65px" style="object-fit: cover; object-position: left;">
+                     <span class="h1 fw-bold mb-0">PlacoCompta</span>
+                  </div>
+                  {% if error %}
+                      <div class="alert alert-danger">Identifiants incorrects, veuillez réessayer.</div>
+                  {% endif %}
+                  {% if app.user %}
+                      <div class="mb-3">
+                          Vous êtes déjà connecté en tant que {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Se déconnecter</a>
+                      </div>
+                  {% endif %}
+                  <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Module de connexion</h5>
+
+
+                <div class="form-outline mb-4">
+                    <label class="form-label" for="inputEmail">Adresse email</label>
+                    <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control form-control-lg" autocomplete="email" required autofocus>
+                </div>
+
+                <div class="form-outline mb-4">
+                    <label class="form-label" for="inputPassword">Mot de passe</label>
+                    <input type="password" name="password" id="inputPassword" class="form-control form-control-lg" autocomplete="current-password" required>
+                </div>
+
+                  <div class="pt-1 mb-4">
+                    <button data-mdb-button-init data-mdb-ripple-init class="btn btn-dark btn-lg btn-block" type="submit">Se connecter</button>
+                  </div>
+                  <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                  <a class="small text-muted" href="{{ path('app_forgot_password_request')}}">Mot de passe oublié ?</a>
+                  {# <p class="mb-5 pb-lg-2" style="color: #393f81;">Don't have an account? <a href="#!"
+                      style="color: #393f81;">Register here</a></p> #}
+                </form>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# <section class="vh-100">
   <div class="container-fluid">
     <div class="row">
-      <div class="col-sm-6 text-black">
+      <div class="col-lg-6 text-black">
 
         <div class="px-5 ms-xl-4">
             <img src={{ asset('build/images/IconePng.ico') }}
@@ -55,5 +116,5 @@
       </div>
     </div>
   </div>
-</section>
+</section> #}
 {% endblock %}
