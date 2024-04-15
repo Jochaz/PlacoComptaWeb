@@ -19,7 +19,7 @@
                     <div class="list-group">
                     <a href="/invoice/updatecontent/{{facture.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-pen"></i> Modifier le contenu de la facture</a>
                     {% if facture.devis %}
-                    <a href="/quote/detail/{{facture.devis.id}}" class="list-group-item list-group-item-action"><button type="button" class="btn btn-info"><i class="fa-solid fa-file-invoice"></i> Voir le devis de la facture</button></a>
+                    <a href="/quote/detail/{{facture.devis.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-file-invoice"></i> Voir le devis de la facture</a>
                     {% endif %}
                     <a href="/invoice/generatePDF/{{facture.id}}" target="_blank" class="list-group-item list-group-item-action"><i class="fa-solid fa-file-pdf"></i> Générer le document</a>
                     {% if facture.peutModifierDocument %}

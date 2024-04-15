@@ -897,10 +897,15 @@ class DevisController extends AbstractController
         $facture->setDevis($devis);
 
         $modeReglementDefaut = $modeReglementRepository->findOneBy(["Libelle" => "Virement bancaire"]);
+        if (!$modeReglementDefaut) {
+            $modeReglementDefaut = $modeReglementRepository->findAll()[0];
+        }
         $echeance = new Echeance();
         $echeance->setModeReglement($modeReglementDefaut);
         $echeance->setIsRegle(false);
         $echeance->setMontant($facture->getPrixTTC());
+
+
 
         $facture->addEcheance($echeance);
 
