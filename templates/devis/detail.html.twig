@@ -17,12 +17,43 @@
                 </div>
                 <div class="offcanvas-body">
                     <div class="list-group">
-                    <a href="/quote/updatecontent/{{devis.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-pen"></i> Modifier le contenu du devis</a>
-                    {% if not devis.facture %}
-                    <a href="/quote/transform/{{devis.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-gear"></i> Transformer en facture</a>
-                    {% else %}
+
+                    {% if devis.EtatDocument.Abrege == "CR" %}
+                    {# <a href="/quote/send/{{devis.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-envelope"></i> Envoyer le devis au client par email</a> #}
+                    <a href="/quote/waitvalidation/{{devis.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-gear"></i> Passer le devis en Attente de validation client</a>
+                    {% endif %}
+
+                    {% if devis.EtatDocument.Abrege == "ATVA" %}
+                    <a href="/quote/validation/{{devis.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-gear"></i> Passer le devis en Valider par le client</a>
+                    <a href="/quote/dismiss/{{devis.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-gear"></i> Passer le devis en Refuser par le client</a>
+                    {% endif %}
+
+                    {% if devis.EtatDocument.Abrege == "AC" %}
+                    <a href="/quote/inprogress/{{devis.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-gear"></i> Passer le devis en En cours de traitement</a>
+                    {% endif %}
+
+                    {% if devis.EtatDocument.Abrege == "RE" %}
+                    {# <a href="/quote/send/{{devis.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-envelope"></i> Envoyer le devis rectifié au client par email</a> #}
+                    <a href="/quote/waitvalidation/{{devis.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-gear"></i> Passer le devis en Attente de validation client</a>
+                    {% endif %}
+
+                    <!-- FAC -->
+                    {% if devis.EtatDocument.Abrege == "EC" %}
+                    <a href="/quote/toinvoice/{{devis.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-gear"></i> Passer le devis en facturation</a>
+                    {% endif %}
+
+                    <!-- CL -->
+                    <a href="/quote/cancel/{{devis.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-xmark"></i> Passer le devis en Devis clôturé</a>
+
+                    <hr >
+                    {% if devis.EtatDocument.Abrege != "FAC" %}
+                    <a href="/quote/updatecontent/{{devis.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-pen"></i> Modifier le contenu du devis</a>    
+                    {% endif %}
+
+                    {% if devis.facture %}
                     <a href="/invoice/detail/{{devis.facture.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-file-invoice"></i> Voir la facture</a>
                     {% endif %}
+                    
                     <a href="/quote/generatePDF/{{devis.id}}" target="_blank" class="list-group-item list-group-item-action"><i class="fa-solid fa-file-pdf"></i> Générer le document</a>
                     {% set acomptePossible = true %}
                     {% if (devis.facture) and (not devis.facture.peutModifierDocument) %}
@@ -31,13 +62,15 @@
                     {% if acomptePossible %}
                     <a href="/quote/acompte/{{devis.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-coins"></i> {% if not devis.acompte %}Créer{% else %}Modifier{% endif %} l'acompte</a>
                     {% endif %}
-                    <a href="/quote/disable/{{devis.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-eye-slash"></i> Désactiver le devis</a> 
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-12" id="principal">
             <h2>Devis : {{devis.numDevis}}</h2>
+            
+            <p>Statut du devis : <span class="{{devis.EtatDocument.Badge}}">{{devis.EtatDocument.Nom}}</span></p>
+            
             <hr>
             {% if (devis.facture) and (not devis.facture.peutModifierDocument) %}
                 <p style="color: red">La facture lié à ce devis est éditée définitivement et ne peut plus être modifiée</p>

@@ -67,6 +67,10 @@ class Devis
     #[ORM\OneToOne(mappedBy: 'devis', cascade: ['persist', 'remove'])]
     private ?Acompte $acompte = null;
 
+    #[ORM\ManyToOne(inversedBy: 'devis')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?EtatDocument $EtatDocument = null;
+
     public function __construct()
     {
         $this->ligneDevis = new ArrayCollection();
@@ -400,6 +404,18 @@ class Devis
         }
 
         $this->acompte = $acompte;
+
+        return $this;
+    }
+
+    public function getEtatDocument(): ?EtatDocument
+    {
+        return $this->EtatDocument;
+    }
+
+    public function setEtatDocument(?EtatDocument $EtatDocument): static
+    {
+        $this->EtatDocument = $EtatDocument;
 
         return $this;
     }

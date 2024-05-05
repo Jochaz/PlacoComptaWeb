@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use App\Entity\Devis;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -33,6 +34,18 @@ class EmailVerifier
         $context['expiresAtMessageKey'] = $signatureComponents->getExpirationMessageKey();
         $context['expiresAtMessageData'] = $signatureComponents->getExpirationMessageData();
 
+        $email->context($context);
+
+        $this->mailer->send($email);
+    }
+
+    public function sendQuoteToClient(TemplatedEmail $email): void
+    {
+        $context = $email->getContext();
+        // $context['signedUrl'] = $signatureComponents->getSignedUrl();
+        // $context['expiresAtMessageKey'] = $signatureComponents->getExpirationMessageKey();
+        // $context['expiresAtMessageData'] = $signatureComponents->getExpirationMessageData();
+        $context['NomPrenom'] = "CHARIOT Jordan"; 
         $email->context($context);
 
         $this->mailer->send($email);

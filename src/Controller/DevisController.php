@@ -21,7 +21,7 @@ use App\Model\SearchDevisData;
 use App\Repository\AdresseDocumentRepository;
 use App\Repository\AdresseFacturationRepository;
 use App\Repository\DevisRepository;
-use App\Repository\EcheanceRepository;
+use App\Repository\EtatDocumentRepository;
 use App\Repository\EnteteDocumentRepository;
 use App\Repository\FactureRepository;
 use App\Repository\LigneDevisRepository;
@@ -31,6 +31,7 @@ use App\Repository\ModeReglementRepository;
 use App\Repository\ParametrageDevisRepository;
 use App\Repository\ParametrageFactureRepository;
 use App\Repository\TVARepository;
+use App\Security\EmailVerifier;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,6 +42,7 @@ use Dompdf\Options;
 
 class DevisController extends AbstractController
 {
+
     #[Route('/quote', name: 'app_devis')]
     public function index(DevisRepository $devisRepository, 
                           ModelePieceRepository $modelePieceRepository,
@@ -93,7 +95,9 @@ class DevisController extends AbstractController
 
     #[Route('/quote/add/info', name: 'app_devis_add_info')]
     public function addInfo(Request $request, DevisRepository $devisRepository, 
-                            ParametrageDevisRepository $parametrageDevisRepository, ModelePieceRepository $modelePieceRepository): Response
+                            ParametrageDevisRepository $parametrageDevisRepository, 
+                            ModelePieceRepository $modelePieceRepository,
+                            EtatDocumentRepository $etatDocumentRepository): Response
     {
         function insertToString(string $mainstr,string $insertstr,int $index):string
         {
@@ -110,8 +114,10 @@ class DevisController extends AbstractController
         }
 
         $parametrageDevis = $parametrageDevisRepository->findOneBy(['TypeDocument' => 'Devis']);
+        $EtatDocumentCR = $etatDocumentRepository->findOneBy(['NumOrdre' => 1]);
 
         $devis = new Devis();
+        $devis->setEtatDocument($EtatDocumentCR);
 
         if ($parametrageDevis) {
             $numDevis = $parametrageDevis->getPrefixe();
@@ -793,15 +799,105 @@ class DevisController extends AbstractController
         return new Response("The PDF file has been succesfully generated !");
     }
 
-    #[Route('/quote/transform/{id}', name: 'app_devis_transform')]
-    public function transformDevis(string $id, DevisRepository $devisRepository,
-    FactureRepository $factureRepository,
-    ParametrageFactureRepository $parametrageFactureRepository,
-    AdresseDocumentRepository $adresseDocumentRepository,
-    AdresseFacturationRepository $adresseFacturationRepository,
-    ModeReglementRepository $modeReglementRepository): Response
-    {
+    #[Route('/quote/waitvalidation/{id}', name: 'app_devis_waitvalidation')]
+    public function waitvalidation(string $id, DevisRepository $devisRepository, EtatDocumentRepository $etatDocumentRepository){
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+        $devis = $devisRepository->findOneBy(["id" => $id]);
 
+        if (!$devis){
+            return $this->redirectToRoute('app_devis');
+        }
+
+        if ($devis->getEtatDocument()->getAbrege() == "CR" || $devis->getEtatDocument()->getAbrege() == "RE"){
+            $devis->setEtatDocument($etatDocumentRepository->findOneBy(["Abrege" => "ATVA"]));
+            $devisRepository->save($devis, true);
+        } 
+        return $this->redirectToRoute('app_devis_detail', ["id" => $devis->getId()]);   
+    }
+
+    
+    #[Route('/quote/validation/{id}', name: 'app_devis_validation')]
+    public function validation(string $id, DevisRepository $devisRepository, EtatDocumentRepository $etatDocumentRepository){
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+        $devis = $devisRepository->findOneBy(["id" => $id]);
+
+        if (!$devis){
+            return $this->redirectToRoute('app_devis');
+        }
+
+        if ($devis->getEtatDocument()->getAbrege() == "ATVA"){
+            $devis->setEtatDocument($etatDocumentRepository->findOneBy(["Abrege" => "AC"]));
+            $devisRepository->save($devis, true);
+        }
+
+        return $this->redirectToRoute('app_devis_detail', ["id" => $devis->getId()]);   
+    }
+
+    #[Route('/quote/dismiss/{id}', name: 'app_devis_dismiss')]
+    public function dismiss(string $id, DevisRepository $devisRepository, EtatDocumentRepository $etatDocumentRepository){
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+        $devis = $devisRepository->findOneBy(["id" => $id]);
+
+        if (!$devis){
+            return $this->redirectToRoute('app_devis');
+        }
+
+        if ($devis->getEtatDocument()->getAbrege() == "ATVA"){
+            $devis->setEtatDocument($etatDocumentRepository->findOneBy(["Abrege" => "RE"]));
+            $devisRepository->save($devis, true);
+        }
+
+        return $this->redirectToRoute('app_devis_detail', ["id" => $devis->getId()]);   
+    }
+
+    #[Route('/quote/inprogress/{id}', name: 'app_devis_inprogress')]
+    public function inprogress(string $id, DevisRepository $devisRepository, EtatDocumentRepository $etatDocumentRepository){
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+        $devis = $devisRepository->findOneBy(["id" => $id]);
+
+        if (!$devis){
+            return $this->redirectToRoute('app_devis');
+        }
+
+        if ($devis->getEtatDocument()->getAbrege() == "AC"){
+            $devis->setEtatDocument($etatDocumentRepository->findOneBy(["Abrege" => "EC"]));
+            $devisRepository->save($devis, true);
+        }
+
+        return $this->redirectToRoute('app_devis_detail', ["id" => $devis->getId()]);   
+    }
+
+    #[Route('/quote/toinvoice/{id}', name: 'app_devis_toinvoice')]
+    public function toinvoice(string $id, DevisRepository $devisRepository, EtatDocumentRepository $etatDocumentRepository,
+                                        AdresseDocumentRepository $adresseDocumentRepository,
+                                        AdresseFacturationRepository $adresseFacturationRepository,
+                                        ParametrageFactureRepository $parametrageFactureRepository,
+                                        ModeReglementRepository $modeReglementRepository,
+                                        FactureRepository $factureRepository
+                                        ){
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+        $devis = $devisRepository->findOneBy(["id" => $id]);
+
+        if (!$devis){
+            return $this->redirectToRoute('app_devis');
+        }
+
+        if ($devis->getEtatDocument()->getAbrege() == "EC"){
+            $devis->setEtatDocument($etatDocumentRepository->findOneBy(["Abrege" => "FAC"]));
+            $devisRepository->save($devis, true);
+        }
+
+        
         function insertToStr(string $mainstr,string $insertstr,int $index):string
         {
             return substr($mainstr, 0, $index) . $insertstr . substr($mainstr, $index);
@@ -905,14 +1001,26 @@ class DevisController extends AbstractController
         $echeance->setIsRegle(false);
         $echeance->setMontant($facture->getPrixTTC());
 
-
-
         $facture->addEcheance($echeance);
 
         $factureRepository->save($facture, true);
 
-        $this->addFlash('success', 'Transformation du devis en facture réussie'); 
-        return $this->redirectToRoute('app_facture_detail', ["id" => $facture->getId()]);
+        return $this->redirectToRoute('app_devis_detail', ["id" => $devis->getId()]);   
     }
 
+    #[Route('/quote/cancel/{id}', name: 'app_devis_cancel')]
+    public function cancel(string $id, DevisRepository $devisRepository, EtatDocumentRepository $etatDocumentRepository){
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+        $devis = $devisRepository->findOneBy(["id" => $id]);
+
+        if (!$devis){
+            return $this->redirectToRoute('app_devis');
+        }
+
+        $devis->setEtatDocument($etatDocumentRepository->findOneBy(["Abrege" => "CL"]));
+        $devisRepository->save($devis, true);
+        return $this->redirectToRoute('app_devis_detail', ["id" => $devis->getId()]);   
+    }
 }

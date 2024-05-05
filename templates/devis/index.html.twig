@@ -38,6 +38,7 @@
                         <div class="card shadow-sm border-light mb-4 h-100">
                             <div class="card-body"  id="div-card-listing">
                                 <h5 class="font-weight-normal">Devis n°{{devis.NumDevis}}</h5>
+                                <span class="{{devis.EtatDocument.Badge}}">{{devis.EtatDocument.Nom}}</span>
                                 <p class="fst-italic fs-6">{{devis.DateDevis|date('d/m/Y')}}</p>
                         
                                 {% if devis.particulier %}
