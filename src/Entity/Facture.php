@@ -72,6 +72,9 @@ class Facture
     #[ORM\OneToMany(mappedBy: 'Facture', cascade:["persist"], targetEntity: Echeance::class)]
     private Collection $echeances;
 
+    #[ORM\ManyToOne(inversedBy: 'factures')]
+    private ?EtatDocument $EtatDocument = null;
+
     public function __construct()
     {
         $this->LigneFacture = new ArrayCollection();
@@ -436,5 +439,17 @@ class Facture
         }
 
         return $result;
+    }
+
+    public function getEtatDocument(): ?EtatDocument
+    {
+        return $this->EtatDocument;
+    }
+
+    public function setEtatDocument(?EtatDocument $EtatDocument): static
+    {
+        $this->EtatDocument = $EtatDocument;
+
+        return $this;
     }
 }

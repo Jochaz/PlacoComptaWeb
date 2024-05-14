@@ -39,6 +39,7 @@
                         <div class="card shadow-sm border-light mb-4 h-100">
                             <div class="card-body"  id="div-card-listing">
                                 <h5 class="font-weight-normal">Facture n°{{facture.NumFacture}}</h5>
+                                <span class="{{facture.EtatDocument.Badge}}">{{facture.EtatDocument.Nom}}</span>
                                 <p class="fst-italic fs-6">{{facture.DateFacture|date('d/m/Y')}}</p>
                         
                                 {% if facture.particulier %}

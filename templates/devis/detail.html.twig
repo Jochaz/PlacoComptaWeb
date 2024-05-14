@@ -43,9 +43,12 @@
                     {% endif %}
 
                     <!-- CL -->
+                    {% if devis.EtatDocument.Abrege != "CL" %}
                     <a href="/quote/cancel/{{devis.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-xmark"></i> Passer le devis en Devis clôturé</a>
+                       <hr >
+                    {% endif %}
 
-                    <hr >
+                 
                     {% if devis.EtatDocument.Abrege != "FAC" %}
                     <a href="/quote/updatecontent/{{devis.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-pen"></i> Modifier le contenu du devis</a>    
                     {% endif %}

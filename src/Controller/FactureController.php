@@ -19,6 +19,7 @@ use App\Repository\AdresseDocumentRepository;
 use App\Repository\AdresseFacturationRepository;
 use App\Repository\EcheanceRepository;
 use App\Repository\EnteteDocumentRepository;
+use App\Repository\EtatDocumentRepository;
 use App\Repository\FactureRepository;
 use App\Repository\LigneFactureRepository;
 use App\Repository\MateriauxRepository;
@@ -88,7 +89,8 @@ class FactureController extends AbstractController
 
     #[Route('/invoice/add/info', name: 'app_facture_add_info')]
     public function addInfo(Request $request, FactureRepository $factureRepository, 
-                            ParametrageFactureRepository $parametrageFactureRepository): Response
+                            ParametrageFactureRepository $parametrageFactureRepository,
+                            EtatDocumentRepository $etatDocumentRepository): Response
     {
         function insertToString(string $mainstr,string $insertstr,int $index):string
         {
@@ -101,6 +103,10 @@ class FactureController extends AbstractController
 
         $facture = new Facture();
         $parametrageFacture = $parametrageFactureRepository->findOneBy(['TypeDocument' => 'Facture']);
+        $EtatDocumentCR = $etatDocumentRepository->findOneBy(['NumOrdre' => 1]);
+
+        $facture->setEtatDocument($EtatDocumentCR);
+
         if ($parametrageFacture) {
             $numFacture = $parametrageFacture->getPrefixe();
             if ($parametrageFacture->isAnneeEnCours()){
@@ -789,5 +795,124 @@ class FactureController extends AbstractController
         return $this->redirectToRoute('app_facture_PDF', ["id" => $facture->getId()]);     
     }
 
+    #[Route('/invoice/waitpayment/{id}', name: 'app_invoice_waitpayment')]
+    public function waitpayment(string $id, FactureRepository $factureRepository, EtatDocumentRepository $etatDocumentRepository){
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+        $facture = $factureRepository->findOneBy(["id" => $id]);
+
+        if (!$facture){
+            return $this->redirectToRoute('app_facture');
+        }
+
+        if ($facture->getEtatDocument()->getAbrege() == "CR"){
+            $facture->setEtatDocument($etatDocumentRepository->findOneBy(["Abrege" => "ATREG"]));
+            $factureRepository->save($facture, true);
+        }
+
+        return $this->redirectToRoute('app_facture_detail', ["id" => $facture->getId()]);   
+    }
+
+    #[Route('/invoice/cancel/{id}', name: 'app_invoice_cancel')]
+    public function cancel(string $id, FactureRepository $factureRepository, EtatDocumentRepository $etatDocumentRepository){
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+        $facture = $factureRepository->findOneBy(["id" => $id]);
+
+        if (!$facture){
+            return $this->redirectToRoute('app_facture');
+        }
+
+        if ($facture->getEtatDocument()->getAbrege() == "CR" || $facture->getEtatDocument()->getAbrege() == "ATREG"){
+            $facture->setEtatDocument($etatDocumentRepository->findOneBy(["Abrege" => "AN"]));
+            $factureRepository->save($facture, true);
+        }
+
+        return $this->redirectToRoute('app_facture_detail', ["id" => $facture->getId()]);   
+    }
+
+    #[Route('/invoice/payment/{id}', name: 'app_invoice_payment')]
+    public function payment(string $id, FactureRepository $factureRepository, EtatDocumentRepository $etatDocumentRepository){
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+        $facture = $factureRepository->findOneBy(["id" => $id]);
+
+        if (!$facture){
+            return $this->redirectToRoute('app_facture');
+        }
+
+        if ($facture->getEtatDocument()->getAbrege() == "ATREG" || 
+            $facture->getEtatDocument()->getAbrege() == "PPAY"  || 
+            $facture->getEtatDocument()->getAbrege() == "LI"){
+            $facture->setEtatDocument($etatDocumentRepository->findOneBy(["Abrege" => "PAY"]));
+            $factureRepository->save($facture, true);
+        }
+
+        return $this->redirectToRoute('app_facture_detail', ["id" => $facture->getId()]);   
+    }
+
+    #[Route('/invoice/partialpayment/{id}', name: 'app_invoice_partial_payment')]
+    public function partialPayment(string $id, FactureRepository $factureRepository, EtatDocumentRepository $etatDocumentRepository){
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+        $facture = $factureRepository->findOneBy(["id" => $id]);
+
+        if (!$facture){
+            return $this->redirectToRoute('app_facture');
+        }
+
+        if ($facture->getEtatDocument()->getAbrege() == "ATREG" ||  
+            $facture->getEtatDocument()->getAbrege() == "LI"){
+            $facture->setEtatDocument($etatDocumentRepository->findOneBy(["Abrege" => "PPAY"]));
+            $factureRepository->save($facture, true);
+        }
+
+        return $this->redirectToRoute('app_facture_detail', ["id" => $facture->getId()]);   
+    }
+
+    #[Route('/invoice/dispute/{id}', name: 'app_invoice_dispute')]
+    public function dispute(string $id, FactureRepository $factureRepository, EtatDocumentRepository $etatDocumentRepository){
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+        $facture = $factureRepository->findOneBy(["id" => $id]);
+
+        if (!$facture){
+            return $this->redirectToRoute('app_facture');
+        }
+
+        if ($facture->getEtatDocument()->getAbrege() == "ATREG" ||  
+            $facture->getEtatDocument()->getAbrege() == "PPAY" || 
+            $facture->getEtatDocument()->getAbrege() == "PAY"){
+            $facture->setEtatDocument($etatDocumentRepository->findOneBy(["Abrege" => "LI"]));
+            $factureRepository->save($facture, true);
+        }
+
+        return $this->redirectToRoute('app_facture_detail', ["id" => $facture->getId()]);   
+    }
+
+    #[Route('/invoice/close/{id}', name: 'app_invoice_close')]
+    public function closed(string $id, FactureRepository $factureRepository, EtatDocumentRepository $etatDocumentRepository){
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+        $facture = $factureRepository->findOneBy(["id" => $id]);
+
+        if (!$facture){
+            return $this->redirectToRoute('app_facture');
+        }
+
+        if ($facture->getEtatDocument()->getAbrege() == "PAY" ||  
+            $facture->getEtatDocument()->getAbrege() == "AN"){
+            $facture->setEtatDocument($etatDocumentRepository->findOneBy(["Abrege" => "CL"]));
+            $factureRepository->save($facture, true);
+        }
+
+        return $this->redirectToRoute('app_facture_detail', ["id" => $facture->getId()]);   
+    }
     
 }
