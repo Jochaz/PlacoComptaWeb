@@ -12,6 +12,10 @@ class SearchFactureData{
     public int $prixmaxTTC = 0;
 
     public string $client;
-
+    
+     /**
+     * @var EtatDocument[]
+     */
+    public array $etatDocument = [];
 
 }

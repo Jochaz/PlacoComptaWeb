@@ -71,6 +71,7 @@ class FactureRepository extends ServiceEntityRepository
     {
         $data = $this->createQueryBuilder('f')
            ->andWhere('f.Plusutilise = :val')
+           ->join('f.EtatDocument' , 'ed')
            ->leftJoin('f.Particulier', 'part')
            ->leftJoin('f.Professionnel', 'pro')
            ->setParameter('val', false)
@@ -99,6 +100,12 @@ class FactureRepository extends ServiceEntityRepository
             $data = $data 
                 ->andwhere ('f.PrixTTC <= :prixmaxTTC')
                 ->setParameter('prixmaxTTC', $search->prixmaxTTC);
+        }
+
+        if (!empty($search->etatDocument)){
+            $data = $data 
+                ->andwhere ('ed.id IN (:etat)')
+                ->setParameter('etat', $search->etatDocument);
         }
 
        return $data = $data->getQuery()->getResult();;
