@@ -2,8 +2,10 @@
 
 namespace App\Form;
 
+use App\Entity\EtatDocument;
 use App\Entity\Particulier;
 use App\Model\SearchDevisData;
+use App\Repository\EtatDocumentRepository;
 use Doctrine\ORM\Mapping\Entity;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -47,7 +49,18 @@ class SearchDevisType extends AbstractType{
                 'required' => false,
                 'empty_data' => '9999999',
             ])
-
+            ->add('etatDocument', EntityType::class, [
+                'class' => EtatDocument::class,
+                'query_builder' => function (EtatDocumentRepository $er) {
+                    return $er->createQueryBuilder('ed')
+                        ->where('ed.TypeDocument = 11')
+                        ->orWhere('ed.TypeDocument = 10')
+                        ->orderBy('ed.NumOrdre', 'ASC');
+                },
+                'expanded' => true,
+                'multiple' => true,
+                'label' => 'Recherche par état du devis',
+            ])
             ;
     }
 

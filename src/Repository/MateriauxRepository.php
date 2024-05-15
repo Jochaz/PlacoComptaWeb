@@ -79,16 +79,10 @@ class MateriauxRepository extends ServiceEntityRepository
         }
 
         if (!empty($searchData->categorie)){
-            $cat = '';
-            foreach ($searchData->categorie as $key => $value) {
-                $cat = $cat.$value->getId().',';
-            } 
-
-            $cat = rtrim($cat, ",");
             $data = $data 
                 ->join('m.Categorie', 'c')
                 ->andwhere ('c.id IN ( :categories )')
-                ->setParameter('categories', "{$cat}");
+                ->setParameter('categories', $searchData->categorie);
         }
         if (!empty($searchData->prixminachat) && $searchData->prixminachat != 0) {
             $data = $data 

@@ -13,5 +13,10 @@ class SearchDevisData{
 
     public string $client;
 
+     /**
+     * @var EtatDocument[]
+     */
+    public array $etatDocument = [];
+
 
 }

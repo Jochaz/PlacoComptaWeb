@@ -65,6 +65,7 @@ class DevisRepository extends ServiceEntityRepository
     {
         $data = $this->createQueryBuilder('d')
            ->andWhere('d.Plusutilise = :val')
+           ->join('d.EtatDocument' , 'ed')
            ->leftJoin('d.Particulier', 'part')
            ->leftJoin('d.Professionnel', 'pro')
            ->setParameter('val', false)
@@ -83,16 +84,22 @@ class DevisRepository extends ServiceEntityRepository
                 ->setParameter('client', "%{$search->client}%");
         }
 
-        if (!empty($search->prixminTTC) || $search->prixminTTC >= 0){
+        if (!empty($search->prixminTTC) && $search->prixminTTC > 0){
             $data = $data 
                 ->andwhere ('d.PrixTTC >= :prixminTTC')
                 ->setParameter('prixminTTC', $search->prixminTTC);
         }
-
-        if (!empty($search->prixmaxTTC) || $search->prixmaxTTC >= 0){
+     
+        if (!empty($search->prixmaxTTC) && $search->prixmaxTTC > 0){
             $data = $data 
                 ->andwhere ('d.PrixTTC <= :prixmaxTTC')
                 ->setParameter('prixmaxTTC', $search->prixmaxTTC);
+        }
+
+        if (!empty($search->etatDocument)){
+            $data = $data 
+                ->andwhere ('ed.id IN (:etat)')
+                ->setParameter('etat', $search->etatDocument);
         }
 
        return $data = $data->getQuery()->getResult();;
