@@ -118,6 +118,7 @@ class DevisController extends AbstractController
 
         $devis = new Devis();
         $devis->setEtatDocument($EtatDocumentCR);
+        $devis->setCreatedBy($this->getUser());
 
         if ($parametrageDevis) {
             $numDevis = $parametrageDevis->getPrefixe();
@@ -919,6 +920,7 @@ class DevisController extends AbstractController
 
         $facture = new Facture();
         $facture->setObjet($devis->getObjet());
+        $facture->setCreatedBy($this->getUser());
         $facture->setNumDossier($devis->getNumDossier());
         $facture->setTVAAutoliquidation($devis->isTVAAutoliquidation());
         $facture->setDateFacture(new \DateTime());

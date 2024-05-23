@@ -71,6 +71,10 @@ class Devis
     #[ORM\JoinColumn(nullable: false)]
     private ?EtatDocument $EtatDocument = null;
 
+    #[ORM\ManyToOne(inversedBy: 'devis')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $CreatedBy = null;
+
     public function __construct()
     {
         $this->ligneDevis = new ArrayCollection();
@@ -416,6 +420,18 @@ class Devis
     public function setEtatDocument(?EtatDocument $EtatDocument): static
     {
         $this->EtatDocument = $EtatDocument;
+
+        return $this;
+    }
+
+    public function getCreatedBy(): ?User
+    {
+        return $this->CreatedBy;
+    }
+
+    public function setCreatedBy(?User $CreatedBy): static
+    {
+        $this->CreatedBy = $CreatedBy;
 
         return $this;
     }

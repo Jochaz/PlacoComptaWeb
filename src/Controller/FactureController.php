@@ -102,6 +102,7 @@ class FactureController extends AbstractController
         }
 
         $facture = new Facture();
+        $facture->setCreatedBy($this->getUser());
         $parametrageFacture = $parametrageFactureRepository->findOneBy(['TypeDocument' => 'Facture']);
         $EtatDocumentCR = $etatDocumentRepository->findOneBy(['NumOrdre' => 1]);
 
