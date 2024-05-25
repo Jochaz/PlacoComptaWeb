@@ -63,7 +63,7 @@
                             <form method="POST" action="/quote/updatecontent/{{devis.id}}" name="addLigne" id="addLigne">                            
                                 <div class="row" style="padding-bottom: 15px">
                                     <p><b>Matériaux</b></p>
-                                    <input type="text" autocomplete="off" class="form-control" name="ligne_add_select" id="id_ligne_add_select" list="ligne_add_select" onChange="chargeMateriaux()" required>
+                                    {# <input type="text" autocomplete="off" class="form-control" name="ligne_add_select" id="id_ligne_add_select" list="ligne_add_select" onChange="chargeMateriaux()" required>
                                         <datalist id="ligne_add_select" >
                                             {% for ligne in ligneAdd %}
                                             <option value="{{ligne.Designation}}" 
@@ -72,8 +72,18 @@
                                                     data-tva="{{ligne.tva.id}}">
                                             </option>
                                             {% endfor %}
-                                        </datalist>
+                                        </datalist> #}
                                     <input type="hidden" id="materiaux_id" name="materiaux_id" value="x"/>
+                                    <select id="materiau-select" style="width:99%">
+                                        <option value="">Sélectionner un matériau</option>
+                                        {% for ligne in ligneAdd %}
+                                            <option value="{{ligne.id}}" 
+                                                    data-id="{{ligne.id}}"
+                                                    data-designation="{{ligne.Designation}}"
+                                                    data-pu="{{ligne.PrixUnitaire}}"
+                                                    data-tva="{{ligne.tva.id}}">{{ ligne.Designation }}</option>
+                                        {% endfor %}
+                                    </select>
                                     <hidden>
                                 </div>
                                 <div class="row" style="padding-bottom: 15px">
