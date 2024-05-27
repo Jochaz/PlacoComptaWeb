@@ -917,8 +917,10 @@ class DevisController extends AbstractController
         if ($devis->getFacture()){
             return $this->redirectToRoute('app_facture_detail', ["id" => $devis->getFacture()->getId()]);
         }
+        $EtatDocumentCR = $etatDocumentRepository->findOneBy(['NumOrdre' => 1]);
 
         $facture = new Facture();
+        $facture->setEtatDocument($EtatDocumentCR);
         $facture->setObjet($devis->getObjet());
         $facture->setCreatedBy($this->getUser());
         $facture->setNumDossier($devis->getNumDossier());

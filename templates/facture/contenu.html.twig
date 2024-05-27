@@ -63,18 +63,17 @@
                             <form method="POST" action="/invoice/updatecontent/{{facture.id}}" name="addLigne" id="addLigne">                            
                                 <div class="row" style="padding-bottom: 15px">
                                     <p><b>Matériaux</b></p>
-                                    <input type="text" class="form-control" name="ligne_add_select" id="id_ligne_add_select" list="ligne_add_select" onChange="chargeMateriaux()" required>
-                                        <datalist id="ligne_add_select" >
-                                            {% for ligne in ligneAdd %}
-                                            <option value="{{ligne.Designation}}" 
-                                                    data-value="{{ligne.id}}"
-                                                    data-pu="{{ligne.PrixUnitaire}}"
-                                                    data-tva="{{ligne.tva.id}}">
-                                            </option>
-                                            {% endfor %}
-                                        </datalist>
                                     <input type="hidden" id="materiaux_id" name="materiaux_id" value="x"/>
-                                    <hidden>
+                                    <select id="materiau-select" style="width:99%">
+                                        <option value="">Sélectionner un matériau</option>
+                                        {% for ligne in ligneAdd %}
+                                            <option value="{{ligne.id}}" 
+                                                    data-id="{{ligne.id}}"
+                                                    data-designation="{{ligne.Designation}}"
+                                                    data-pu="{{ligne.PrixUnitaire}}"
+                                                    data-tva="{{ligne.tva.id}}">{{ ligne.Designation }}</option>
+                                        {% endfor %}
+                                    </select>
                                 </div>
                                 <div class="row" style="padding-bottom: 15px">
                                     <div class="col">
