@@ -61,10 +61,10 @@
                     <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse">
                         <div class="accordion-body">
                             <form method="POST" action="/quote/updatecontent/{{devis.id}}" name="addLigne" id="addLigne">                            
-                                <div class="row" style="padding-bottom: 15px">
+                                <div style="padding-bottom: 15px">
                                     <p><b>Matériaux</b></p>
                                     <input type="hidden" id="materiaux_id" name="materiaux_id" value="x"/>
-                                    <select id="materiau-select" style="width:99%">
+                                    <select id="materiau-select" style="width:100%; padding-left:0; padding-right:0;">
                                         <option value="">Sélectionner un matériau</option>
                                         {% for ligne in ligneAdd %}
                                             <option value="{{ligne.id}}" 
