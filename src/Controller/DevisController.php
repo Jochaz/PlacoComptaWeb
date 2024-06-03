@@ -553,7 +553,7 @@ class DevisController extends AbstractController
                 $inconnu = "";
                 if (!$materiaux){ 
                     $uniteMesure = $umRepo->findOneBy(["Libelle" => "Inconnu"]);
-                    $categorie = $cateRepo->findOneBy(["Libelle" => "Aucune catégorie"]);
+                    $categorie = $cateRepo->findOneBy(["Libelle" => "Sans catégorie"]);
 
                     $materiaux = new Materiaux();
                     $materiaux->setDesignation($request->request->get('des_add'));
