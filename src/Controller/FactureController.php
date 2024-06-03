@@ -7,6 +7,7 @@ use App\Entity\AdresseFacturation;
 use App\Entity\Echeance;
 use App\Entity\Facture;
 use App\Entity\LigneFacture;
+use App\Entity\Materiaux;
 use App\Form\AdresseChantierType;
 use App\Form\AdresseFacturationType;
 use App\Form\FactureDetailType;
@@ -17,6 +18,7 @@ use App\Form\SearchFactureType;
 use App\Model\SearchFactureData;
 use App\Repository\AdresseDocumentRepository;
 use App\Repository\AdresseFacturationRepository;
+use App\Repository\CategorieMateriauxRepository;
 use App\Repository\EcheanceRepository;
 use App\Repository\EnteteDocumentRepository;
 use App\Repository\EtatDocumentRepository;
@@ -27,6 +29,7 @@ use App\Repository\ModelePieceRepository;
 use App\Repository\ModeReglementRepository;
 use App\Repository\ParametrageFactureRepository;
 use App\Repository\TVARepository;
+use App\Repository\UniteMesureRepository;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use Knp\Component\Pager\PaginatorInterface;
@@ -513,7 +516,13 @@ class FactureController extends AbstractController
     }
 
     #[Route('/invoice/updatecontent/{id}', name: 'app_facture_contenu')]
-    public function quotedContent(string $id, Request $request, FactureRepository $factureRepository, LigneFactureRepository $ligneFactureRepository, MateriauxRepository $materiauxRepository, TVARepository $tVARepository): Response
+    public function quotedContent(string $id, Request $request, 
+                                    FactureRepository $factureRepository, 
+                                    LigneFactureRepository $ligneFactureRepository, 
+                                    MateriauxRepository $materiauxRepository, 
+                                    CategorieMateriauxRepository $cateRepo,
+                                    UniteMesureRepository $umRepo,
+                                    TVARepository $tVARepository): Response
     {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
@@ -533,7 +542,21 @@ class FactureController extends AbstractController
             {
                 $materiaux = $materiauxRepository->find($request->request->get('materiaux_id'));
                 $tva = $tVARepository->find($request->request->get('tva_add'));
+                $inconnu = "";
+                if (!$materiaux){ 
+                    $uniteMesure = $umRepo->findOneBy(["Libelle" => "Inconnu"]);
+                    $categorie = $cateRepo->findOneBy(["Libelle" => "Aucune catégorie"]);
 
+                    $materiaux = new Materiaux();
+                    $materiaux->setDesignation($request->request->get('des_add'));
+                    $materiaux->setPlusUtilise(false);
+                    $materiaux->setTVA($tva);
+                    $materiaux->setPrixUnitaire($request->request->get('pu_add'));
+                    $materiaux->setUniteMesure($uniteMesure); 
+                    $materiaux->setCategorie($categorie);
+                    $inconnu = ", attention le materiau a été ajouté en base.";      
+                    $materiauxRepository->save($materiaux, true);         
+                }
                 $ligneFacture = new LigneFacture();
                 $ligneFacture->setMateriaux($materiaux);
                 $ligneFacture->setTVA($tva);
@@ -582,7 +605,7 @@ class FactureController extends AbstractController
             $facture->setPrixTTC($facture->getPrixTTC());
             $factureRepository->save($facture, true);
 
-            $this->addFlash('success', 'Facture modifiée avec succès');    
+            $this->addFlash('success', 'Facture modifiée avec succès'.$inconnu);    
             return $this->redirectToRoute('app_facture_contenu', ["id" => $facture->getId()]);     
         }
 

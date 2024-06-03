@@ -83,22 +83,22 @@
     });
 </script>
 <script type="text/javascript">
-        $(document).ready(function() {
-            $('#materiau-select').select2();
+    $(document).ready(function() {
+        $('#materiau-select').select2();
 
-            $('#materiau-select').on('change', function() {
-                var selectedOption = $(this).find(':selected');
-                var pu = selectedOption.data('pu');
-                var designation = selectedOption.data('designation');
-                var tva = selectedOption.data('tva');
-                var id = selectedOption.data('id');
+        $('#materiau-select').on('change', function() {
+            var selectedOption = $(this).find(':selected');
+            var pu = selectedOption.data('pu');
+            var designation = selectedOption.data('designation');
+            var tva = selectedOption.data('tva');
+            var id = selectedOption.data('id');
 
-                $('#des_add').val(designation || '');
-                $('#qte_add').val(1 || '');
-                $('#tva_add').val(tva || '');
-                $('#pu_add').val(pu || '');
-                $('#remise_add').val('');
-                $('#materiaux_id').val(id || 'x');
-            });
+            $('#des_add').val(designation || '');
+            $('#qte_add').val(1 || '');
+            $('#tva_add').val(tva || '');
+            $('#pu_add').val(pu || '');
+            $('#remise_add').val('');
+            $('#materiaux_id').val(id || 'x');
         });
-    </script>
+    });
+</script>

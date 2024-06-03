@@ -130,6 +130,7 @@ class MateriauxRepository extends ServiceEntityRepository
         $query = $this->createQueryBuilder('m')
                 ->Where($expr->notIn('m.id', $sub->getDQL()))
                 ->andWhere('m.Plus_utilise = false')
+                ->orderBy('m.Designation');
                 ;
 
         return $query->getQuery()->getResult();
