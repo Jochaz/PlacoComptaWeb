@@ -48,16 +48,13 @@
                        <hr >
                     {% endif %}
 
-                 
-                    {% if devis.EtatDocument.Abrege != "FAC" %}
-                    <a href="/quote/updatecontent/{{devis.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-pen"></i> Modifier le contenu du devis</a>    
-                    {% endif %}
-
+                    <a href="/quote/updatecontent/{{devis.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-pen"></i> Contenu du devis</a>    
                     {% if devis.facture %}
                     <a href="/invoice/detail/{{devis.facture.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-file-invoice"></i> Voir la facture</a>
                     {% endif %}
                     
                     <a href="/quote/generatePDF/{{devis.id}}" target="_blank" class="list-group-item list-group-item-action"><i class="fa-solid fa-file-pdf"></i> Générer le document</a>
+                    <a href="/quote/sendemail/{{devis.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-envelope"></i> Envoyer le devis au client</a>  
                     {% set acomptePossible = true %}
                     {% if (devis.facture) and (not devis.facture.peutModifierDocument) %}
                         {% set acomptePossible = false %}

@@ -17,7 +17,9 @@ use App\Form\AdresseFacturationType;
 use App\Form\DevisDetailType;
 use App\Form\DevisInfoGeneraleType;
 use App\Form\DevisRemiseType;
+use App\Form\EmailingType;
 use App\Form\SearchDevisType;
+use App\Model\EmailingData;
 use App\Model\SearchDevisData;
 use App\Repository\AdresseDocumentRepository;
 use App\Repository\AdresseFacturationRepository;
@@ -34,7 +36,6 @@ use App\Repository\ParametrageDevisRepository;
 use App\Repository\ParametrageFactureRepository;
 use App\Repository\TVARepository;
 use App\Repository\UniteMesureRepository;
-use App\Security\EmailVerifier;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -42,9 +43,90 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mailer\MailerInterface;
 
 class DevisController extends AbstractController
 {
+    private function loadHtml(Devis $devis, 
+                              EnteteDocumentRepository $enteteDocumentRepository,
+                              LigneDevisRepository $ligneDevisRepository)
+    {
+        $entete = $enteteDocumentRepository->findAll()[0];
+        $LigneAdresseChantier = '';
+        if (!is_null($devis->getAdresseChantier())) {
+            if (!is_null($devis->getAdresseChantier()->getLigne1())){
+                $LigneAdresseChantier = $devis->getAdresseChantier()->getLigne1();
+            }
+            if (!is_null($devis->getAdresseChantier()->getLigne2())){
+                $LigneAdresseChantier = $LigneAdresseChantier.'\n'.$devis->getAdresseChantier()->getLigne2();
+            }
+            if (!is_null($devis->getAdresseChantier()->getLigne3())){
+                $LigneAdresseChantier = $LigneAdresseChantier.'\n'.$devis->getAdresseChantier()->getLigne3();
+            }
+        }
+        $LigneAdresseFacturation = "";
+        if (!is_null($devis->getAdresseFacturation())) {
+            if (!is_null($devis->getAdresseFacturation()->getLigne1())){
+                $LigneAdresseFacturation = $devis->getAdresseFacturation()->getLigne1();
+            }
+            if (!is_null($devis->getAdresseFacturation()->getLigne2())){
+                $LigneAdresseFacturation = $LigneAdresseFacturation.'\n'.$devis->getAdresseFacturation()->getLigne2();
+            }
+            if (!is_null($devis->getAdresseFacturation()->getLigne3())){
+                $LigneAdresseFacturation = $LigneAdresseFacturation.'\n'.$devis->getAdresseFacturation()->getLigne3();
+            }
+        }
+        if($devis->getParticulier()){
+            $nomprenom = $devis->getParticulier()->getNom()." ".$devis->getParticulier()->getPrenom();
+        } else if ($devis->getProfessionnel()){
+            $nomprenom = $devis->getProfessionnel()->getNomsociete();
+        }
+
+        $lignes = $ligneDevisRepository->findByIdDevisAndOrderByCategorie($devis->getId());
+
+        // Retrieve the HTML generated in our twig file
+        return  $this->renderView('pdf/devis.html.twig', [
+            'title' => "Devis N°".$devis->getNumDevis(),
+
+            'Ligne1Gauche' => $entete->getLigne1Gauche(),
+            'Ligne2Gauche' => $entete->getLigne2Gauche(),
+            'Ligne3Gauche' => $entete->getLigne3Gauche(),
+            'Ligne4Gauche' => $entete->getLigne4Gauche(),
+
+            'Ligne1Droite' => $entete->getLigne1Droite(),
+            'Ligne2Droite' => $entete->getLigne2Droite(),
+            'Ligne3Droite' => $entete->getLigne3Droite(),
+            'Ligne4Droite' => $entete->getLigne4Droite(),
+
+            'TelFixe' => $entete->getNumeroTelFixe(),
+            'TelFax' => $entete->getNumeroFax(),
+            'TelPort' => $entete->getNumeroTelPortable(),
+
+            'NumDevis' => $devis->getNumDevis(),
+
+            'Ville' => $entete->getVilleFaitA(),
+            'DateDevis' => $devis->getDateDevis()->format('d-m-Y'),
+
+            'NomPrenom' => $nomprenom,
+            'LigneAdresseClient' => $LigneAdresseFacturation,
+            
+            'VilleCP' => $devis->getAdresseFacturation()->getCP().' '.$devis->getAdresseFacturation()->getVille(),
+
+            'LigneAdresseChantier' => $LigneAdresseChantier,
+            'CPVilleAdresseChantier' => $devis->getAdresseChantier()->getCP().' '.$devis->getAdresseChantier()->getVille(),
+
+            'MontantHT' => $devis->getPrixHT(),
+            'MontantTTC' => $devis->getPrixTTC(),
+            'TotalTVA' => $devis->getPrixTTC() - $devis->getPrixHT(),
+
+            // 'lignes' => $devis->getLigneDevis(),
+            'lignes' => $lignes,
+            'devis' => $devis
+        ]);
+        
+    }
+
 
     #[Route('/quote', name: 'app_devis')]
     public function index(DevisRepository $devisRepository, 
@@ -732,75 +814,12 @@ class DevisController extends AbstractController
             return $this->redirectToRoute('app_devis');
         }
 
-        $entete = $enteteDocumentRepository->findAll()[0];
-        $LigneAdresseChantier = $devis->getAdresseChantier()->getLigne1();
-        if (!is_null($devis->getAdresseChantier()->getLigne2())){
-            $LigneAdresseChantier = $LigneAdresseChantier.'\n'.$devis->getAdresseChantier()->getLigne2();
-        }
-        if (!is_null($devis->getAdresseChantier()->getLigne3())){
-            $LigneAdresseChantier = $LigneAdresseChantier.'\n'.$devis->getAdresseChantier()->getLigne3();
-        }
-        $LigneAdresseFacturation = $devis->getAdresseFacturation()->getLigne1();
-        if (!is_null($devis->getAdresseFacturation()->getLigne2())){
-            $LigneAdresseFacturation = $LigneAdresseFacturation.'\n'.$devis->getAdresseFacturation()->getLigne2();
-        }
-        if (!is_null($devis->getAdresseFacturation()->getLigne3())){
-            $LigneAdresseFacturation = $LigneAdresseFacturation.'\n'.$devis->getAdresseFacturation()->getLigne3();
-        }
-        if($devis->getParticulier()){
-            $nomprenom = $devis->getParticulier()->getNom()." ".$devis->getParticulier()->getPrenom();
-        } else if ($devis->getProfessionnel()){
-            $nomprenom = $devis->getProfessionnel()->getNomsociete();
-        }
-
-        $lignes = $ligneDevisRepository->findByIdDevisAndOrderByCategorie($devis->getId());
-
         $pdfOptions = new Options();
         $pdfOptions->set('defaultFont', 'Arial');
         $dompdf = new Dompdf($pdfOptions);
 
-          // Retrieve the HTML generated in our twig file
-          $html = $this->renderView('pdf/devis.html.twig', [
-            'title' => "Devis N°".$devis->getNumDevis(),
-
-            'Ligne1Gauche' => $entete->getLigne1Gauche(),
-            'Ligne2Gauche' => $entete->getLigne2Gauche(),
-            'Ligne3Gauche' => $entete->getLigne3Gauche(),
-            'Ligne4Gauche' => $entete->getLigne4Gauche(),
-
-            'Ligne1Droite' => $entete->getLigne1Droite(),
-            'Ligne2Droite' => $entete->getLigne2Droite(),
-            'Ligne3Droite' => $entete->getLigne3Droite(),
-            'Ligne4Droite' => $entete->getLigne4Droite(),
-
-            'TelFixe' => $entete->getNumeroTelFixe(),
-            'TelFax' => $entete->getNumeroFax(),
-            'TelPort' => $entete->getNumeroTelPortable(),
-
-            'NumDevis' => $devis->getNumDevis(),
-
-            'Ville' => $entete->getVilleFaitA(),
-            'DateDevis' => $devis->getDateDevis()->format('d-m-Y'),
-
-            'NomPrenom' => $nomprenom,
-            'LigneAdresseClient' => $LigneAdresseFacturation,
-            
-            'VilleCP' => $devis->getAdresseFacturation()->getCP().' '.$devis->getAdresseFacturation()->getVille(),
-
-            'LigneAdresseChantier' => $LigneAdresseChantier,
-            'CPVilleAdresseChantier' => $devis->getAdresseChantier()->getCP().' '.$devis->getAdresseChantier()->getVille(),
-
-            'MontantHT' => $devis->getPrixHT(),
-            'MontantTTC' => $devis->getPrixTTC(),
-            'TotalTVA' => $devis->getPrixTTC() - $devis->getPrixHT(),
-
-            // 'lignes' => $devis->getLigneDevis(),
-            'lignes' => $lignes,
-            'devis' => $devis
-        ]);
-
         // Load HTML to Dompdf
-        $dompdf->loadHtml($html);
+        $dompdf->loadHtml($this->loadHtml($devis, $enteteDocumentRepository, $ligneDevisRepository));
         
         // (Optional) Setup the paper size and orientation 'portrait' or 'portrait'
         $dompdf->setPaper('A4', 'portrait');
@@ -1045,5 +1064,85 @@ class DevisController extends AbstractController
         $devis->setEtatDocument($etatDocumentRepository->findOneBy(["Abrege" => "CL"]));
         $devisRepository->save($devis, true);
         return $this->redirectToRoute('app_devis_detail', ["id" => $devis->getId()]);   
+    }
+
+    #[Route('/quote/sendemail/{id}', name: 'app_devis_send_email')]
+    public function sendEmail(string $id, 
+                                Request $request,
+                                EnteteDocumentRepository $enteteDocumentRepository,
+                                MailerInterface $mailer, 
+                                DevisRepository $devisRepository, 
+                                LigneDevisRepository $ligneDevisRepository){
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+        $devis = $devisRepository->findOneBy(["id" => $id]);
+
+        if (!$devis){
+            return $this->redirectToRoute('app_devis');
+        }
+        $emailPrincipal = "";
+        if ($devis->getParticulier()){
+            $emailPrincipal = $devis->getParticulier()->getAdresseemail1(); 
+        }
+ 
+        $emailData = new EmailingData();
+        $emailData->email = $emailPrincipal;
+        $emailData->object = "Devis n°".$devis->getNumDevis();
+        $emailData->content = "Bonjour, \nVous trouverez en pièce jointe de ce mail votre devis d'un montant de ".$devis->getPrixTTC(). "€.\n\nEn vous souhaitant une bonne réception.";
+        $form = $this->createForm(EmailingType::class, $emailData, [
+                                                                    "data" => $emailData
+                                                                    ]);
+        $form->handleRequest($request);        
+    
+        //Si le mail est partie alors on genere le pdf et on envoie le mail avec les 
+        if($form->isSubmitted() && $form->isvalid()){
+           
+            $pdfOptions = new Options();
+            $pdfOptions->set('defaultFont', 'Arial');
+            $dompdf = new Dompdf($pdfOptions);
+           
+            // Load HTML to Dompdf
+            $dompdf->loadHtml($this->LoadHtml($devis, $enteteDocumentRepository, $ligneDevisRepository));
+            
+            // (Optional) Setup the paper size and orientation 'portrait' or 'portrait'
+            $dompdf->setPaper('A4', 'portrait');
+
+            // Render the HTML as PDF
+            $dompdf->render();
+
+            $canvas = $dompdf->getCanvas();
+            $canvas->page_text(555, 815, "{PAGE_NUM} / {PAGE_COUNT}", null, 10, array(0, 0, 0));
+
+            // Output the generated PDF to Browser (force download)
+            ob_end_clean();
+            $fileatt = $dompdf->output();
+
+            $email = (new TemplatedEmail())
+                    ->from('sarlcarneiro@placocompta.fr')
+                    ->to($emailData->email)
+                    ->subject($emailData->object)
+                    ->attach($fileatt, 'Devis n°'.$devis->getNumDevis(), 'application/pdf')
+                    ->htmlTemplate('emailing/devis.html.twig')
+                    ->context(["devis" => $devis, "content"=> $emailData->content]);
+            
+
+            $mailer->send($email);
+
+            $devis->setmailSend(new \DateTime());
+            $devisRepository->save($devis, true);
+            
+            return $this->render('devis/email.html.twig', [
+            'devis' => $devis,
+            'form' => $form->createView(),
+            ]);
+        }
+
+        if ($request->getMethod() == Request::METHOD_GET){
+            return $this->render('devis/email.html.twig', [
+                'form' => $form->createView(),
+                'devis' => $devis
+            ]);
+        }
     }
 }

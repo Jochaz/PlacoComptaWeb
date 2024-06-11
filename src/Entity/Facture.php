@@ -78,6 +78,9 @@ class Facture
     #[ORM\ManyToOne(inversedBy: 'factures')]
     private ?User $CreatedBy = null;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $mailSend = null;
+
     public function __construct()
     {
         $this->LigneFacture = new ArrayCollection();
@@ -464,6 +467,18 @@ class Facture
     public function setCreatedBy(?User $CreatedBy): static
     {
         $this->CreatedBy = $CreatedBy;
+
+        return $this;
+    }
+
+    public function getMailSend(): ?\DateTimeInterface
+    {
+        return $this->mailSend;
+    }
+
+    public function setMailSend(?\DateTimeInterface $mailSend): static
+    {
+        $this->mailSend = $mailSend;
 
         return $this;
     }

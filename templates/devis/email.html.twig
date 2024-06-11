@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Devis : PlacoCompta{% endblock %}
+
+{% block body %}
+
+<main class="container">
+    <section class="row">
+        <div class="col-12" id="principal">
+            <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasMenuLabel">Navigation</h5>
+                    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <div class="list-group">
+                        <a href="/quote/detail/{{devis.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-file"></i> Info. générales du devis</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12" id="principal">
+            <h2>Envoyer le devis {{devis.numDevis}} par email</h2>
+            
+            <p>Statut du devis : <span class="{{devis.EtatDocument.Badge}}">{{devis.EtatDocument.Nom}}</span><br /> Date du devis : {{devis.DateDevis|date("d/m/Y")}}</p>
+            <p>Client : 
+            {% if devis.Particulier %}
+                {{devis.Particulier.Nom}} {{devis.Particulier.Prenom}}
+            {% endif %}
+            {% if devis.Professionnel %}
+                {{devis.Particulier.NomSociete}}
+            {% endif %}
+            </p>
+            {% if devis.mailSend %}
+            <p style="color:red">Devis envoyé au client le {{devis.mailSend|date("d/m/Y h:m:s")}}</p>
+            {% endif %}
+            <hr>
+            {% include "_partials/_flash.html.twig"%}
+
+            {{ form_start(form)}}
+                {{ form_row(form.email)}}
+                
+                {{ form_row(form.object)}}
+                
+                {{ form_row(form.content)}}
+                <a href="/quote/generatePDF/{{devis.id}}" target="_blank" class="list-group-item list-group-item-action"><i class="fa-solid fa-file-pdf"></i> Voir la pièce jointe</a>
+                <br />
+                <button type="submit" class="btn btn-primary">{{ button_label|default('Envoyer le mail')}}</button>
+            {{ form_end(form)}}
+        </div>
+    </section>
+</main>     
+
+{% endblock %}

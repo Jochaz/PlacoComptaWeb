@@ -17,49 +17,47 @@
                 </div>
                 <div class="offcanvas-body">
                     <div class="list-group">
-                    {% if facture.EtatDocument.Abrege == "CR" %}
-                    <a href="/invoice/waitpayment/{{facture.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-gear"></i> Passer la facture en Attente de réglement</a>
-                    <a href="/invoice/cancel/{{facture.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-gear"></i> Passer la facture en statut Annulé</a>    
-                    {% endif %}
+                        {% if facture.EtatDocument.Abrege == "CR" %}
+                        <a href="/invoice/waitpayment/{{facture.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-gear"></i> Passer la facture en Attente de réglement</a>
+                        <a href="/invoice/cancel/{{facture.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-gear"></i> Passer la facture en statut Annulé</a>    
+                        {% endif %}
 
-                    {% if facture.EtatDocument.Abrege == "ATREG" %}
-                    <a href="/invoice/payment/{{facture.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-gear"></i> Passer la facture en statut Payée</a>
-                    <a href="/invoice/partialpayment/{{facture.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-gear"></i> Passer la facture en statut Partiellement payée</a>
-                    <a href="/invoice/dispute/{{facture.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-gear"></i> Passer la facture en statut Litige</a>            
-                    <a href="/invoice/cancel/{{facture.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-gear"></i> Passer la facture en statut Annulé</a>            
-                    {% endif %}
-                    
-                    {% if facture.EtatDocument.Abrege == "PAY" %}
-                    <a href="/invoice/dispute/{{facture.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-gear"></i> Passer la facture en statut Litige</a>
-                    <a href="/invoice/close/{{facture.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-xmark"></i> Passer la facture en clôturée</a>
-                    {% endif %}
+                        {% if facture.EtatDocument.Abrege == "ATREG" %}
+                        <a href="/invoice/payment/{{facture.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-gear"></i> Passer la facture en statut Payée</a>
+                        <a href="/invoice/partialpayment/{{facture.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-gear"></i> Passer la facture en statut Partiellement payée</a>
+                        <a href="/invoice/dispute/{{facture.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-gear"></i> Passer la facture en statut Litige</a>            
+                        <a href="/invoice/cancel/{{facture.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-gear"></i> Passer la facture en statut Annulé</a>            
+                        {% endif %}
+                        
+                        {% if facture.EtatDocument.Abrege == "PAY" %}
+                        <a href="/invoice/dispute/{{facture.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-gear"></i> Passer la facture en statut Litige</a>
+                        <a href="/invoice/close/{{facture.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-xmark"></i> Passer la facture en clôturée</a>
+                        {% endif %}
 
-                    {% if facture.EtatDocument.Abrege == "PPAY" %}
-                    <a href="/invoice/dispute/{{facture.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-gear"></i> Passer la facture en statut Litige</a>
-                    <a href="/invoice/payment/{{facture.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-gear"></i> Passer la facture en statut Payée</a>
-                    {% endif %}
+                        {% if facture.EtatDocument.Abrege == "PPAY" %}
+                        <a href="/invoice/dispute/{{facture.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-gear"></i> Passer la facture en statut Litige</a>
+                        <a href="/invoice/payment/{{facture.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-gear"></i> Passer la facture en statut Payée</a>
+                        {% endif %}
 
-                    {% if facture.EtatDocument.Abrege == "LI" %}
-                    <a href="/invoice/payment/{{facture.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-gear"></i> Passer la facture en statut Payée</a>
-                    <a href="/invoice/partialpayment/{{facture.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-gear"></i> Passer la facture en statut Partiellement payée</a>
-                    {% endif %}
+                        {% if facture.EtatDocument.Abrege == "LI" %}
+                        <a href="/invoice/payment/{{facture.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-gear"></i> Passer la facture en statut Payée</a>
+                        <a href="/invoice/partialpayment/{{facture.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-gear"></i> Passer la facture en statut Partiellement payée</a>
+                        {% endif %}
 
-                    {% if facture.EtatDocument.Abrege == "AN" %}
-                    <a href="/invoice/close/{{facture.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-xmark"></i> Passer la facture en clôturée</a>
-                    {% endif %}
+                        {% if facture.EtatDocument.Abrege == "AN" %}
+                        <a href="/invoice/close/{{facture.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-xmark"></i> Passer la facture en clôturée</a>
+                        {% endif %}
 
-                    {% if facture.EtatDocument.Abrege != "CL" %}
-                    <hr >
-                    {% endif %}
+                        {% if facture.EtatDocument.Abrege != "CL" %}
+                        <hr >
+                        {% endif %}
 
-                    {% if (facture.EtatDocument.Abrege == "CR" or facture.EtatDocument.Abrege == "ATREG") %}
-                    <a href="/invoice/updatecontent/{{facture.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-pen"></i> Modifier le contenu de la facture</a>
-                    {% endif %}
-
-                    {% if facture.devis %}
-                    <a href="/quote/detail/{{facture.devis.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-file-invoice"></i> Voir le devis de la facture</a>
-                    {% endif %}
-                    <a href="/invoice/generatePDF/{{facture.id}}" target="_blank" class="list-group-item list-group-item-action"><i class="fa-solid fa-file-pdf"></i> Générer le document</a>
+                        <a href="/invoice/updatecontent/{{facture.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-pen"></i> Contenu de la facture</a>
+                        {% if facture.devis %}
+                        <a href="/quote/detail/{{facture.devis.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-file-invoice"></i> Voir le devis de la facture</a>
+                        {% endif %}
+                        <a href="/invoice/generatePDF/{{facture.id}}" target="_blank" class="list-group-item list-group-item-action"><i class="fa-solid fa-file-pdf"></i> Générer le document</a>
+                        <a href="/invoice/sendemail/{{facture.id}}" class="list-group-item list-group-item-action"><i class="fa-solid fa-envelope"></i> Envoyer la facture au client</a>  
                     </div>
                 </div>
             </div>

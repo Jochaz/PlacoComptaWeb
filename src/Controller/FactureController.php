@@ -10,11 +10,13 @@ use App\Entity\LigneFacture;
 use App\Entity\Materiaux;
 use App\Form\AdresseChantierType;
 use App\Form\AdresseFacturationType;
+use App\Form\EmailingType;
 use App\Form\FactureDetailType;
 use App\Form\FactureInfoGeneraleType;
 use App\Form\FactureRemiseType;
 use App\Form\ParametrageFactureType;
 use App\Form\SearchFactureType;
+use App\Model\EmailingData;
 use App\Model\SearchFactureData;
 use App\Repository\AdresseDocumentRepository;
 use App\Repository\AdresseFacturationRepository;
@@ -33,15 +35,113 @@ use App\Repository\UniteMesureRepository;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 use function PHPUnit\Framework\isNull;
 
 class FactureController extends AbstractController
 {
+    private function loadHtml(Facture $facture, EnteteDocumentRepository $enteteDocumentRepository, LigneFactureRepository $ligneFactureRepository){
+        
+        $entete = $enteteDocumentRepository->findAll()[0];
+        $LigneAdresseChantier = 'Sans adresse';
+        $LigneAdresseFacturation = 'Sans adresse';
+        if (!isNull($facture->getAdresseChantier())) {
+            if (!isNull($facture->getAdresseChantier()->getLigne1())){
+                $LigneAdresseChantier = $facture->getAdresseChantier()->getLigne1();
+            }
+            if (!isNull($facture->getAdresseChantier()->getLigne2())){
+                $LigneAdresseChantier = $LigneAdresseChantier.'\n'.$facture->getAdresseChantier()->getLigne2();
+            }
+            if (!isNull($facture->getAdresseChantier()->getLigne3())){
+                $LigneAdresseChantier = $LigneAdresseChantier.'\n'.$facture->getAdresseChantier()->getLigne3();
+            }
+            $LigneAdresseFacturation = $facture->getAdresseFacturation()->getLigne1();
+            if (!isNull($facture->getAdresseFacturation()->getLigne2())){
+                $LigneAdresseFacturation = $LigneAdresseFacturation.'\n'.$facture->getAdresseFacturation()->getLigne2();
+            }
+            if (!isNull($facture->getAdresseFacturation()->getLigne3())){
+                $LigneAdresseFacturation = $LigneAdresseFacturation.'\n'.$facture->getAdresseFacturation()->getLigne3();
+            }
+        }
+        if($facture->getParticulier()){
+            $nomprenom = $facture->getParticulier()->getNom()." ".$facture->getParticulier()->getPrenom();
+        } else if ($facture->getProfessionnel()){
+            $nomprenom = $facture->getProfessionnel()->getNomsociete();
+        }
+        $montantHT  = $facture->getPrixHT();
+        $montantTTC = $facture->getPrixTTC();
+        if (($facture->getDevis() && ($facture->getDevis()->getAcompte()))){
+            $montantHT  = $montantHT - $facture->getDevis()->getAcompte()->getMontant();
+            $montantTTC  = $montantTTC - $facture->getDevis()->getAcompte()->getMontant();
+            if ($montantHT < 0){
+                $montantHT = 0;
+            }
+
+            if ($montantTTC < 0) {
+                $montantTTC = 0;
+            }
+        }
+
+        $acompte = '';
+        if (($facture->getDevis() && ($facture->getDevis()->getAcompte()))){
+            $acompte = 'Un acompte a déjà été versé pour un montant de '.$facture->getDevis()->getAcompte()->getMontant().'€ par '.$facture->getDevis()->getAcompte()->getModeReglement()->getLibelle();
+        }
+
+        $villeCPChantier = '';
+        if (!isNull($facture->getAdresseChantier())) {
+            $villeCPChantier = $facture->getAdresseChantier()->getCP().' '.$facture->getAdresseChantier()->getVille();
+        }
+        $villeCPFacturation = '';
+        if (!isNull($facture->getAdresseChantier())) {
+            $villeCPFacturation = $facture->getAdresseFacturation()->getCP().' '.$facture->getAdresseFacturation()->getVille();
+        }
+        $lignes = $ligneFactureRepository->findByIdFactureAndOrderByCategorie($facture->getId());
+
+        return $this->renderView('pdf/facture.html.twig', [
+            'title' => "Facture N°".$facture->getNumFacture(),
+
+            'Ligne1Gauche' => $entete->getLigne1Gauche(),
+            'Ligne2Gauche' => $entete->getLigne2Gauche(),
+            'Ligne3Gauche' => $entete->getLigne3Gauche(),
+            'Ligne4Gauche' => $entete->getLigne4Gauche(),
+
+            'Ligne1Droite' => $entete->getLigne1Droite(),
+            'Ligne2Droite' => $entete->getLigne2Droite(),
+            'Ligne3Droite' => $entete->getLigne3Droite(),
+            'Ligne4Droite' => $entete->getLigne4Droite(),
+
+            'TelFixe' => $entete->getNumeroTelFixe(),
+            'TelFax' => $entete->getNumeroFax(),
+            'TelPort' => $entete->getNumeroTelPortable(),
+
+            'NumFacture' => $facture->getNumFacture(),
+
+            'Ville' => $entete->getVilleFaitA(),
+            'DateFacture' => $facture->getDateFacture()->format('d-m-Y'),
+
+            'NomPrenom' => $nomprenom,
+            'LigneAdresseClient' => $LigneAdresseFacturation,
+            'VilleCPFacturation' => $villeCPFacturation,
+
+            'LigneAdresseChantier' => $LigneAdresseChantier,
+            'CPVilleAdresseChantier' => $villeCPChantier,
+
+            'MontantHT' => $montantHT,
+            'MontantTTC' => $montantTTC,
+            'TotalTVA' => $montantTTC - $montantHT,
+            'acompte' => $acompte,
+
+            'lignes' => $lignes,
+            'facture' => $facture
+        ]);
+    }
+
     #[Route('/invoice', name: 'app_facture')]
     public function index(FactureRepository $factureRepository, Request $request, PaginatorInterface $paginator, 
                         ModelePieceRepository $modelePieceRepository,
@@ -683,106 +783,12 @@ class FactureController extends AbstractController
             return $this->redirectToRoute('app_facture');
         }
 
-        $entete = $enteteDocumentRepository->findAll()[0];
-        $LigneAdresseChantier = 'Sans adresse';
-        $LigneAdresseFacturation = 'Sans adresse';
-        if (!isNull($facture->getAdresseChantier())) {
-            if (!isNull($facture->getAdresseChantier()->getLigne1())){
-                $LigneAdresseChantier = $facture->getAdresseChantier()->getLigne1();
-            }
-            if (!isNull($facture->getAdresseChantier()->getLigne2())){
-                $LigneAdresseChantier = $LigneAdresseChantier.'\n'.$facture->getAdresseChantier()->getLigne2();
-            }
-            if (!isNull($facture->getAdresseChantier()->getLigne3())){
-                $LigneAdresseChantier = $LigneAdresseChantier.'\n'.$facture->getAdresseChantier()->getLigne3();
-            }
-            $LigneAdresseFacturation = $facture->getAdresseFacturation()->getLigne1();
-            if (!isNull($facture->getAdresseFacturation()->getLigne2())){
-                $LigneAdresseFacturation = $LigneAdresseFacturation.'\n'.$facture->getAdresseFacturation()->getLigne2();
-            }
-            if (!isNull($facture->getAdresseFacturation()->getLigne3())){
-                $LigneAdresseFacturation = $LigneAdresseFacturation.'\n'.$facture->getAdresseFacturation()->getLigne3();
-            }
-        }
-        if($facture->getParticulier()){
-            $nomprenom = $facture->getParticulier()->getNom()." ".$facture->getParticulier()->getPrenom();
-        } else if ($facture->getProfessionnel()){
-            $nomprenom = $facture->getProfessionnel()->getNomsociete();
-        }
-        $montantHT  = $facture->getPrixHT();
-        $montantTTC = $facture->getPrixTTC();
-        if (($facture->getDevis() && ($facture->getDevis()->getAcompte()))){
-            $montantHT  = $montantHT - $facture->getDevis()->getAcompte()->getMontant();
-            $montantTTC  = $montantTTC - $facture->getDevis()->getAcompte()->getMontant();
-            if ($montantHT < 0){
-                $montantHT = 0;
-            }
-
-            if ($montantTTC < 0) {
-                $montantTTC = 0;
-            }
-        }
-
-        $acompte = '';
-        if (($facture->getDevis() && ($facture->getDevis()->getAcompte()))){
-            $acompte = 'Un acompte a déjà été versé pour un montant de '.$facture->getDevis()->getAcompte()->getMontant().'€ par '.$facture->getDevis()->getAcompte()->getModeReglement()->getLibelle();
-        }
-
-        $villeCPChantier = '';
-        if (!isNull($facture->getAdresseChantier())) {
-            $villeCPChantier = $facture->getAdresseChantier()->getCP().' '.$facture->getAdresseChantier()->getVille();
-        }
-        $villeCPFacturation = '';
-        if (!isNull($facture->getAdresseChantier())) {
-            $villeCPFacturation = $facture->getAdresseFacturation()->getCP().' '.$facture->getAdresseFacturation()->getVille();
-        }
-        $lignes = $ligneFactureRepository->findByIdFactureAndOrderByCategorie($facture->getId());
-
         $pdfOptions = new Options();
         $pdfOptions->set('defaultFont', 'Arial');
         $dompdf = new Dompdf($pdfOptions);
 
-          // Retrieve the HTML generated in our twig file
-          $html = $this->renderView('pdf/facture.html.twig', [
-            'title' => "Facture N°".$facture->getNumFacture(),
-
-            'Ligne1Gauche' => $entete->getLigne1Gauche(),
-            'Ligne2Gauche' => $entete->getLigne2Gauche(),
-            'Ligne3Gauche' => $entete->getLigne3Gauche(),
-            'Ligne4Gauche' => $entete->getLigne4Gauche(),
-
-            'Ligne1Droite' => $entete->getLigne1Droite(),
-            'Ligne2Droite' => $entete->getLigne2Droite(),
-            'Ligne3Droite' => $entete->getLigne3Droite(),
-            'Ligne4Droite' => $entete->getLigne4Droite(),
-
-            'TelFixe' => $entete->getNumeroTelFixe(),
-            'TelFax' => $entete->getNumeroFax(),
-            'TelPort' => $entete->getNumeroTelPortable(),
-
-            'NumFacture' => $facture->getNumFacture(),
-
-            'Ville' => $entete->getVilleFaitA(),
-            'DateFacture' => $facture->getDateFacture()->format('d-m-Y'),
-
-            'NomPrenom' => $nomprenom,
-            'LigneAdresseClient' => $LigneAdresseFacturation,
-            'VilleCPFacturation' => $villeCPFacturation,
-
-            'LigneAdresseChantier' => $LigneAdresseChantier,
-            'CPVilleAdresseChantier' => $villeCPChantier,
-
-            'MontantHT' => $montantHT,
-            'MontantTTC' => $montantTTC,
-            'TotalTVA' => $montantTTC - $montantHT,
-            'acompte' => $acompte,
-
-            'lignes' => $lignes,
-            'facture' => $facture
-        ]);
-
         // Load HTML to Dompdf
-        $dompdf->loadHtml($html);
+        $dompdf->loadHtml($this->loadHtml($facture, $enteteDocumentRepository, $ligneFactureRepository));
         
         // (Optional) Setup the paper size and orientation 'portrait' or 'portrait'
         $dompdf->setPaper('A4', 'portrait');
@@ -938,5 +944,84 @@ class FactureController extends AbstractController
 
         return $this->redirectToRoute('app_facture_detail', ["id" => $facture->getId()]);   
     }
+
+    #[Route('/invoice/sendemail/{id}', name: 'app_facture_send_email')]
+    public function sendEmail(string $id, 
+                                Request $request,
+                                EnteteDocumentRepository $enteteDocumentRepository,
+                                MailerInterface $mailer, 
+                                FactureRepository $factureRepository, 
+                                LigneFactureRepository $ligneFactureRepository){
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+        $facture = $factureRepository->findOneBy(["id" => $id]);
+
+        if (!$facture){
+            return $this->redirectToRoute('app_facture');
+        }
+        $emailPrincipal = "";
+        if ($facture->getParticulier()){
+            $emailPrincipal = $facture->getParticulier()->getAdresseemail1(); 
+        }
+ 
+        $emailData = new EmailingData();
+        $emailData->email = $emailPrincipal;
+        $emailData->object = "Facture n°".$facture->getNumFacture();
+        $emailData->content = "Bonjour, \nVous trouverez en pièce jointe de ce mail votre facture d'un montant de ".$facture->getPrixTTC(). "€.\n\nEn vous souhaitant une bonne réception.";
+        $form = $this->createForm(EmailingType::class, $emailData, [
+                                                                    "data" => $emailData
+                                                                    ]);
+        $form->handleRequest($request);        
     
+        //Si le mail est partie alors on genere le pdf et on envoie le mail avec les 
+        if($form->isSubmitted() && $form->isvalid()){
+           
+            $pdfOptions = new Options();
+            $pdfOptions->set('defaultFont', 'Arial');
+            $dompdf = new Dompdf($pdfOptions);
+           
+            // Load HTML to Dompdf
+            $dompdf->loadHtml($this->LoadHtml($facture, $enteteDocumentRepository, $ligneFactureRepository));
+            
+            // (Optional) Setup the paper size and orientation 'portrait' or 'portrait'
+            $dompdf->setPaper('A4', 'portrait');
+
+            // Render the HTML as PDF
+            $dompdf->render();
+
+            $canvas = $dompdf->getCanvas();
+            $canvas->page_text(555, 815, "{PAGE_NUM} / {PAGE_COUNT}", null, 10, array(0, 0, 0));
+
+            // Output the generated PDF to Browser (force download)
+            ob_end_clean();
+            $fileatt = $dompdf->output();
+
+            $email = (new TemplatedEmail())
+                    ->from('sarlcarneiro@placocompta.fr')
+                    ->to($emailData->email)
+                    ->subject($emailData->object)
+                    ->attach($fileatt, 'Facture n°'.$facture->getNumFacture(), 'application/pdf')
+                    ->htmlTemplate('emailing/facture.html.twig')
+                    ->context(["facture" => $facture, "content"=> $emailData->content]);
+            
+
+            $mailer->send($email);
+
+            $facture->setmailSend(new \DateTime());
+            $factureRepository->save($facture, true);
+
+            return $this->render('facture/email.html.twig', [
+            'facture' => $facture,
+            'form' => $form->createView(),
+            ]);
+        }
+
+        if ($request->getMethod() == Request::METHOD_GET){
+            return $this->render('facture/email.html.twig', [
+                'form' => $form->createView(),
+                'facture' => $facture
+            ]);
+        }
+    }
 }
