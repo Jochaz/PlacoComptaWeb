@@ -343,6 +343,8 @@ class DevisController extends AbstractController
     public function addDevisLigneSansModele(string $id,
     Request $request,
     MateriauxRepository $materiauxRepository,
+    CategorieMateriauxRepository $cateRepo,
+    UniteMesureRepository $umRepo,
     DevisRepository $devisRepository,
     LigneDevisRepository $ligneDevisRepository,
     AdresseDocumentRepository $adresseChantierRepository,
@@ -386,26 +388,41 @@ class DevisController extends AbstractController
             if ($request->request->get('materiaux_id'))
             {   
                 $materiaux = $materiauxRepository->find($request->request->get('materiaux_id'));
-                if ($materiaux){                                               
-                    $tva = $tVARepository->find($request->request->get('tva_add'));
-                
-                    $ligneDevis = new LigneDevis();
-                    $ligneDevis->setMateriaux($materiaux);
-                    $ligneDevis->setTVA($tva);
-                    $ligneDevis->setDesignation($request->request->get('des_add'));
-                    $ligneDevis->setQte($request->request->get('qte_add'));
-                    if ($request->request->get('remise_add')) {
-                        $ligneDevis->setRemise($request->request->get('remise_add'));
-                    } else {
-                        $ligneDevis->setRemise(0);
-                    }                   
-                    $ligneDevis->setPrixUnitaire($request->request->get('pu_add'));
-                    $devis->addLigneDevi($ligneDevis);
-                    
-                    $this->addFlash('success', 'Devis modifié avec succès');
-                } else {
-                    $this->addFlash('danger', 'Devis non modifié : Matériaux inconnu');    
+                if (!$materiaux){  
+                    $materiaux = $materiauxRepository->findOneBy(["Designation" => $request->request->get('des_add')]);
                 }
+
+                $tva = $tVARepository->find($request->request->get('tva_add'));
+                $inconnu = "";
+                if (!$materiaux){  
+                    $inconnu = ", attention le materiau a été ajouté en base.";   
+                    $uniteMesure = $umRepo->findOneBy(["Libelle" => "Inconnu"]);
+                    $categorie = $cateRepo->findOneBy(["Libelle" => "Sans catégorie"]);
+
+                    $materiaux = new Materiaux();
+                    $materiaux->setDesignation($request->request->get('des_add'));
+                    $materiaux->setPlusUtilise(false);
+                    $materiaux->setTVA($tva);
+                    $materiaux->setPrixUnitaire($request->request->get('pu_add'));
+                    $materiaux->setUniteMesure($uniteMesure); 
+                    $materiaux->setCategorie($categorie);  
+                    $materiauxRepository->save($materiaux, true);                                                      
+                } 
+
+                $ligneDevis = new LigneDevis();
+                $ligneDevis->setMateriaux($materiaux);
+                $ligneDevis->setTVA($tva);
+                $ligneDevis->setDesignation($request->request->get('des_add'));
+                $ligneDevis->setQte($request->request->get('qte_add'));
+                if ($request->request->get('remise_add')) {
+                    $ligneDevis->setRemise($request->request->get('remise_add'));
+                } else {
+                    $ligneDevis->setRemise(0);
+                }                   
+                $ligneDevis->setPrixUnitaire($request->request->get('pu_add'));
+                $devis->addLigneDevi($ligneDevis);
+                
+                $this->addFlash('success', 'Devis modifié avec succès'.$inconnu);
             } else {
                 foreach ($request->request as $key => $value){
                     if (str_contains($key, 'ligne_')){
@@ -631,6 +648,10 @@ class DevisController extends AbstractController
             if ($request->request->get('materiaux_id'))
             {   
                 $materiaux = $materiauxRepository->find($request->request->get('materiaux_id'));
+                if (!$materiaux){  
+                    $materiaux = $materiauxRepository->findOneBy(["Designation" => $request->request->get('des_add'), "Plusutilise" => false]);
+                }
+
                 $tva = $tVARepository->find($request->request->get('tva_add'));
                 $inconnu = "";
                 if (!$materiaux){ 

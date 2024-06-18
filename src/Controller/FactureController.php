@@ -354,6 +354,8 @@ class FactureController extends AbstractController
         Request $request, 
         TVARepository $tVARepository, 
         FactureRepository $factureRepository,
+        CategorieMateriauxRepository $cateRepo,
+        UniteMesureRepository $umRepo,
         MateriauxRepository $materiauxRepository,
         AdresseDocumentRepository $adresseChantierRepository,
         AdresseFacturationRepository $adresseFacturationRepository,
@@ -396,8 +398,27 @@ class FactureController extends AbstractController
                 if ($request->request->get('materiaux_id'))
                 {
                     $materiaux = $materiauxRepository->find($request->request->get('materiaux_id'));
+                    if (!$materiaux){  
+                        $materiaux = $materiauxRepository->findOneBy(["Designation" => $request->request->get('des_add')]);
+                    }
+    
                     $tva = $tVARepository->find($request->request->get('tva_add'));
-
+                    $inconnu = "";
+                    if (!$materiaux){  
+                        $inconnu = ", attention le materiau a été ajouté en base.";   
+                        $uniteMesure = $umRepo->findOneBy(["Libelle" => "Inconnu"]);
+                        $categorie = $cateRepo->findOneBy(["Libelle" => "Sans catégorie"]);
+    
+                        $materiaux = new Materiaux();
+                        $materiaux->setDesignation($request->request->get('des_add'));
+                        $materiaux->setPlusUtilise(false);
+                        $materiaux->setTVA($tva);
+                        $materiaux->setPrixUnitaire($request->request->get('pu_add'));
+                        $materiaux->setUniteMesure($uniteMesure); 
+                        $materiaux->setCategorie($categorie);  
+                        $materiauxRepository->save($materiaux, true);                                                      
+                    } 
+    
                     $ligneFacture = new LigneFacture();
                     $ligneFacture->setMateriaux($materiaux);
                     $ligneFacture->setTVA($tva);
@@ -410,6 +431,8 @@ class FactureController extends AbstractController
                     }                   
                     $ligneFacture->setPrixUnitaire($request->request->get('pu_add'));
                     $facture->addLigneFacture($ligneFacture);
+                    $this->addFlash('success', 'Facture modifiée avec succès'.$inconnu);
+                    
                 } else {
                     foreach ($request->request as $key => $value){
                         if (str_contains($key, 'ligne_')){
