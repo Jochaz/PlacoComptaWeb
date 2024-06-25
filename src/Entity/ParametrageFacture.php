@@ -107,4 +107,14 @@ class ParametrageFacture
 
         return $this;
     }
+
+    public function __construct()
+    {
+        $this->TypeDocument = "Facture";
+        $this->CompletionAvecZero = true;
+        $this->NumeroAGenerer = 1;
+        $this->Prefixe = "F";
+        $this->NombreCaractereTotal = 10;
+        $this->AnneeEnCours = true;
+    }
 }

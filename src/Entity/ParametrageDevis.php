@@ -107,4 +107,14 @@ class ParametrageDevis
 
         return $this;
     }
+
+    public function __construct()
+    {
+        $this->TypeDocument = "Devis";
+        $this->CompletionAvecZero = true;
+        $this->NumeroAGenerer = 1;
+        $this->Prefixe = "D";
+        $this->NombreCaractereTotal = 10;
+        $this->AnneeEnCours = true;
+    }
 }
