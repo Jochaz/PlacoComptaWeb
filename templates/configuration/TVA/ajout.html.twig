@@ -1,22 +1,20 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Catégories matériaux : PlacoCompta{% endblock %}
+{% block title %}TVA : PlacoCompta
+{% endblock %}
 
 {% block body %}
 
-<main class="container">
-    <section class="row">
-        <div class="col-12" id="principal">
-            <h2>Ajouter une nouvelle catégorie de matériaux</h2>
-            <hr>
-            {% include "_partials/_flash.html.twig"%}
-            {% include "configuration/TVA/_form.html.twig"%}
-        </div>
-    </section>
-</main>
+	<main class="container">
+		<section class="row">
+			<div class="col-12" id="principal">
+				<h2>Ajouter une nouvelle catégorie de matériaux</h2>
+				<hr>
+				{% include "_partials/_flash.html.twig"%}
+				{% include "configuration/TVA/_form.html.twig"%}
+			</div>
+		</section>
+	</main>
 
-    
-
-    
 
 {% endblock %}
