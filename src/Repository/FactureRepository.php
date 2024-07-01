@@ -40,144 +40,140 @@ class FactureRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Facture[] Returns an array of Facture objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('f')
-//            ->andWhere('f.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('f.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    //    /**
+    //     * @return Facture[] Returns an array of Facture objects
+    //     */
+    //    public function findByExampleField($value): array
+    //    {
+    //        return $this->createQueryBuilder('f')
+    //            ->andWhere('f.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->orderBy('f.id', 'ASC')
+    //            ->setMaxResults(10)
+    //            ->getQuery()
+    //            ->getResult()
+    //        ;
+    //    }
 
-//    public function findOneBySomeField($value): ?Facture
-//    {
-//        return $this->createQueryBuilder('f')
-//            ->andWhere('f.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
- /**
-    * @return Facture[] Returns an array of Facture objects
-    */
+    //    public function findOneBySomeField($value): ?Facture
+    //    {
+    //        return $this->createQueryBuilder('f')
+    //            ->andWhere('f.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->getQuery()
+    //            ->getOneOrNullResult()
+    //        ;
+    //    }
+    /**
+     * @return Facture[] Returns an array of Facture objects
+     */
     public function findBySearch(SearchFactureData $search): array
     {
         $data = $this->createQueryBuilder('f')
-           ->andWhere('f.Plusutilise = :val')
-           ->join('f.EtatDocument' , 'ed')
-           ->leftJoin('f.Particulier', 'part')
-           ->leftJoin('f.Professionnel', 'pro')
-           ->setParameter('val', false)
-           ->orderBy('f.id', 'ASC');
+            ->andWhere('f.Plusutilise = :val')
+            ->join('f.EtatDocument', 'ed')
+            ->leftJoin('f.Particulier', 'part')
+            ->leftJoin('f.Professionnel', 'pro')
+            ->setParameter('val', false)
+            ->orderBy('f.id', 'ASC');
 
-        if (!empty($search->NumFacture)){
-            $data = $data 
-                ->andwhere ('f.NumFacture LIKE :NumFacture')
+        if (!empty($search->NumFacture)) {
+            $data = $data
+                ->andwhere('f.NumFacture LIKE :NumFacture')
                 ->setParameter('NumFacture', "%{$search->NumFacture}%");
         }
 
-        if (!empty($search->client)){
-            $data = $data 
-                ->andwhere ("(concat(part.nom, ' ', part.prenom) LIKE :client) or 
+        if (!empty($search->client)) {
+            $data = $data
+                ->andwhere("(concat(part.nom, ' ', part.prenom) LIKE :client) or 
                              (pro.nomsociete LIKE :client)")
                 ->setParameter('client', "%{$search->client}%");
         }
 
-        if (!empty($search->prixminTTC) || $search->prixminTTC >= 0){
-            $data = $data 
-                ->andwhere ('f.PrixTTC >= :prixminTTC')
+        if (!empty($search->prixminTTC) && $search->prixminTTC > 0) {
+            $data = $data
+                ->andwhere('f.PrixTTC >= :prixminTTC')
                 ->setParameter('prixminTTC', $search->prixminTTC);
         }
 
-        if (!empty($search->prixmaxTTC) || $search->prixmaxTTC >= 0){
-            $data = $data 
-                ->andwhere ('f.PrixTTC <= :prixmaxTTC')
+        if (!empty($search->prixmaxTTC) && $search->prixmaxTTC > 0) {
+            $data = $data
+                ->andwhere('f.PrixTTC <= :prixmaxTTC')
                 ->setParameter('prixmaxTTC', $search->prixmaxTTC);
         }
 
-        if (!empty($search->etatDocument)){
-            $data = $data 
-                ->andwhere ('ed.id IN (:etat)')
+        if (!empty($search->etatDocument)) {
+            $data = $data
+                ->andwhere('ed.id IN (:etat)')
                 ->setParameter('etat', $search->etatDocument);
         }
 
-       return $data = $data->getQuery()->getResult();;
+        return $data = $data->getQuery()->getResult();;
     }
- /**
-    * @return Facture[] Returns an array of Facture objects
-    */
+    /**
+     * @return Facture[] Returns an array of Facture objects
+     */
     public function findByRecherche(SearchFactureData $search): array
     {
         $data = $this->createQueryBuilder('f')
-           ->andWhere('f.Plusutilise = :val')
-           ->leftJoin('f.Particulier', 'part')
-           ->leftJoin('f.Professionnel', 'pro')
-           ->setParameter('val', false)
-           ->orderBy('f.id', 'ASC');
+            ->andWhere('f.Plusutilise = :val')
+            ->leftJoin('f.Particulier', 'part')
+            ->leftJoin('f.Professionnel', 'pro')
+            ->setParameter('val', false)
+            ->orderBy('f.id', 'ASC');
 
-        if (!empty($search->NumFacture)){
-            $data = $data 
-                ->andwhere ('f.NumFacture LIKE :NumFacture')
+        if (!empty($search->NumFacture)) {
+            $data = $data
+                ->andwhere('f.NumFacture LIKE :NumFacture')
                 ->setParameter('NumFacture', "%{$search->NumFacture}%");
         }
 
-       return $data = $data->getQuery()->getResult();;
+        return $data = $data->getQuery()->getResult();;
     }
 
     public function paginationQuery()
     {
-       return $this->createQueryBuilder('f')
+        return $this->createQueryBuilder('f')
             ->andWhere('f.Plusutilise = :val')
             ->setParameter('val', false)
             ->orderBy('f.id', 'ASC')
-            ->getQuery()
-       ;
+            ->getQuery();
     }
 
     public function findWithJoin(string $search): ?Facture
     {
         $data = $this->createQueryBuilder('f')
-           ->select('f, part, pro, ad, af')
-           ->leftJoin('f.Particulier', 'part')
-           ->leftJoin('f.Professionnel', 'pro')
-           ->leftJoin('f.AdresseChantier', 'ad')
-           ->leftJoin('f.AdresseFacturation', 'af')
-           ->andWhere('f.Plusutilise = false')
-           ->andWhere('f.id = '.$search)
-           ->orderBy('f.DateFacture', 'ASC');
+            ->select('f, part, pro, ad, af')
+            ->leftJoin('f.Particulier', 'part')
+            ->leftJoin('f.Professionnel', 'pro')
+            ->leftJoin('f.AdresseChantier', 'ad')
+            ->leftJoin('f.AdresseFacturation', 'af')
+            ->andWhere('f.Plusutilise = false')
+            ->andWhere('f.id = ' . $search)
+            ->orderBy('f.DateFacture', 'ASC');
 
-       return $data = $data->getQuery()->getOneOrNullResult();
+        return $data = $data->getQuery()->getOneOrNullResult();
     }
 
-   public function findByIdAdresseChantier($value): ?Facture
-   {
-       return $this->createQueryBuilder('d')
-           ->select('f, ad') 
-           ->innerJoin('f.AdresseChantier', 'ad')
-           ->andWhere('ad.id = :val')
-           ->setParameter('val', $value)
-           ->getQuery()
-           ->getOneOrNullResult()
-       ;
-   }
+    public function findByIdAdresseChantier($value): ?Facture
+    {
+        return $this->createQueryBuilder('d')
+            ->select('f, ad')
+            ->innerJoin('f.AdresseChantier', 'ad')
+            ->andWhere('ad.id = :val')
+            ->setParameter('val', $value)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 
-   public function findByIdAdresseFacturation($value): ?Facture
-   {
-       return $this->createQueryBuilder('f')
-           ->select('f, af') 
-           ->innerJoin('f.AdresseFacturation', 'af')
-           ->andWhere('af.id = :val')
-           ->setParameter('val', $value)
-           ->getQuery()
-           ->getOneOrNullResult()
-       ;
-   }
-
+    public function findByIdAdresseFacturation($value): ?Facture
+    {
+        return $this->createQueryBuilder('f')
+            ->select('f, af')
+            ->innerJoin('f.AdresseFacturation', 'af')
+            ->andWhere('af.id = :val')
+            ->setParameter('val', $value)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

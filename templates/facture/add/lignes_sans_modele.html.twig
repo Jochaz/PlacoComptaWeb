@@ -28,7 +28,7 @@
                                     </div>
 
                                     <div class="col">
-                                        Prix HT : {{facture.PrixTTC|round(2, 'floor')}}€
+                                        Prix TTC : {{facture.PrixTTC|round(2, 'floor')}}€
                                     </div>
                                 </div>
                             </div>
@@ -131,11 +131,11 @@
                                                         </div>
                                                         <div class="col">
                                                             <h6>Quantité</h6>
-                                                            <input type="number" step="0.01" class="form-control" id="pu_{{ligne.id}}" name="pu_{{ligne.id}}" value="{{ ligne.PrixUnitaire }}" {% if (not facture.peutModifierDocument) %} disabled {% endif %}></input>
+                                                            <input type="number" step="0.01" class="form-control" id="qte_{{ligne.id}}" name="qte_{{ligne.id}}" value="{{ ligne.Qte }}" {% if (not facture.peutModifierDocument) %} disabled {% endif %}></input>
                                                         </div>
                                                         <div class="col">
                                                             <h6>Remise P.U</h6>
-                                                            <input type="number" class="form-control" id="qte_{{ligne.id}}" name="qte_{{ligne.id}}" value="{{ ligne.Qte}}" {% if (not facture.peutModifierDocument) %} disabled {% endif %}></input>
+                                                            <input type="number" class="form-control" id="remise_{{ligne.id}}" name="remise_{{ligne.id}}" value="{{ ligne.Remise }}" {% if (not facture.peutModifierDocument) %} disabled {% endif %}></input>
                                                         </div>
                                                         <div class="col">
                                                             <h6>TVA</h6>
