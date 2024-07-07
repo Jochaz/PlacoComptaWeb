@@ -35,7 +35,7 @@
             {% endif %}
             </p>
             {% if facture.mailSend %}
-            <p style="color:red">Facture envoyée au client le {{facture.mailSend|date("d/m/Y h:m:s")}}</p>
+            <p style="color:red">Facture envoyée au client le {{facture.mailSend|date("d/m/Y")}}</p>
             {% endif %}
             <hr>
             {% include "_partials/_flash.html.twig"%}

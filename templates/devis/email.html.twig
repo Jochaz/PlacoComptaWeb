@@ -35,7 +35,7 @@
             {% endif %}
             </p>
             {% if devis.mailSend %}
-            <p style="color:red">Devis envoyé au client le {{devis.mailSend|date("d/m/Y h:m:s")}}</p>
+            <p style="color:red">Devis envoyé au client le {{devis.mailSend|date("d/m/Y")}}</p>
             {% endif %}
             <hr>
             {% include "_partials/_flash.html.twig"%}
