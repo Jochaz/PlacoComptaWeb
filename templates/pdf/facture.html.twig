@@ -117,10 +117,22 @@
             </thead>
             <tbody>
                 {% set cat = "" %}
+                {% set sousTotal = 0 %}
                 {% for ligne in lignes %}
                 
                 {% if cat != ligne.Materiaux.Categorie.Libelle %}
+                    {% if devis.isSousTotaux and cat != "" %}
+                        <tr>
+                            <td style="padding: 5px 10px 10px 10px;">Sous total pour la catégorie {{cat}}</td>
+                            <td style="text-align: center; padding: 0 10px 10px 10px;"></td>
+                            <td style="text-align: center; padding: 0 10px 10px 10px;"></td>
+                            <td style="text-align: center; padding: 0 10px 10px 10px;"></td>
+                            <td style="text-align: center; padding: 0 10px 10px 10px;"></td>
+                            <td style="text-align: center; padding: 0 10px 10px 10px;">{{sousTotal}}€</td>
+                        </tr>    
+                    {% endif %}
                     {% set cat = ligne.Materiaux.Categorie.Libelle %}
+                    {% set sousTotal = 0 %}
                     <tr>
                         <td><b><u>{{cat}}</u></b></td>
                         <td style="text-align: center; padding: 0 10px 10px 10px;"></td>
@@ -137,8 +149,19 @@
                     <td style="text-align: center; padding: 0 10px 10px 10px;">{{ligne.PrixUnitaire}}</td>
                     <td style="text-align: center; padding: 0 10px 10px 10px;">{{ligne.TVA.Taux}}%</td>
                     <td style="text-align: center; padding: 0 10px 10px 10px;">{{(ligne.PrixUnitaire * ligne.Qte) - (ligne.Remise * ligne.Qte)}}€</td>
+                    {% set sousTotal = sousTotal + (ligne.PrixUnitaire * ligne.Qte) - (ligne.Remise * ligne.Qte) %}
                 </tr>
                 {% endfor %} 
+                {% if devis.isSousTotaux and cat != "" %}
+                    <tr>
+                        <td style="padding: 5px 10px 10px 10px;"><b>Sous total pour la catégorie {{cat}}</b></td>
+                        <td style="text-align: center; padding: 0 10px 10px 10px;"></td>
+                        <td style="text-align: center; padding: 0 10px 10px 10px;"></td>
+                        <td style="text-align: center; padding: 0 10px 10px 10px;"></td>
+                        <td style="text-align: center; padding: 0 10px 10px 10px;"></td>
+                        <td style="text-align: center; padding: 0 10px 10px 10px;">{{sousTotal}}€</td>
+                    </tr>    
+                {% endif %}
             </tbody>
         </table>
        

@@ -81,6 +81,9 @@ class Facture
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $mailSend = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $isSousTotaux = null;
+
     public function __construct()
     {
         $this->LigneFacture = new ArrayCollection();
@@ -479,6 +482,18 @@ class Facture
     public function setMailSend(?\DateTimeInterface $mailSend): static
     {
         $this->mailSend = $mailSend;
+
+        return $this;
+    }
+
+    public function isIsSousTotaux(): ?bool
+    {
+        return $this->isSousTotaux;
+    }
+
+    public function setIsSousTotaux(?bool $isSousTotaux): static
+    {
+        $this->isSousTotaux = $isSousTotaux;
 
         return $this;
     }
