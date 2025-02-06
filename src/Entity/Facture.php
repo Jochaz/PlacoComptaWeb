@@ -84,15 +84,11 @@ class Facture
     #[ORM\Column(nullable: true)]
     private ?bool $isSousTotaux = null;
 
-    #[ORM\OneToMany(mappedBy: 'facture', targetEntity: CategorieDupliquee::class)]
-    private Collection $CategorieDupliquee;
-
     public function __construct()
     {
         $this->LigneFacture = new ArrayCollection();
         $this->setIsEditer(false);
         $this->echeances = new ArrayCollection();
-        $this->CategorieDupliquee = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -498,36 +494,6 @@ class Facture
     public function setIsSousTotaux(?bool $isSousTotaux): static
     {
         $this->isSousTotaux = $isSousTotaux;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, CategorieDupliquee>
-     */
-    public function getCategorieDupliquee(): Collection
-    {
-        return $this->CategorieDupliquee;
-    }
-
-    public function addCategorieDupliquee(CategorieDupliquee $categorieDupliquee): static
-    {
-        if (!$this->CategorieDupliquee->contains($categorieDupliquee)) {
-            $this->CategorieDupliquee->add($categorieDupliquee);
-            $categorieDupliquee->setFacture($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCategorieDupliquee(CategorieDupliquee $categorieDupliquee): static
-    {
-        if ($this->CategorieDupliquee->removeElement($categorieDupliquee)) {
-            // set the owning side to null (unless already changed)
-            if ($categorieDupliquee->getFacture() === $this) {
-                $categorieDupliquee->setFacture(null);
-            }
-        }
 
         return $this;
     }
