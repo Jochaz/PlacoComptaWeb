@@ -194,6 +194,13 @@
                     <p style="font-size: small">Echéance de 100% soit {{MontantTTC}}€</p>
                 </div>
             </div>
+            {% if devis.DureeValidite and devis.DureeValidite >= 0%}
+            <div class="row">
+                <div class="col-sm" style="font-size: medium;">
+                    <p style="font-size: small">Durée de validité du devis : {{devis.DureeValidite}} mois</p>
+                </div>
+            </div>
+            {% endif %}
 
             <div class="row">
                 <div class="col-sm" style="font-size: medium;">

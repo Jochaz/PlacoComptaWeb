@@ -81,6 +81,9 @@ class Devis
     #[ORM\Column(nullable: true)]
     private ?bool $isSousTotaux = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $DureeValidite = null;
+
     public function __construct()
     {
         $this->ligneDevis = new ArrayCollection();
@@ -462,6 +465,18 @@ class Devis
     public function setIsSousTotaux(?bool $isSousTotaux): static
     {
         $this->isSousTotaux = $isSousTotaux;
+
+        return $this;
+    }
+
+    public function getDureeValidite(): ?int
+    {
+        return $this->DureeValidite;
+    }
+
+    public function setDureeValidite(?int $DureeValidite): static
+    {
+        $this->DureeValidite = $DureeValidite;
 
         return $this;
     }

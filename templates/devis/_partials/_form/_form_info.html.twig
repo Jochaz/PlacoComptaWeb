@@ -34,6 +34,12 @@
     </div>
     {{ form_row(form.Objet)}}
     {{ form_row(form.TVAAutoliquidation)}}
+
+    <div class="row">
+        <div class="col">
+            {{ form_row(form.DureeValidite)}}
+        </div>
+    </div>
     <button type="submit" class="btn btn-primary">{{ button_label|default('Continuer vers les adresses')}}</button>
 {{ form_end(form)}}
 </div>

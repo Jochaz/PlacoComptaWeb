@@ -61,6 +61,9 @@ class DevisDetailType extends AbstractType
             ])
             ->add('isSousTotaux', options:[
                 'label' => 'Afficher les sous-totaux des modèles'
+            ])
+            ->add('DureeValidite', options:[
+                'label' => 'Durée de validité du devis (en mois)'                 
             ]);
     }
 
