@@ -1,6 +1,11 @@
 <div class="container">
 {{ form_start(form)}}
     <div class="container">
+        <div class="row">
+            <a href="/customer/add">Créer un nouveau client particulier</a>    
+            <a href="/professional/add">Créer un nouveau client professionnel</a>    
+        </div>
+        <br />
         <div class="form-check form-switch">
             <input class="form-check-input" type="checkbox" id="SwitchTypeClient" name="SwitchTypeClient">
             <label class="form-check-label" for="SwitchTypeClient" id="SwitchTypeClientLabel" name="SwitchTypeClientLabel">Type de client</label>
