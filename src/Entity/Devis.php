@@ -81,9 +81,13 @@ class Devis
     #[ORM\Column(nullable: true)]
     private ?bool $isSousTotaux = null;
 
+    #[ORM\OneToMany(mappedBy: 'devis', targetEntity: CategorieDupliquee::class)]
+    private Collection $CategorieDupliquee;
+
     public function __construct()
     {
         $this->ligneDevis = new ArrayCollection();
+        $this->CategorieDupliquee = new ArrayCollection();
     }
     
     public function AddressChantierIsFacturation(): bool
@@ -462,6 +466,36 @@ class Devis
     public function setIsSousTotaux(?bool $isSousTotaux): static
     {
         $this->isSousTotaux = $isSousTotaux;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CategorieDupliquee>
+     */
+    public function getCategorieDupliquee(): Collection
+    {
+        return $this->CategorieDupliquee;
+    }
+
+    public function addCategorieDupliquee(CategorieDupliquee $categorieDupliquee): static
+    {
+        if (!$this->CategorieDupliquee->contains($categorieDupliquee)) {
+            $this->CategorieDupliquee->add($categorieDupliquee);
+            $categorieDupliquee->setDevis($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCategorieDupliquee(CategorieDupliquee $categorieDupliquee): static
+    {
+        if ($this->CategorieDupliquee->removeElement($categorieDupliquee)) {
+            // set the owning side to null (unless already changed)
+            if ($categorieDupliquee->getDevis() === $this) {
+                $categorieDupliquee->setDevis(null);
+            }
+        }
 
         return $this;
     }

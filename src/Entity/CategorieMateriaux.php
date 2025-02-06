@@ -28,9 +28,13 @@ class CategorieMateriaux
     #[ORM\Column(nullable: true)]
     private ?bool $plus_Utilise = null;
 
+    #[ORM\OneToMany(mappedBy: 'Categorie', targetEntity: CategorieDupliquee::class, orphanRemoval: true)]
+    private Collection $categorieDupliquees;
+
     public function __construct()
     {
         $this->materiauxes = new ArrayCollection();
+        $this->categorieDupliquees = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -105,6 +109,36 @@ class CategorieMateriaux
     public function setPlusUtilise(?bool $plus_Utilise): self
     {
         $this->plus_Utilise = $plus_Utilise;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CategorieDupliquee>
+     */
+    public function getCategorieDupliquees(): Collection
+    {
+        return $this->categorieDupliquees;
+    }
+
+    public function addCategorieDupliquee(CategorieDupliquee $categorieDupliquee): static
+    {
+        if (!$this->categorieDupliquees->contains($categorieDupliquee)) {
+            $this->categorieDupliquees->add($categorieDupliquee);
+            $categorieDupliquee->setCategorie($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCategorieDupliquee(CategorieDupliquee $categorieDupliquee): static
+    {
+        if ($this->categorieDupliquees->removeElement($categorieDupliquee)) {
+            // set the owning side to null (unless already changed)
+            if ($categorieDupliquee->getCategorie() === $this) {
+                $categorieDupliquee->setCategorie(null);
+            }
+        }
 
         return $this;
     }
